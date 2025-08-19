@@ -81,10 +81,13 @@
     </changeSet>
     
     <changeSet id="TEST_DATA_TABLE_COLUMN(TABLE_NAME)-FK_TEST_DATA_TABLE_CATALOG(TABLE_NAME)" author="admin">
-        <preConditions onFail="MARK_RAN" onError="HALT">
-            <not>
-                <foreignKeyConstraintExists foreignKeyName="TEST_DATA_TABLE_COLUMN(TABLE_NAME)-FK_TEST_DATA_TABLE_CATALOG(TABLE_NAME)"/>
-            </not>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM information_schema.table_constraints
+                WHERE lower(constraint_type) = 'foreign key'
+                  AND lower(table_name) = 'test_data_table_column'
+                  AND constraint_name = 'TEST_DATA_TABLE_COLUMN(TABLE_NAME)-FK_TEST_DATA_TABLE_CATALOG(TABLE_NAME)';
+            </sqlCheck>
         </preConditions>
         <addForeignKeyConstraint baseTableName="TEST_DATA_TABLE_COLUMN" baseColumnNames="TABLE_NAME"
                                  referencedTableName="TEST_DATA_TABLE_CATALOG"
@@ -171,10 +174,13 @@
     </changeSet>
     
     <changeSet id="TABLE_TEST_DATA_REFRESH_CONFIG(ID)-FK_TEST_DATA_TABLE_CATALOG(REFRESH_CONFIG_ID)" author="admin">
-        <preConditions onFail="MARK_RAN" onError="HALT">
-            <not>
-                <foreignKeyConstraintExists foreignKeyName="TABLE_TEST_DATA_REFRESH_CONFIG(ID)-FK_TEST_DATA_TABLE_CATALOG(REFRESH_CONFIG_ID)"/>
-            </not>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM information_schema.table_constraints
+                WHERE lower(constraint_type) = 'foreign key'
+                  AND lower(table_name) = 'test_data_refresh_config'
+                  AND constraint_name = 'TABLE_TEST_DATA_REFRESH_CONFIG(ID)-FK_TEST_DATA_TABLE_CATALOG(REFRESH_CONFIG_ID)';
+            </sqlCheck>
         </preConditions>
         <addForeignKeyConstraint baseTableName="TEST_DATA_REFRESH_CONFIG"
                                  baseColumnNames="ID"
@@ -212,9 +218,12 @@
     
     <changeSet id="TEST_DATA_TABLE_IMPORT_INFO(TABLE_NAME)-FK_TEST_DATA_TABLE_CATALOG(TABLE_NAME)" author="admin">
         <preConditions onFail="MARK_RAN" onError="HALT">
-            <not>
-                <foreignKeyConstraintExists foreignKeyName="TEST_DATA_TABLE_IMPORT_INFO(TABLE_NAME)-FK_TEST_DATA_TABLE_CATALOG(TABLE_NAME)"/>
-            </not>
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM information_schema.table_constraints
+                WHERE lower(constraint_type) = 'foreign key'
+                  AND lower(table_name) = 'test_data_table_import_info'
+                  AND constraint_name = 'TEST_DATA_TABLE_IMPORT_INFO(TABLE_NAME)-FK_TEST_DATA_TABLE_CATALOG(TABLE_NAME)';
+            </sqlCheck>
         </preConditions>
         <addForeignKeyConstraint baseTableName="TEST_DATA_TABLE_IMPORT_INFO" baseColumnNames="TABLE_NAME"
                                  referencedTableName="TEST_DATA_TABLE_CATALOG"
@@ -395,9 +404,12 @@
 
     <changeSet id="TEST_DATA_FLAGS_TABLE(TABLE_NAME)-FK_TEST_DATA_TABLE_CATALOG(TABLE_NAME)" author="admin">
         <preConditions onFail="MARK_RAN" onError="HALT">
-            <not>
-                <foreignKeyConstraintExists foreignKeyName="TEST_DATA_FLAGS_TABLE(TABLE_NAME)-FK_TEST_DATA_TABLE_CATALOG(TABLE_NAME)"/>
-            </not>
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM information_schema.table_constraints
+                WHERE lower(constraint_type) = 'foreign key'
+                  AND lower(table_name) = 'test_data_flags_table'
+                  AND constraint_name = 'TEST_DATA_FLAGS_TABLE(TABLE_NAME)-FK_TEST_DATA_TABLE_CATALOG(TABLE_NAME)';
+            </sqlCheck>
         </preConditions>
         <addForeignKeyConstraint baseTableName="TEST_DATA_FLAGS_TABLE" baseColumnNames="TABLE_NAME"
                                  referencedTableName="TEST_DATA_TABLE_CATALOG"
