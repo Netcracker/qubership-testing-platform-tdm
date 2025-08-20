@@ -33,7 +33,7 @@
         <atp.crypt.version>0.0.20</atp.crypt.version>
         <atp-export-import-lib.version>0.2.43</atp-export-import-lib.version>
         <atp.integration.spring.boot.starter.version>0.2.38</atp.integration.spring.boot.starter.version>
-        <atp.auth.spring.boot.starter.version>1.2.68</atp.auth.spring.boot.starter.version>
+        <atp.auth.spring.boot.starter.version>1.2.60</atp.auth.spring.boot.starter.version>
         <atp.common.version>0.0.43</atp.common.version>
         <owasp.encoder.version>2.5.5.0</owasp.encoder.version>
     </properties>
