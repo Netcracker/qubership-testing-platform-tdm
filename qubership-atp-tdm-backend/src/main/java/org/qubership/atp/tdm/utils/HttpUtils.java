@@ -19,12 +19,12 @@ package org.qubership.atp.tdm.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
 
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.util.UriUtils;
 
 public class HttpUtils {
 
@@ -38,14 +38,25 @@ public class HttpUtils {
      */
     public static ResponseEntity<InputStreamResource> buildFileResponseEntity(File file, String contentType)
             throws FileNotFoundException {
-        Path safePath = Paths.get(file.getName());
-        file = new File(safePath.toString());
+
+        if (file == null || !file.isFile()) {
+            throw new FileNotFoundException(file == null ? "null" : file.getPath());
+        }
+
+        String filename = file.getName();
+        String contentDisposition = contentDisposition(filename);
         ResponseEntity<InputStreamResource> body = ResponseEntity.ok()
                 .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Content-Disposition")
-                .header("Content-Disposition", file.getName())
+                .header("Content-Disposition", contentDisposition)
                 .header("Content-Type", contentType)
                 .body(new InputStreamResource(new FileInputStream(file)));
         DataUtils.deleteFile(file.toPath());
         return body;
+    }
+
+    private static String contentDisposition(String filename) {
+        String quoted = filename.replace("\"", "\\\"");
+        String utf8 = UriUtils.encode(filename, StandardCharsets.UTF_8);
+        return "attachment; filename=\"" + quoted + "\"; filename*=UTF-8''" + utf8;
     }
 }
