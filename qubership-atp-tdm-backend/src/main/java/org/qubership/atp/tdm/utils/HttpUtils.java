@@ -38,7 +38,7 @@ public class HttpUtils {
      */
     public static ResponseEntity<InputStreamResource> buildFileResponseEntity(File file, String contentType)
             throws FileNotFoundException {
-        Path safePath = Paths.get(file.getName(), file.getName());
+        Path safePath = Paths.get(file.getName());
         file = new File(safePath.toString());
         ResponseEntity<InputStreamResource> body = ResponseEntity.ok()
                 .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Content-Disposition")
