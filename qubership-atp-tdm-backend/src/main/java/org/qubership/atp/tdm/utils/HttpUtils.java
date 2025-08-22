@@ -22,15 +22,13 @@ import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
 public class HttpUtils {
 
-    @Value("${excel.import.directory}")
-    private static String excelImportDirectory;
+    private static final String TMP_DIR = "/tmp";
 
     /**
      * Building response entity containing file for download to user.
@@ -47,7 +45,7 @@ public class HttpUtils {
             throw new FileNotFoundException(file == null ? "null" : file.getPath());
         }
 
-        Path baseDir = Paths.get(excelImportDirectory).toAbsolutePath().normalize();
+        Path baseDir = Paths.get(TMP_DIR).toAbsolutePath().normalize();
         Path safePath = baseDir.resolve(file.getName()).normalize();
         if (!safePath.startsWith(baseDir)) {
             throw new SecurityException("Bad filename");
