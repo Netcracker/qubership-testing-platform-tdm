@@ -19,14 +19,17 @@ package org.qubership.atp.tdm.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.util.UriUtils;
 
 public class HttpUtils {
+
+    @Value("${excel.import.directory}")
+    private static String excelImportDirectory;
 
     /**
      * Building response entity containing file for download to user.
@@ -43,20 +46,18 @@ public class HttpUtils {
             throw new FileNotFoundException(file == null ? "null" : file.getPath());
         }
 
-        String filename = file.getName();
-        String contentDisposition = contentDisposition(filename);
+        Path baseDir = new File(excelImportDirectory).toPath().toAbsolutePath().normalize();
+        Path safePath = baseDir.resolve(file.getName()).normalize();
+        if (!safePath.startsWith(baseDir)) {
+            throw new SecurityException("Bad filename");
+        }
+        File safeFile = safePath.toFile();
         ResponseEntity<InputStreamResource> body = ResponseEntity.ok()
                 .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Content-Disposition")
-                .header("Content-Disposition", contentDisposition)
+                .header("Content-Disposition", safeFile.getName())
                 .header("Content-Type", contentType)
                 .body(new InputStreamResource(new FileInputStream(file)));
         DataUtils.deleteFile(file.toPath());
         return body;
-    }
-
-    private static String contentDisposition(String filename) {
-        String quoted = filename.replace("\"", "\\\"");
-        String utf8 = UriUtils.encode(filename, StandardCharsets.UTF_8);
-        return "attachment; filename=\"" + quoted + "\"; filename*=UTF-8''" + utf8;
     }
 }
