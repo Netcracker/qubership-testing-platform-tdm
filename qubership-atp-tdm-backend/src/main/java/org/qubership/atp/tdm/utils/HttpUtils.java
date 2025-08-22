@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -46,7 +47,7 @@ public class HttpUtils {
             throw new FileNotFoundException(file == null ? "null" : file.getPath());
         }
 
-        Path baseDir = new File(excelImportDirectory).toPath().toAbsolutePath().normalize();
+        Path baseDir = Paths.get(excelImportDirectory).toAbsolutePath().normalize();
         Path safePath = baseDir.resolve(file.getName()).normalize();
         if (!safePath.startsWith(baseDir)) {
             throw new SecurityException("Bad filename");
