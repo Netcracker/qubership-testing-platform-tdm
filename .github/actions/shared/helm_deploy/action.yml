@@ -151,46 +151,6 @@ runs:
           exit 1
         }
 
-    - name: Install MongoDB via bitnami
-      shell: bash
-      run: |       
-        helm install my-mongodb bitnami/mongodb -n ${{inputs.namespace}} \
-          --set image.registry=docker.io \
-          --set image.repository=bitnamilegacy/mongodb \
-          --set image.tag=8.0.13 \
-          --set auth.rootUser=root \
-          --set auth.rootPassword=root
-        
-        pod=$(kubectl get pods -n ${{inputs.namespace}} -o name | grep -vE 'postgres' | head -n 1 | cut -d/ -f2)
-        kubectl wait pod "$pod" -n ${{inputs.namespace}} \
-           --for=condition=Ready \
-           --timeout=120s || {
-           echo "❌ Pod $pod did not become ready in time"
-           ERROR_FLAG=true
-           exit 1
-        }
-
-    - name: Install Kafka via bitnami
-      shell: bash
-      run: |
-        cd ${{inputs.repository_name}}/.github/deploy_templates/
-        ls -la
-        
-        helm install kafka bitnami/kafka \
-          --version 25.0.0 \
-          --namespace ${{inputs.namespace}} \
-          --create-namespace \
-          -f no-auth-values.yaml
-        
-        pod=$(kubectl get pods -n ${{inputs.namespace}} -o name | grep -vE 'postgres|mongodb' | head -n 1 | cut -d/ -f2)
-        kubectl wait pod "$pod" -n ${{inputs.namespace}} \
-           --for=condition=Ready \
-           --timeout=300s || {
-           echo "❌ Pod $pod did not become ready in time"
-           ERROR_FLAG=true
-           exit 1
-        }
-
     - name: Install/update service with helm
       shell: bash
       run: |
