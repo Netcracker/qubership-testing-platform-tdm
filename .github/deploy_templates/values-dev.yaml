@@ -11,7 +11,6 @@ HELPER_IMAGE: "ghcr.io/netcracker/qubership-testing-platform-helm-hook-helper:ma
 CONTENT_SECURITY_POLICY: "*"
 pg_pass: "postgrestest"
 pg_user: "postgres"
-SERVICE_ENTITIES_MIGRATION_ENABLED: "false"
 MAIL_SENDER_ENABLE: "false"
 LIQUIBASE_LAUNCH_ENABLED: "false"
 ATP_SERVICE_PUBLIC: "false"
