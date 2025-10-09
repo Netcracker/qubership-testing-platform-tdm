@@ -2,7 +2,6 @@
 DOCKER_TAG: "ghcr.io/netcracker/qubership-testing-platform-tdm:main-20251008143211"
 # This option turns on or off logging in graylog
 GRAYLOG_ON: "false"
-KAFKA_REPORTING_SERVERS: ""
 # IP of db
 PG_DB_ADDR: "my-postgres-postgresql"
 # Spring profile for security
