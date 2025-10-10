@@ -215,6 +215,13 @@ runs:
         
         done
         
+        pod=$(kubectl get pods -n namespace -o name | grep -E 'predeploy' | head -n 1 | cut -d/ -f2)
+        kubectl wait pod "$pod" -n ${{inputs.namespace}} \
+           --for=condition=Ready \
+           --timeout=600s || {
+           echo "❌ Pod $pod did not become ready in time"
+        }
+        
         echo " Get pods $pod"
         kubectl get pods -n ${{inputs.namespace}}
 
