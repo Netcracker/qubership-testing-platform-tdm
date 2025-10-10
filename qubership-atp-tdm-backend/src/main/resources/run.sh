@@ -41,13 +41,15 @@ JAVA_OPTIONS="${JAVA_OPTIONS} -Dlog.graylog.on=${LOG_GRAYLOG_ON:-false}"
 JAVA_OPTIONS="${JAVA_OPTIONS} -Djdbc.MinIdle=20 -Djdbc.MaxPoolSize=50"
 JAVA_OPTIONS="${JAVA_OPTIONS} -Dspring.config.location=file:./config/application.properties"
 JAVA_OPTIONS="${JAVA_OPTIONS} -Dspring.cloud.bootstrap.location=file:./config/bootstrap.properties"
-JAVA_OPTIONS="${JAVA_OPTIONS} -Dei.gridfs.database=${EI_GRIDFS_DB:?}"
-JAVA_OPTIONS="${JAVA_OPTIONS} -Dei.gridfs.host=${EI_GRIDFS_DB_ADDR:-$GRIDFS_DB_ADDR}"
-JAVA_OPTIONS="${JAVA_OPTIONS} -Dei.gridfs.port=${EI_GRIDFS_DB_PORT:-$GRIDFS_DB_PORT}"
 JAVA_OPTIONS="${JAVA_OPTIONS} -Datp.audit.logging.topic.name=${AUDIT_LOGGING_TOPIC_NAME:?}"
 JAVA_OPTIONS="${JAVA_OPTIONS} -Datp.audit.logging.enable=${AUDIT_LOGGING_ENABLE:?}"
 JAVA_OPTIONS="${JAVA_OPTIONS} -Datp.audit.logging.topic.partitions=${AUDIT_LOGGING_TOPIC_PARTITIONS:?}"
 JAVA_OPTIONS="${JAVA_OPTIONS} -Datp.audit.logging.topic.replicas=${AUDIT_LOGGING_TOPIC_REPLICAS:?}"
 JAVA_OPTIONS="${JAVA_OPTIONS} -Datp.reporting.kafka.producer.bootstrap.server=${KAFKA_REPORTING_SERVERS:?}"
+if [ "${EI_GRIDFS_ENABLED:-true}" = "true" ]; then
+  JAVA_OPTIONS="${JAVA_OPTIONS} -Dei.gridfs.database=${EI_GRIDFS_DB:?}"
+  JAVA_OPTIONS="${JAVA_OPTIONS} -Dei.gridfs.host=${EI_GRIDFS_DB_ADDR:-$GRIDFS_DB_ADDR}"
+  JAVA_OPTIONS="${JAVA_OPTIONS} -Dei.gridfs.port=${EI_GRIDFS_DB_PORT:-$GRIDFS_DB_PORT}"
+fi
 
 /usr/bin/java ${JAVA_OPTIONS} -XX:+PrintFlagsFinal -XX:MaxRAM=${MAX_RAM:-1024m} -cp "./config/:./lib/*" org.qubership.atp.tdm.Main

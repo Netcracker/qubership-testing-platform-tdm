@@ -199,7 +199,6 @@ runs:
         
         for pod in $(kubectl get pods -n ${{inputs.namespace}} --no-headers -o custom-columns=":metadata.name"); do 
           echo "📦 Logs from pod: $pod"
-        
           if ! kubectl logs "$pod" -n ${{inputs.namespace}}; then
             echo "⚠️ Could not fetch current logs for $pod"
           fi
@@ -214,13 +213,6 @@ runs:
           fi
         
         done
-        
-        pod=$(kubectl get pods -n namespace -o name | grep -E 'predeploy' | head -n 1 | cut -d/ -f2)
-        kubectl wait pod "$pod" -n ${{inputs.namespace}} \
-           --for=condition=Ready \
-           --timeout=600s || {
-           echo "❌ Pod $pod did not become ready in time"
-        }
         
         echo " Get pods $pod"
         kubectl get pods -n ${{inputs.namespace}}
