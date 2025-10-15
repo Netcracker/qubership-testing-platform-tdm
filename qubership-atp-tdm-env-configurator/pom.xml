@@ -87,7 +87,37 @@
         </dependency>
         <dependency>
             <groupId>org.qubership.atp.auth</groupId>
-            <artifactId>atp-auth-spring-boot-starter</artifactId>
+            <artifactId>atp-auth-models</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>httpclient</artifactId>
+                    <groupId>org.apache.httpcomponents</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>bcprov-jdk15on</artifactId>
+                    <groupId>org.bouncycastle</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>bcpkix-jdk15on</artifactId>
+                    <groupId>org.bouncycastle</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>wildfly-common</artifactId>
+                    <groupId>org.wildfly.common</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.qubership.atp.auth</groupId>
+            <artifactId>atp-auth-impl</artifactId>
             <exclusions>
                 <exclusion>
                     <artifactId>guava</artifactId>

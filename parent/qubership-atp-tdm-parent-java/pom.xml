@@ -27,13 +27,14 @@
         <svn.revision>local_build</svn.revision>
         <model.mapper.version>3.2.0</model.mapper.version>
         <springfox.version>3.0.0</springfox.version>
+        <owasp.encoder.version>2.5.5.0</owasp.encoder.version>
+
+        <atp.auth.version>1.2.75</atp.auth.version>
+        <atp-export-import-lib.version>0.2.45</atp-export-import-lib.version>
 
         <atp.crypt.version>0.0.20</atp.crypt.version>
-        <atp-export-import-lib.version>0.2.40</atp-export-import-lib.version>
-        <atp.integration.spring.boot.starter.version>0.2.38</atp.integration.spring.boot.starter.version>
-        <atp.auth.spring.boot.starter.version>1.2.60</atp.auth.spring.boot.starter.version>
+        <atp.integration.version>0.2.38</atp.integration.version>
         <atp.common.version>0.0.43</atp.common.version>
-        <owasp.encoder.version>2.5.5.0</owasp.encoder.version>
     </properties>
 
     <dependencyManagement>
@@ -211,12 +212,27 @@
             <dependency>
                 <groupId>org.qubership.atp</groupId>
                 <artifactId>atp-integration-spring-boot-starter</artifactId>
-                <version>${atp.integration.spring.boot.starter.version}</version>
+                <version>${atp.integration.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.qubership.atp.auth</groupId>
-                <artifactId>atp-auth-spring-boot-starter</artifactId>
-                <version>${atp.auth.spring.boot.starter.version}</version>
+                <artifactId>atp-auth-models</artifactId>
+                <version>${atp.auth.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>io.github.openfeign</groupId>
+                        <artifactId>feign-httpclient</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.squareup.okhttp3</groupId>
+                        <artifactId>okhttp</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.qubership.atp.auth</groupId>
+                <artifactId>atp-auth-impl</artifactId>
+                <version>${atp.auth.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>io.github.openfeign</groupId>

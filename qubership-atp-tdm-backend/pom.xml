@@ -104,7 +104,41 @@
         </dependency>
         <dependency>
             <groupId>org.qubership.atp.auth</groupId>
-            <artifactId>atp-auth-spring-boot-starter</artifactId>
+            <artifactId>atp-auth-models</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>bcpkix-jdk15on</artifactId>
+                    <groupId>org.bouncycastle</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>bcprov-jdk15on</artifactId>
+                    <groupId>org.bouncycastle</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jaxb-api</artifactId>
+                    <groupId>javax.xml.bind</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>qubership-atp-common-logging</artifactId>
+                    <groupId>org.qubership.atp.common</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-kafka</artifactId>
+                    <groupId>org.springframework.kafka</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-websocket</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.qubership.atp.auth</groupId>
+            <artifactId>atp-auth-impl</artifactId>
             <exclusions>
                 <exclusion>
                     <artifactId>bcpkix-jdk15on</artifactId>
