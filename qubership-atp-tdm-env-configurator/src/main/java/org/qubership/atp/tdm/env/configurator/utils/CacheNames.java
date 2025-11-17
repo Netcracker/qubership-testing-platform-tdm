@@ -17,7 +17,7 @@
 package org.qubership.atp.tdm.env.configurator.utils;
 
 public class CacheNames {
-    public static final String AUTH_PROJECT_CACHE = "projects";
+    public static final String AUTH_PROJECT_CACHE = "auth_projects";
 
     public static final String TDM_FULL_PROJECT_CACHE = "tdmFullProjectCache";
     public static final String TDM_LAZY_PROJECT_CACHE = "tdmLazyProjectCache";
