@@ -203,3 +203,4 @@ extraEnvs: [ ]
 keepHookLogs: false
 HELPER_IMAGE: "artifactory.some-domain.com/link-to-image"
 USE_W_HELM: "true"
+EI_GRIDFS_ENABLED: "true"
