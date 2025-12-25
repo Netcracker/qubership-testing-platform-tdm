@@ -48,7 +48,7 @@ jobs:
           path: 'qubership-testing-platform-helm-hook-helper'
 
       - name: Postgres up
-        uses: ./qubership-testing-platform-helm-hook-helper/.github/actions/databases/postgres_for_build@v1.0.2
+        uses: ./qubership-testing-platform-helm-hook-helper/.github/actions/databases/postgres_for_build
         with:
           postgresql_user: tdmadmin
           postgresql_password: tdmadmin
