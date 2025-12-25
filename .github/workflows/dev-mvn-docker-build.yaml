@@ -48,7 +48,7 @@ jobs:
           path: 'qubership-testing-platform-helm-hook-helper'
 
       - name: Postgres up
-        uses: ./qubership-testing-platform-helm-hook-helper/.github/actions/databases/postgres_for_build@74bd6fc374c5af0d5851f7611e33ee15cdd3e3ce # v1.0.1
+        uses: ./qubership-testing-platform-helm-hook-helper/.github/actions/databases/postgres_for_build@v1.0.2
         with:
           postgresql_user: tdmadmin
           postgresql_password: tdmadmin
@@ -156,7 +156,7 @@ jobs:
         github.event_name == 'pull_request' ||
         (github.event_name == 'push' && github.ref == 'refs/heads/main')
       )
-    uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/workflows/deploy-run-tests.yaml@74bd6fc374c5af0d5851f7611e33ee15cdd3e3ce # v1.0.1
+    uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/workflows/deploy-run-tests.yaml@v1.0.2
     with:
       repository_name: 'qubership-testing-platform-tdm'
       service_name: 'atp-tdm'
