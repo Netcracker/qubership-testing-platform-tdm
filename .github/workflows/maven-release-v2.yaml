@@ -63,40 +63,24 @@ permissions:
 jobs:
   dry-run-build:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: centos/postgresql-96-centos7:9.6
-        ports:
-          - 5432:5432
-        env:
-          POSTGRESQL_USER: tdmadmin
-          POSTGRESQL_PASSWORD: tdmadmin
-          POSTGRESQL_DATABASE: atp2_tdm
-          POSTGRESQL_ADMIN_PASSWORD: postgres
-        options: >-
-          --health-cmd="pg_isready -U postgres -d atp2_tdm"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
     steps:
-      - name: Wait for Postgres to be ready
-        run: |
-          for i in {1..30}; do
-            if pg_isready -h localhost -U postgres -d atp2_tdm; then
-              echo "Postgres is ready"
-              break
-            fi
-            echo "Waiting for Postgres..."
-            sleep 5
-          done
+      - name: Checkout pipeline
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: 'main'
+          repository: 'Netcracker/qubership-testing-platform-helm-hook-helper'
+          path: 'qubership-testing-platform-helm-hook-helper'
 
-      - name: Create uuid-ossp extension
-        run: |
-          sudo apt-get update && sudo apt-get install -y postgresql-client
-          PGPASSWORD=postgres psql -h localhost -U postgres -d atp2_tdm -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; CREATE EXTENSION IF NOT EXISTS pgcrypto;'
+      - name: Postgres up
+        uses: ./qubership-testing-platform-helm-hook-helper/.github/actions/databases/postgres_for_build
+        with:
+          postgresql_user: tdmadmin
+          postgresql_password: tdmadmin
+          postgresql_database: atp2_tdm
+          postgresql_admin_password: postgres
 
       - name: "Build and Publish current SNAPSHOT (dry run)"
-        uses: netcracker/qubership-workflow-hub/actions/maven-release@de43c4115d6d3b1547060e7ef2a137aa9ab60fc1 #v1.0.5
+        uses: netcracker/qubership-workflow-hub/actions/maven-release@396774180000abdb825cbf150b56cc59c6913db8 #v2.0.5
         with:
           java-version: "21"
           version-type: ${{ github.event.inputs.version-type }}
@@ -117,39 +101,24 @@ jobs:
     outputs:
       release-version: ${{ steps.build-and-publish.outputs.release-version }}
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: centos/postgresql-96-centos7:9.6
-        ports:
-          - 5432:5432
-        env:
-          POSTGRESQL_USER: tdmadmin
-          POSTGRESQL_PASSWORD: tdmadmin
-          POSTGRESQL_DATABASE: atp2_tdm
-          POSTGRESQL_ADMIN_PASSWORD: postgres
-        options: >-
-          --health-cmd="pg_isready -U postgres -d atp2_tdm"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
     steps:
-      - name: Wait for Postgres to be ready
-        run: |
-          for i in {1..30}; do
-            if pg_isready -h localhost -U postgres -d atp2_tdm; then
-              echo "Postgres is ready"
-              break
-            fi
-            echo "Waiting for Postgres..."
-            sleep 5
-          done
-      - name: Create uuid-ossp extension
-        run: |
-          sudo apt-get update && sudo apt-get install -y postgresql-client
-          PGPASSWORD=postgres psql -h localhost -U postgres -d atp2_tdm -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; CREATE EXTENSION IF NOT EXISTS pgcrypto;'
+      - name: Checkout pipeline
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: 'main'
+          repository: 'Netcracker/qubership-testing-platform-helm-hook-helper'
+          path: 'qubership-testing-platform-helm-hook-helper'
+
+      - name: Postgres up
+        uses: ./qubership-testing-platform-helm-hook-helper/.github/actions/databases/postgres_for_build
+        with:
+          postgresql_user: tdmadmin
+          postgresql_password: tdmadmin
+          postgresql_database: atp2_tdm
+          postgresql_admin_password: postgres
 
       - name: "Prepare app token"
-        uses: actions/create-github-app-token@67018539274d69449ef7c02e8e71183d1719ab42 #v2.1.4
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf #v2.2.1
         id: app-token
         with:
           app-id: ${{ vars.GH_BUMP_VERSION_APP_ID }}
@@ -157,7 +126,7 @@ jobs:
       - name: "Build and Publish"
         id: build-and-publish
 
-        uses: netcracker/qubership-workflow-hub/actions/maven-release@de43c4115d6d3b1547060e7ef2a137aa9ab60fc1 #v1.0.5
+        uses: netcracker/qubership-workflow-hub/actions/maven-release@396774180000abdb825cbf150b56cc59c6913db8 #v2.0.5
         with:
           java-version: "21"
           version-type: ${{ github.event.inputs.version-type }}
@@ -174,7 +143,7 @@ jobs:
           dry-run: 'false'
 
       - name: Upload all Maven target directories
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: qubership-testing-platform-tdm
           path: '${{ github.event.repository.name }}/**/target'
@@ -187,7 +156,7 @@ jobs:
       platforms: ${{ steps.load_component.outputs.platforms }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
 
@@ -229,7 +198,7 @@ jobs:
     steps:
       - name: "Docker Build"
         id: docker_build
-        uses: netcracker/qubership-workflow-hub/actions/docker-action@9319676b7d20b423a2e0943a0ac08da07d615998 #v1.0.6
+        uses: netcracker/qubership-workflow-hub/actions/docker-action@396774180000abdb825cbf150b56cc59c6913db8 #v2.0.5
         with:
           ref: v${{ needs.deploy.outputs.release-version }}
           download-artifact: true
@@ -244,7 +213,19 @@ jobs:
   github-release:
     needs: [deploy]
     if: ${{ needs.deploy.result == 'success' }}
-    uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@de43c4115d6d3b1547060e7ef2a137aa9ab60fc1 #v1.0.5
+    uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@396774180000abdb825cbf150b56cc59c6913db8 #v2.0.5
     with:
       version: ${{ needs.deploy.outputs.release-version }}
       publish: true
+
+  run-tests:
+    needs: [ docker-build ]
+    if: ${{ needs.docker-build.result == 'success' }}
+    uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/workflows/deploy-run-tests.yaml@main
+    with:
+      repository_name: 'qubership-testing-platform-tdm'
+      service_name: 'atp-tdm'
+      namespace: 'tdm'
+      pipeline_branch: 'main'
+      postgres: enable
+      enable_test: enable
