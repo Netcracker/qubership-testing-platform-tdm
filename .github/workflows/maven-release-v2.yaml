@@ -72,7 +72,7 @@ jobs:
           path: 'qubership-testing-platform-helm-hook-helper'
 
       - name: Postgres up
-        uses: ./qubership-testing-platform-helm-hook-helper/.github/actions/databases/postgres_for_build
+        uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/actions/databases/postgres_for_build@v1.0.1
         with:
           postgresql_user: tdmadmin
           postgresql_password: tdmadmin
@@ -110,7 +110,7 @@ jobs:
           path: 'qubership-testing-platform-helm-hook-helper'
 
       - name: Postgres up
-        uses: ./qubership-testing-platform-helm-hook-helper/.github/actions/databases/postgres_for_build
+        uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/actions/databases/postgres_for_build@v1.0.1
         with:
           postgresql_user: tdmadmin
           postgresql_password: tdmadmin
@@ -221,7 +221,7 @@ jobs:
   run-tests:
     needs: [ docker-build ]
     if: ${{ needs.docker-build.result == 'success' }}
-    uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/workflows/deploy-run-tests.yaml@main
+    uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/workflows/deploy-run-tests.yaml@v1.0.1
     with:
       repository_name: 'qubership-testing-platform-tdm'
       service_name: 'atp-tdm'
