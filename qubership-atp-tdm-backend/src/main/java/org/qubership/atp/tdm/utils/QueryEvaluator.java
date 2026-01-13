@@ -23,13 +23,13 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
-
+import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.tdm.exceptions.internal.TdmEvaluateQueryException;
 import org.qubership.atp.tdm.model.table.TestDataTable;
 import org.qubership.atp.tdm.repo.impl.extractors.TestDataExtractorProvider;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

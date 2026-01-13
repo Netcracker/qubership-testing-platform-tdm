@@ -16,22 +16,21 @@
 
 package org.qubership.atp.tdm.service.impl;
 
-import org.qubership.atp.tdm.AbstractTest;
-import org.qubership.atp.tdm.utils.scheduler.ScheduleConfig;
-import org.qubership.atp.tdm.service.SchedulerService;
-import lombok.Data;
-import org.apache.commons.lang.StringUtils;
+import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.SchedulerException;
+import org.qubership.atp.tdm.AbstractTest;
+import org.qubership.atp.tdm.service.SchedulerService;
+import org.qubership.atp.tdm.utils.scheduler.ScheduleConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.UUID;
+import lombok.Data;
 
 public class SchedulerServiceTest extends AbstractTest {
 

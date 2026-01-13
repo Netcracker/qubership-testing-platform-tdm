@@ -21,7 +21,7 @@ import java.util.UUID;
 
 import javax.annotation.Nonnull;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -29,11 +29,10 @@ import org.springframework.stereotype.Component;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 
-
 @Component
 public class MetricService {
-    private MeterRegistry meterRegistry;
-    private JdbcTemplate jdbcTemplate;
+    private final MeterRegistry meterRegistry;
+    private final JdbcTemplate jdbcTemplate;
 
     private static final String EXECUTE_CLEANUP_BY_CRON = "atp_tdm_execute_cleanup_by_cron";
     private static final String EXECUTE_REFRESH_BY_CRON = "atp_tdm_execute_refresh_by_cron";
@@ -89,7 +88,7 @@ public class MetricService {
     }
 
     public void registerTablesCount() {
-        Gauge.builder(TABLES_COUNT, this, eos -> eos.getTablesCount()).register(meterRegistry);
+        Gauge.builder(TABLES_COUNT, this, MetricService::getTablesCount).register(meterRegistry);
     }
 
     private int getTablesCount() {

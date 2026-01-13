@@ -26,7 +26,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.proxy.HibernateProxy;
 import org.qubership.atp.tdm.utils.scheduler.ScheduleConfig;
 
@@ -34,7 +34,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 
 @Data
 @AllArgsConstructor

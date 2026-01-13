@@ -29,7 +29,11 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.qubership.atp.common.lock.LockManager;
+import org.qubership.atp.tdm.exceptions.internal.TdmOccupyDataIncorrectlyException;
+import org.qubership.atp.tdm.exceptions.internal.TdmOccupyDataResponseMessageException;
+import org.qubership.atp.tdm.exceptions.internal.TdmSearchCleanupConfigException;
 import org.qubership.atp.tdm.model.TestDataTableCatalog;
 import org.qubership.atp.tdm.model.cleanup.CleanupResults;
 import org.qubership.atp.tdm.model.cleanup.TestDataCleanupConfig;
@@ -58,11 +62,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.qubership.atp.common.lock.LockManager;
-import org.qubership.atp.tdm.exceptions.internal.TdmOccupyDataIncorrectlyException;
-import org.qubership.atp.tdm.exceptions.internal.TdmOccupyDataResponseMessageException;
-import org.qubership.atp.tdm.exceptions.internal.TdmSearchCleanupConfigException;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
