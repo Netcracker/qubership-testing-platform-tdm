@@ -30,11 +30,11 @@
         <owasp.encoder.version>2.5.5.0</owasp.encoder.version>
 
         <atp.auth.version>1.2.75</atp.auth.version>
-        <atp-export-import-lib.version>0.2.45</atp-export-import-lib.version>
+        <atp-export-import-lib.version>0.2.46</atp-export-import-lib.version>
 
-        <atp.crypt.version>0.0.20</atp.crypt.version>
-        <atp.integration.version>0.2.38</atp.integration.version>
-        <atp.common.version>0.0.43</atp.common.version>
+        <atp.crypt.version>0.0.24</atp.crypt.version>
+        <atp.integration.version>0.2.42</atp.integration.version>
+        <atp.common.version>0.0.47</atp.common.version>
     </properties>
 
     <dependencyManagement>
