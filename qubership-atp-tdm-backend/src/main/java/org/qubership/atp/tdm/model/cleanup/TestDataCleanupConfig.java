@@ -25,7 +25,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.qubership.atp.tdm.utils.scheduler.ScheduleConfig;
 

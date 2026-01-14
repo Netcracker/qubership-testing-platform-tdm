@@ -34,22 +34,12 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.quartz.CronExpression;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
-import org.qubership.atp.tdm.service.DataRefreshService;
-import org.qubership.atp.tdm.service.SchedulerService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.base.Preconditions;
 import org.qubership.atp.integration.configuration.mdc.MdcUtils;
 import org.qubership.atp.tdm.env.configurator.model.Server;
 import org.qubership.atp.tdm.env.configurator.service.EnvironmentsService;
@@ -68,7 +58,17 @@ import org.qubership.atp.tdm.repo.ImportInfoRepository;
 import org.qubership.atp.tdm.repo.RefreshConfigRepository;
 import org.qubership.atp.tdm.repo.SqlRepository;
 import org.qubership.atp.tdm.repo.TestDataTableRepository;
+import org.qubership.atp.tdm.service.DataRefreshService;
+import org.qubership.atp.tdm.service.SchedulerService;
 import org.qubership.atp.tdm.utils.ValidateCronExpression;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -129,10 +129,10 @@ public class DataRefreshServiceImpl implements DataRefreshService {
 
     @Override
     public TestDataRefreshConfig saveRefreshConfig(@Nonnull String tableName, @Nonnull Integer queryTimeout,
-                                                   @Nonnull TestDataRefreshConfig config) throws Exception {
+                                                   @Nonnull TestDataRefreshConfig config) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(tableName), "Table Name is null");
         Preconditions.checkArgument(checkSqlAvailability(tableName),
-                "Environment ins't set up properly to execute SQL queries");
+                "Environment isn't set up properly to execute SQL queries");
         Preconditions.checkArgument(queryTimeout > 0 && queryTimeout <= maxQueryTimeout,
                 "The timeout is not within the allowed range.\nRange: [1:3600]");
         ValidateCronExpression.validate(config.getSchedule());
@@ -235,11 +235,10 @@ public class DataRefreshServiceImpl implements DataRefreshService {
     @Override
     public List<RefreshResults> runRefresh(@Nonnull String tableName,
                                            @Nonnull Integer queryTimeout,
-                                           @Nonnull boolean allEnv,
-                                                    boolean saveOccupiedData) throws Exception {
+                                           boolean allEnv,
+                                           boolean saveOccupiedData) throws Exception {
         List<RefreshResults> refreshResultsList = new ArrayList<>();
         List<TestDataTableCatalog> catalogList = getTableWithSameTitleAndQuery(tableName, allEnv);
-
         for (TestDataTableCatalog tableCatalog: catalogList) {
             testDataTableRepository.updateLastUsage(tableName);
             refreshResultsList.add(runRefresh(tableCatalog.getTableName(), saveOccupiedData));
@@ -357,7 +356,7 @@ public class DataRefreshServiceImpl implements DataRefreshService {
         log.info("Processing [{}] refresh schedule request(s)", configs.size());
         for (TestDataRefreshConfig config : configs) {
             UUID configId = config.getId();
-            log.info("Scheduling refresh config: {}", config.toString());
+            log.info("Scheduling refresh config: {}", config);
             JobDetail job = JobBuilder.newJob(DataRefreshJob.class)
                     .withIdentity(configId.toString(), SCHED_GROUP)
                     .build();

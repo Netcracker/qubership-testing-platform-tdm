@@ -16,12 +16,12 @@
 
 package org.qubership.atp.tdm.model.statistics;
 
-
 import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import clover.org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

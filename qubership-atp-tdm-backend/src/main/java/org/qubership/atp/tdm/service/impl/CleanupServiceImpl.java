@@ -34,8 +34,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.quartz.CronExpression;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -77,7 +77,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class CleanupServiceImpl implements CleanupService {
-    private static final String EMPTY_NAME = "EMPTY";
     private static final String SCHED_GROUP = "cleanup";
     @Value("${external.query.max.timeout:3600}")
     private Integer maxQueryTimeout;
@@ -303,7 +302,7 @@ public class CleanupServiceImpl implements CleanupService {
             Server server = sqlRepository.getServer(tableName, catalogRepository, environmentsService);
             try (Connection connection = sqlRepository.createConnection(server)) {
                 if (config.getQueryTimeout() == null) {
-                    int queryTimeout = (int) ObjectUtils.defaultIfNull(
+                    int queryTimeout = ObjectUtils.defaultIfNull(
                             importInfoRepository.findByTableName(tableName).getQueryTimeout(), defaultQueryTimeout);
                     config.setQueryTimeout(queryTimeout);
                 }
@@ -432,7 +431,7 @@ public class CleanupServiceImpl implements CleanupService {
         log.info("Processing [{}] cleanup schedule request(s)", configs.size());
         for (TestDataCleanupConfig config : configs) {
             UUID configId = config.getId();
-            log.info("Scheduling cleanup config " + config.toString());
+            log.info("Scheduling cleanup config {}", config);
             JobDetail job = JobBuilder.newJob(DataCleanupJob.class)
                     .withIdentity(configId.toString(), SCHED_GROUP)
                     .build();
@@ -489,7 +488,7 @@ public class CleanupServiceImpl implements CleanupService {
                 ).map(LazySystem::getId)
                 .collect(Collectors.toList());
 
-        List<String> tableNamesWithSameSystem = catalogRepository.findAllByProjectIdAndTableTitleAndSystemIdIn(
+        return catalogRepository.findAllByProjectIdAndTableTitleAndSystemIdIn(
                         testDataTable.getProjectId(),
                         testDataTable.getTableTitle(),
                         systemsWithSameName
@@ -497,7 +496,5 @@ public class CleanupServiceImpl implements CleanupService {
                 .stream()
                 .map(TestDataTableCatalog::getTableName)
                 .collect(Collectors.toList());
-
-        return tableNamesWithSameSystem;
     }
 }

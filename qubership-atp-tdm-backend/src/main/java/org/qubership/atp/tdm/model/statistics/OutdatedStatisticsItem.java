@@ -19,7 +19,8 @@ package org.qubership.atp.tdm.model.statistics;
 import java.util.Collections;
 import java.util.List;
 
-import clover.org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
