@@ -30,13 +30,8 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-
 import org.qubership.atp.common.lock.LockManager;
 import org.qubership.atp.tdm.env.configurator.model.Connection;
 import org.qubership.atp.tdm.env.configurator.model.LazySystem;
@@ -57,6 +52,11 @@ import org.qubership.atp.tdm.repo.TestDataTableRepository;
 import org.qubership.atp.tdm.repo.impl.SystemColumns;
 import org.qubership.atp.tdm.service.ColumnService;
 import org.qubership.atp.tdm.utils.TestDataUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -258,10 +258,7 @@ public class ColumnServiceImpl implements ColumnService {
                     columnRepository.findAllByIdentityTableName(tableName);
             columns.forEach(column -> {
                 String endpoint = extractEndpointFromFullUrl(column.getColumnLink());
-                boolean pickUpFullLinkFromTableCell = false;
-                if (endpoint.equals(StringUtils.EMPTY)) {
-                    pickUpFullLinkFromTableCell = true;
-                }
+                boolean pickUpFullLinkFromTableCell = endpoint.equals(StringUtils.EMPTY);
                 String columnName = column.getIdentity().getColumnName();
                 setupLinkForOneTable(projectId, systemId, tableName, columnName, endpoint,
                         column.isBulkLink(), pickUpFullLinkFromTableCell);
@@ -292,10 +289,7 @@ public class ColumnServiceImpl implements ColumnService {
             columns.forEach(column -> {
                 if (column.isBulkLink()) {
                     String endpoint = extractEndpointFromFullUrl(column.getColumnLink());
-                    boolean pickUpFullLinkFromTableCell = false;
-                    if (endpoint.equals(StringUtils.EMPTY)) {
-                        pickUpFullLinkFromTableCell = true;
-                    }
+                    boolean pickUpFullLinkFromTableCell = endpoint.equals(StringUtils.EMPTY);
                     String columnName = column.getIdentity().getColumnName();
                     setupLinkForOneTable(projectId, systemId, tableName, columnName,
                             endpoint, true, pickUpFullLinkFromTableCell);
