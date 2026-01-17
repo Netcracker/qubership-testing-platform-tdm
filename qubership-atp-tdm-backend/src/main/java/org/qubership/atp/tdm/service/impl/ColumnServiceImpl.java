@@ -31,7 +31,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.qubership.atp.common.lock.LockManager;
 import org.qubership.atp.tdm.env.configurator.model.Connection;
 import org.qubership.atp.tdm.env.configurator.model.LazySystem;
@@ -204,20 +203,15 @@ public class ColumnServiceImpl implements ColumnService {
         List<Connection> connections = environmentsService.getConnectionsSystemById(systemId);
         Map<String, String> parameters = TestDataUtils.getConnection(connections, CONNECTION_NAME).getParameters();
 
-        String serverUrl;
-        if (externalUrl) {
-            serverUrl = getHttpUrlParamValue(parameters, PARAMETER_NAME_EXTERNAL_URL);
-        } else {
-            serverUrl = getHttpUrlParamValue(parameters, PARAMETER_NAME_URL);
-        }
+        String serverUrl = getHttpUrlParamValue(parameters,
+                externalUrl ? PARAMETER_NAME_EXTERNAL_URL : PARAMETER_NAME_URL);
         log.info("Got link for project [{}], system [{}] with endpoint [{}]", projectId, systemId, endpoint);
         return serverUrl + "/" + endpoint;
     }
 
     private String getHttpUrlParamValue(Map<String, String> parameters, String httpUrlParam) {
         if (!parameters.containsKey(httpUrlParam)) {
-            throw new IllegalArgumentException(String.format("Parameter [%s] was not found.",
-                    httpUrlParam));
+            throw new IllegalArgumentException(String.format("Parameter [%s] was not found.", httpUrlParam));
         }
         return parameters.get(httpUrlParam);
     }
@@ -318,8 +312,6 @@ public class ColumnServiceImpl implements ColumnService {
         return columnRepository.findDistinctByIdentityTableName();
     }
 
-
-
     @Override
     public List<TestDataTableColumn> getAllColumnsByTableName(@Nonnull String tableName) {
         return columnRepository.findAllByIdentityTableName(tableName);
@@ -385,10 +377,8 @@ public class ColumnServiceImpl implements ColumnService {
                 .stream()
                 .filter(element -> Objects.nonNull(element.getSystemId()))
                 .filter(item -> systems.stream().anyMatch(s -> item.getSystemId().equals(s.getId())))
-                .forEach(catalogItem -> {
-            setupLinkForOneTable(projectId, catalogItem.getSystemId(), catalogItem.getTableName(),
-                    columnName, endpoint, true, pickUpFullLinkFromTableCell);
-        });
+                .forEach(catalogItem -> setupLinkForOneTable(projectId, catalogItem.getSystemId(),
+                        catalogItem.getTableName(), columnName, endpoint, true, pickUpFullLinkFromTableCell));
         log.info("Setup bulk links for all tables with title [{}] under project [{}]", tableName, projectId);
     }
 
@@ -398,7 +388,7 @@ public class ColumnServiceImpl implements ColumnService {
      * @param tableName TDM table name.
      */
     @Override
-    public void deleteByTableName(@NotNull String tableName) {
+    public void deleteByTableName(@Nonnull String tableName) {
         log.info("Delete rows by table name {} in ColumnRepository",tableName);
         columnRepository.deleteByIdentity_TableName(tableName);
         log.info("Rows was deleted by table name {}.",tableName);

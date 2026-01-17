@@ -17,7 +17,6 @@
         <spring.cloud.version>2021.0.8</spring.cloud.version>
         <logback.version>1.2.13</logback.version>
         <logstash.gelf.version>1.14.1</logstash.gelf.version>
-        <openclover.version>4.5.2</openclover.version>
         <google.guava.version>32.0.1-jre</google.guava.version>
         <mockito.all.version>1.9.5</mockito.all.version>
         <swagger.version>1.5.3</swagger.version>
@@ -275,11 +274,6 @@
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>${postgesql.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.openclover</groupId>
-                <artifactId>clover</artifactId>
-                <version>${openclover.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
