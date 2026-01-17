@@ -18,7 +18,7 @@
         <logback.version>1.2.13</logback.version>
         <logstash.gelf.version>1.14.1</logstash.gelf.version>
         <openclover.version>4.5.2</openclover.version>
-        <google.guava.version>27.0-jre</google.guava.version>
+        <google.guava.version>32.0.1-jre</google.guava.version>
         <mockito.all.version>1.9.5</mockito.all.version>
         <swagger.version>1.5.3</swagger.version>
         <hikariCP.version>4.0.3</hikariCP.version>
@@ -28,6 +28,7 @@
         <model.mapper.version>3.2.0</model.mapper.version>
         <springfox.version>3.0.0</springfox.version>
         <owasp.encoder.version>2.5.5.0</owasp.encoder.version>
+        <tomcat.embed.version>9.0.110</tomcat.embed.version>
 
         <atp.auth.version>1.2.75</atp.auth.version>
         <atp-export-import-lib.version>0.2.46</atp-export-import-lib.version>
@@ -317,11 +318,6 @@
                 <artifactId>snakeyaml</artifactId>
                 <version>2.0</version>
             </dependency>
-            <!--            <dependency>
-                            <groupId>xalan</groupId>
-                            <artifactId>xalan</artifactId>
-                            <version>2.7.3</version>
-                        </dependency>-->
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
@@ -351,6 +347,26 @@
                 <groupId>org.lz4</groupId>
                 <artifactId>lz4-java</artifactId>
                 <version>1.8.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>3.9.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.8.9</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-el</artifactId>
+                <version>${tomcat.embed.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-websocket</artifactId>
+                <version>${tomcat.embed.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
