@@ -28,11 +28,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
 import org.qubership.atp.tdm.env.configurator.model.LazyProject;
 import org.qubership.atp.tdm.env.configurator.model.LazySystem;
@@ -47,6 +42,10 @@ import org.qubership.atp.tdm.model.rest.requests.ReleaseRowRequest;
 import org.qubership.atp.tdm.model.rest.requests.UpdateRowRequest;
 import org.qubership.atp.tdm.repo.AtpActionRepository;
 import org.qubership.atp.tdm.service.AtpActionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -82,9 +81,9 @@ public class AtpActionServiceImpl implements AtpActionService {
     }
 
     @Override
-    public List<ResponseMessage> getMultipleColumnTestData(@NotNull String projectName, @Nullable String envName,
-                                                           @Nullable String systemName, @NotNull String tableTitle,
-                                                           @NotNull List<GetRowRequest> multipleColumnRowRequest) {
+    public List<ResponseMessage> getMultipleColumnTestData(@Nonnull String projectName, @Nullable String envName,
+                                                           @Nullable String systemName, @Nonnull String tableTitle,
+                                                           @Nonnull List<GetRowRequest> multipleColumnRowRequest) {
         log.info("ATP Action. Getting multiple column test data. Table Title: {}", tableTitle);
         EnvironmentContext environmentContext = getEnvironmentContext(projectName, envName, systemName);
         String link = this.formResultLink(environmentContext.getProjectId(), environmentContext.getEnvId(),
@@ -191,10 +190,9 @@ public class AtpActionServiceImpl implements AtpActionService {
             return repository.refreshTables(environmentContext.getProjectId(), environmentContext.getSystemId(),
                     tableTitle, tdmUrl);
         } catch (Exception e) {
-            String message = "ATP Action. Failed to refresh table with title:" + tableTitle
-                    + ". Root cause: " + e.getMessage() ;
-            log.error(message, e);
-            return Collections.singletonList(new ResponseMessage(ResponseType.ERROR, message));
+            String msg = "ATP Action. Failed to refresh table with title:" + tableTitle + ". Root cause: " + e.getMessage();
+            log.error(msg, e);
+            return Collections.singletonList(new ResponseMessage(ResponseType.ERROR, msg));
         }
     }
 
@@ -242,14 +240,10 @@ public class AtpActionServiceImpl implements AtpActionService {
         if (Objects.nonNull(envName) && Objects.nonNull(systemName)) {
             Matcher matcher = TEMP_ENV_TIMESTAMP_PATTERN.matcher(envName);
             if (matcher.find()) {
-                log.info("Removing timestamp from envName");
                 envName = matcher.replaceAll("");
-                log.info("Env: [{}]", envName);
+                log.info("Removing timestamp from envName Env: [{}]", envName);
             }
-
-            LazyEnvironment lazyEnvironment = environmentsService.getLazyEnvironmentByName(projectId,
-                    envName);
-
+            LazyEnvironment lazyEnvironment = environmentsService.getLazyEnvironmentByName(projectId, envName);
             envId = lazyEnvironment.getId();
             LazySystem lazySystemByName =
                     environmentsService.getLazySystemByName(projectId, lazyEnvironment.getId(), systemName);
@@ -257,7 +251,6 @@ public class AtpActionServiceImpl implements AtpActionService {
         }
         log.info("Data from the environments tool is loaded.");
         return new EnvironmentContext(projectId, envId, systemId);
-
     }
 
     private String formResultLink(@Nonnull UUID projectName, @Nullable UUID envName,
@@ -274,11 +267,7 @@ public class AtpActionServiceImpl implements AtpActionService {
 
     @PostConstruct
     public void init() {
-        if (atpGatewayEnabled) {
-            tdmUrl = catalogueUrl;
-        } else {
-            tdmUrl = tdmAddress;
-        }
+        tdmUrl = atpGatewayEnabled ? catalogueUrl : tdmAddress;
     }
 
     @Data
