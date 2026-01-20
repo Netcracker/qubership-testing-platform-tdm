@@ -78,6 +78,7 @@ jobs:
           postgresql_password: tdmadmin
           postgresql_database: atp2_tdm
           postgresql_admin_password: postgres
+          create_pgcrypto: 'true'
 
       - name: "Build and Publish current SNAPSHOT (dry run)"
         uses: netcracker/qubership-workflow-hub/actions/maven-release@396774180000abdb825cbf150b56cc59c6913db8 #v2.0.5
@@ -116,6 +117,7 @@ jobs:
           postgresql_password: tdmadmin
           postgresql_database: atp2_tdm
           postgresql_admin_password: postgres
+          create_pgcrypto: 'true'
 
       - name: "Prepare app token"
         uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf #v2.2.1
