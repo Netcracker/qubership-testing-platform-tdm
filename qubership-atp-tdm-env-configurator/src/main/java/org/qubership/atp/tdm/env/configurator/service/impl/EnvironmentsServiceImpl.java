@@ -27,27 +27,11 @@ import java.util.UUID;
 
 import javax.annotation.Nonnull;
 
-import org.qubership.atp.tdm.env.configurator.api.dto.environments.SystemNameViewDto;
-
-import org.qubership.atp.tdm.env.configurator.model.Connection;
-import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
-import org.qubership.atp.tdm.env.configurator.model.LazyProject;
-import org.qubership.atp.tdm.env.configurator.model.LazySystem;
-import org.qubership.atp.tdm.env.configurator.model.Project;
-import org.qubership.atp.tdm.env.configurator.model.System;
-import org.qubership.atp.tdm.env.configurator.service.DtoConvertService;
-import org.qubership.atp.tdm.env.configurator.service.EnvironmentsService;
-import org.qubership.atp.tdm.env.configurator.utils.CacheNames;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
 import org.qubership.atp.auth.springbootstarter.exceptions.AtpException;
 import org.qubership.atp.tdm.env.configurator.api.dto.environments.BaseSearchRequestDto;
 import org.qubership.atp.tdm.env.configurator.api.dto.environments.EnvironmentDto;
 import org.qubership.atp.tdm.env.configurator.api.dto.environments.EnvironmentFullVer1ViewDto;
+import org.qubership.atp.tdm.env.configurator.api.dto.environments.SystemNameViewDto;
 import org.qubership.atp.tdm.env.configurator.api.dto.project.ConnectionFullVer1ViewDto;
 import org.qubership.atp.tdm.env.configurator.api.dto.project.EnvironmentNameViewDto;
 import org.qubership.atp.tdm.env.configurator.api.dto.project.EnvironmentResDto;
@@ -69,9 +53,23 @@ import org.qubership.atp.tdm.env.configurator.exceptions.internal.TdmEnvConvertL
 import org.qubership.atp.tdm.env.configurator.exceptions.internal.TdmEnvConvertLazySystemsByEnvIdException;
 import org.qubership.atp.tdm.env.configurator.exceptions.internal.TdmEnvConvertLazySystemsByProjectIdException;
 import org.qubership.atp.tdm.env.configurator.exceptions.internal.TdmEnvResetCachesException;
+import org.qubership.atp.tdm.env.configurator.model.Connection;
+import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
+import org.qubership.atp.tdm.env.configurator.model.LazyProject;
+import org.qubership.atp.tdm.env.configurator.model.LazySystem;
+import org.qubership.atp.tdm.env.configurator.model.Project;
+import org.qubership.atp.tdm.env.configurator.model.System;
+import org.qubership.atp.tdm.env.configurator.service.DtoConvertService;
+import org.qubership.atp.tdm.env.configurator.service.EnvironmentsService;
 import org.qubership.atp.tdm.env.configurator.service.client.EnvironmentFeignClient;
 import org.qubership.atp.tdm.env.configurator.service.client.ProjectEnvironmentFeignClient;
 import org.qubership.atp.tdm.env.configurator.service.client.SystemEnvironmentFeignClient;
+import org.qubership.atp.tdm.env.configurator.utils.CacheNames;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -199,8 +197,7 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
     public String getEnvNameById(@Nonnull UUID environmentId) {
         log.info("Loading environment name by environment id: [{}]",  environmentId);
         ResponseEntity<String> environmentNameById = environmentFeignClient.getEnvironmentNameById(environmentId);
-        String body = environmentNameById.getBody();
-        return body;
+        return environmentNameById.getBody();
     }
 
     /**
@@ -210,18 +207,9 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
     @Cacheable(value = CacheNames.TDM_LAZY_ENVIRONMENTS_CACHE)
     public List<LazyEnvironment> getLazyEnvironments(@Nonnull UUID projectId) {
         log.info("Loading lazy environments by project id: [{}]", projectId);
-        List<LazyEnvironment> lazyEnvironments;
         ResponseEntity<List<EnvironmentResDto>> envResponse =
                 projectEnvFeignClient.getEnvironments(projectId, false);
-        try {
-            lazyEnvironments = dtoConvertService.convertList(envResponse.getBody(), LazyEnvironment.class);
-        } catch (Exception e) {
-            log.error(format(TdmEnvConvertLazyEnvironmentsException.DEFAULT_MESSAGE,
-                    projectId), e);
-            throw new TdmEnvConvertLazyEnvironmentsException(projectId.toString());
-        }
-        log.info("Lazy environments successfully loaded.");
-        return lazyEnvironments;
+        return convertToLazyEnvironmentsList(projectId, envResponse.getBody());
     }
 
     /**
@@ -230,19 +218,23 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
     @Override
     @Cacheable(value = CacheNames.TDM_LAZY_ENVIRONMENTS_SHORT_CACHE)
     public List<LazyEnvironment> getLazyEnvironmentsShort(@Nonnull UUID projectId) {
-        log.info("Loading lazy environments by project id: [{}]", projectId);
-        List<LazyEnvironment> lazyEnvironments;
+        log.info("Loading lazy environments (without systems) by project id: [{}]", projectId);
         ResponseEntity<List<EnvironmentNameViewDto>> envResponse =
                 projectEnvFeignClient.getEnvironmentsShort(projectId);
+        return convertToLazyEnvironmentsList(projectId, envResponse.getBody());
+    }
+
+    private List<LazyEnvironment> convertToLazyEnvironmentsList(@Nonnull UUID projectId,
+                                                                List environmentsResponseBody) {
         try {
-            lazyEnvironments = dtoConvertService.convertList(envResponse.getBody(), LazyEnvironment.class);
+            List<LazyEnvironment> lazyEnvironments = dtoConvertService
+                    .convertList(environmentsResponseBody, LazyEnvironment.class);
+            log.info("Lazy environments successfully loaded.");
+            return lazyEnvironments;
         } catch (Exception e) {
-            log.error(format(TdmEnvConvertLazyEnvironmentsException.DEFAULT_MESSAGE,
-                    projectId), e);
+            log.error(format(TdmEnvConvertLazyEnvironmentsException.DEFAULT_MESSAGE, projectId), e);
             throw new TdmEnvConvertLazyEnvironmentsException(projectId.toString());
         }
-        log.info("Lazy environments successfully loaded.");
-        return lazyEnvironments;
     }
 
     /**
@@ -270,7 +262,6 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
         }
         return lazyEnvironment;
     }
-
 
     /**
      * System:
@@ -375,8 +366,6 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
         log.info("Full systems by name successfully loaded.");
         return lazySystem;
     }
-
-
 
     /**
      * Get lazy systems by env Id.

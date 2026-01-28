@@ -43,16 +43,6 @@ import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
-import org.qubership.atp.tdm.service.DataRefreshService;
-import org.qubership.atp.tdm.service.SchedulerService;
-import org.qubership.atp.tdm.service.StatisticsService;
-import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jdbc.BadSqlGrammarException;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import org.qubership.atp.common.lock.LockManager;
 import org.qubership.atp.crypt.api.Decryptor;
 import org.qubership.atp.integration.configuration.mdc.MdcUtils;
@@ -94,11 +84,21 @@ import org.qubership.atp.tdm.repo.TestDataTableRepository;
 import org.qubership.atp.tdm.repo.impl.SystemColumns;
 import org.qubership.atp.tdm.service.CleanupService;
 import org.qubership.atp.tdm.service.ColumnService;
+import org.qubership.atp.tdm.service.DataRefreshService;
+import org.qubership.atp.tdm.service.SchedulerService;
+import org.qubership.atp.tdm.service.StatisticsService;
 import org.qubership.atp.tdm.service.TestDataFlagsService;
 import org.qubership.atp.tdm.service.TestDataService;
 import org.qubership.atp.tdm.utils.DataUtils;
 import org.qubership.atp.tdm.utils.TestDataTableConvertor;
 import org.qubership.atp.tdm.utils.TestDataUtils;
+import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.BadSqlGrammarException;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -237,7 +237,7 @@ public class TestDataServiceImpl implements TestDataService {
         }
         TestDataTableCatalog tableCatalog = catalogRepository
                 .findByProjectIdAndSystemIdAndTableTitle(projectId, systemId, tableTitle);
-        String tableName = "";
+        String tableName;
         ImportTestDataStatistic statistic;
         if (Objects.nonNull(tableCatalog)) {
             tableName = tableCatalog.getTableName();
@@ -428,7 +428,7 @@ public class TestDataServiceImpl implements TestDataService {
     }
 
     /**
-     * Method to convert TestDataTable to excel file.
+     * Method to convert TestDataTable to Excel file.
      *
      * @param tableName table name.
      * @return Excel file.
@@ -439,7 +439,7 @@ public class TestDataServiceImpl implements TestDataService {
     }
 
     /**
-     * Method to convert TestDataTable to csv excel file.
+     * Method to convert TestDataTable to csv Excel file.
      *
      * @param tableName table name.
      * @return csv file.

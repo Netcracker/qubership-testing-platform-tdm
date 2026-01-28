@@ -16,13 +16,14 @@
 
 package org.qubership.atp.tdm.service.notification.projects;
 
-import static org.qubership.atp.tdm.env.configurator.utils.CacheNames.AUTH_PROJECT_CACHE;
 import static java.lang.String.format;
+import static org.qubership.atp.tdm.env.configurator.utils.CacheNames.AUTH_PROJECT_CACHE;
 
 import java.io.IOException;
 
 import javax.annotation.Nonnull;
 
+import org.qubership.atp.integration.configuration.mdc.MdcUtils;
 import org.qubership.atp.tdm.exceptions.kafka.TdmKafkaListenerReadEventException;
 import org.qubership.atp.tdm.exceptions.kafka.TdmKafkaListenerTypeEventException;
 import org.qubership.atp.tdm.mdc.MdcField;
@@ -34,7 +35,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.kafka.annotation.KafkaListener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.qubership.atp.integration.configuration.mdc.MdcUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -64,31 +64,22 @@ public class ProjectEventKafkaListener implements ProjectEventListener {
         }
         MdcUtils.put(MdcField.PROJECT_ID.toString(), projectEvent.getProjectId());
         switch (projectEvent.getType()) {
-            case CREATE: {
-                log.info("Project '{}' was created", projectEvent.getProjectName());
-                projectInformationService.saveProjectInformation(new ProjectInformation(
-                        projectEvent.getProjectId(), projectEvent.getTimeZone(), projectEvent.getDateFormat(),
-                        projectEvent.getTimeFormat(),  projectEvent.getTdmTableExpirationTime())
-                );
-                break;
-            }
-            case UPDATE: {
-                log.info("Project '{}' was updated", projectEvent.getProjectName());
+            case CREATE:
+            case UPDATE:
+                log.info("Project '{}' was {}d", projectEvent.getProjectName(),
+                        projectEvent.getType().name().toLowerCase());
                 projectInformationService.saveProjectInformation(new ProjectInformation(projectEvent.getProjectId(),
                         projectEvent.getTimeZone(), projectEvent.getDateFormat(), projectEvent.getTimeFormat(),
                         projectEvent.getTdmTableExpirationTime()
                 ));
                 break;
-            }
-            case DELETE: {
+            case DELETE:
                 log.info("Project '{}' was deleted from projects catalogue", projectEvent.getProjectName());
                 testDataService.deleteProjectFromCatalogue(projectEvent.getProjectId());
                 break;
-            }
-            default: {
+            default:
                 log.error(format(TdmKafkaListenerTypeEventException.DEFAULT_MESSAGE, projectEvent.getType().name()));
                 throw new TdmKafkaListenerTypeEventException(projectEvent.getType().name());
-            }
         }
     }
 }

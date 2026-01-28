@@ -32,6 +32,9 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.StringUtils;
+import org.qubership.atp.integration.configuration.model.MailRequest;
+import org.qubership.atp.integration.configuration.service.MailSenderService;
+import org.qubership.atp.tdm.env.configurator.service.EnvironmentsService;
 import org.qubership.atp.tdm.exceptions.file.TdmMultipartFileException;
 import org.qubership.atp.tdm.exceptions.internal.TdmGetImageFromHighchartException;
 import org.qubership.atp.tdm.model.mail.charts.ChartSeries;
@@ -50,9 +53,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import org.qubership.atp.integration.configuration.model.MailRequest;
-import org.qubership.atp.integration.configuration.service.MailSenderService;
-import org.qubership.atp.tdm.env.configurator.service.EnvironmentsService;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -237,7 +237,7 @@ public class AvailableDataStatisticsMailSender {
             throw new TdmGetImageFromHighchartException(errorMessage);
         }
         String fileName = System.currentTimeMillis() + ".png";
-        MockMultipartFile multipartFileToSend = null;
+        MockMultipartFile multipartFileToSend;
 
         try (InputStream stream = response.getBody().getInputStream()) {
             multipartFileToSend = new MockMultipartFile("application", fileName,

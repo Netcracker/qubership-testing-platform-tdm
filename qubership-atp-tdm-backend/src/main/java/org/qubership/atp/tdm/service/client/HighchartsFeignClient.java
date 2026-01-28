@@ -16,10 +16,9 @@
 
 package org.qubership.atp.tdm.service.client;
 
-import org.springframework.cloud.openfeign.FeignClient;
-
 import org.qubership.atp.auth.springbootstarter.config.FeignConfiguration;
 import org.qubership.atp.tdm.clients.api.ChartControllerApi;
+import org.springframework.cloud.openfeign.FeignClient;
 
 @FeignClient(name = "${feign.atp.highcharts.name}", url = "${feign.atp.highcharts.url}",
         path = "${feign.atp.highcharts.route}", configuration = FeignConfiguration.class)
