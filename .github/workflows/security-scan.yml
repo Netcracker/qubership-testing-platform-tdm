@@ -60,7 +60,7 @@ jobs:
     steps:
       - name: List GHCR packages for this repo
         id: ghcr
-        uses: Netcracker/qubership-workflow-hub/actions/ghcr-discover-repo-packages@396774180000abdb825cbf150b56cc59c6913db8 #v2.0.5
+        uses: Netcracker/qubership-workflow-hub/actions/ghcr-discover-repo-packages@ac0b35120b940eaa644cdcfee7d4957038998ec2 #v2.0.9
         env:
           GH_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
 
