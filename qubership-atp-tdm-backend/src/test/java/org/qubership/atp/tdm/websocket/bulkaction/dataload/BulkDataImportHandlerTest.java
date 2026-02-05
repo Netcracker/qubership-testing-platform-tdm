@@ -16,20 +16,8 @@
 
 package org.qubership.atp.tdm.websocket.bulkaction.dataload;
 
-import org.qubership.atp.tdm.AbstractTestDataTest;
-import org.qubership.atp.tdm.model.bulkaction.BulkActionConfig;
-import org.qubership.atp.tdm.model.bulkaction.BulkActionResult;
-import org.qubership.atp.tdm.model.mail.bulkaction.BulkCleanupMailSender;
-import org.qubership.atp.tdm.model.refresh.RefreshResults;
-import org.qubership.atp.tdm.model.table.TestDataTable;
-import org.qubership.atp.tdm.service.DataRefreshService;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.socket.WebSocketSession;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,8 +26,18 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.qubership.atp.tdm.AbstractTestDataTest;
+import org.qubership.atp.tdm.model.bulkaction.BulkActionConfig;
+import org.qubership.atp.tdm.model.bulkaction.BulkActionResult;
+import org.qubership.atp.tdm.model.mail.bulkaction.BulkCleanupMailSender;
+import org.qubership.atp.tdm.model.refresh.RefreshResults;
+import org.qubership.atp.tdm.model.table.TestDataTable;
+import org.qubership.atp.tdm.service.DataRefreshService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.socket.WebSocketSession;
 
 public class BulkDataImportHandlerTest extends AbstractTestDataTest {
 
@@ -56,7 +54,6 @@ public class BulkDataImportHandlerTest extends AbstractTestDataTest {
 
     BulkDataImportHandler bulkDataImportHandler;
 
-
     @BeforeEach
     public void setUp() throws Exception {
         bulkDataImportHandler = new BulkDataImportHandler(executorService, catalogRepository, environmentsService,
@@ -64,7 +61,6 @@ public class BulkDataImportHandlerTest extends AbstractTestDataTest {
 
         when(environmentsService.getConnectionsSystemById(any())).thenReturn(Collections.singletonList(dbConnection));
     }
-
 
     @Test
     public void runBulkAction_saveQueryAndUpdateTable_bulkActionIsCorrect() throws Exception {
@@ -130,6 +126,7 @@ public class BulkDataImportHandlerTest extends AbstractTestDataTest {
 
         TestDataTable actual = testDataService.getTestData(tableName);
 
+        Assertions.assertNotNull(actualBulkActionResult);
         Assertions.assertNotEquals(expected, actual);
 
         deleteTestDataTableIfExists(tableName);

@@ -16,20 +16,9 @@
 
 package org.qubership.atp.tdm.websocket.bulkaction.cleanup;
 
-import org.qubership.atp.tdm.AbstractTestDataTest;
-import org.qubership.atp.tdm.model.TestDataTableCatalog;
-import org.qubership.atp.tdm.model.bulkaction.BulkActionConfig;
-import org.qubership.atp.tdm.model.bulkaction.BulkActionResult;
-import org.qubership.atp.tdm.model.mail.bulkaction.BulkCleanupMailSender;
-import org.qubership.atp.tdm.model.cleanup.CleanupResults;
-import org.qubership.atp.tdm.repo.CleanupConfigRepository;
-import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
-import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.socket.WebSocketSession;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -37,8 +26,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.qubership.atp.tdm.AbstractTestDataTest;
+import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
+import org.qubership.atp.tdm.model.TestDataTableCatalog;
+import org.qubership.atp.tdm.model.bulkaction.BulkActionConfig;
+import org.qubership.atp.tdm.model.bulkaction.BulkActionResult;
+import org.qubership.atp.tdm.model.cleanup.CleanupResults;
+import org.qubership.atp.tdm.model.mail.bulkaction.BulkCleanupMailSender;
+import org.qubership.atp.tdm.repo.CleanupConfigRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.socket.WebSocketSession;
 
 public class BulkDataCleanupHandlerTest extends AbstractTestDataTest {
 
@@ -66,7 +67,6 @@ public class BulkDataCleanupHandlerTest extends AbstractTestDataTest {
 
         when(environmentsService.getConnectionsSystemById(any())).thenReturn(connections);
     }
-
 
     @Test
     public void runBulkActionTest_saveDataConfigAndCleanupTable_returnBulkActionIsCorrect() throws Exception {
@@ -131,6 +131,7 @@ public class BulkDataCleanupHandlerTest extends AbstractTestDataTest {
         BulkActionResult bulkActionResult = futures.get(0).get();
         boolean result = testDataService.getTestData(tableName).getData().isEmpty();
 
+        Assertions.assertNotNull(bulkActionResult);
         Assertions.assertTrue(result);
 
         deleteTestDataTableIfExists(tableName);
@@ -200,6 +201,7 @@ public class BulkDataCleanupHandlerTest extends AbstractTestDataTest {
         BulkActionResult bulkActionResult = futures.get(0).get();
         boolean result = testDataService.getTestData(tableName).getData().isEmpty();
 
+        Assertions.assertNotNull(bulkActionResult);
         Assertions.assertTrue(result);
 
         deleteTestDataTableIfExists(tableName);
@@ -222,6 +224,4 @@ public class BulkDataCleanupHandlerTest extends AbstractTestDataTest {
     }
 
 }
-
-
 

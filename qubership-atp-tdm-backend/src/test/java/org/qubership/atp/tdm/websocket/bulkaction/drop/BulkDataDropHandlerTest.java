@@ -16,22 +16,23 @@
 
 package org.qubership.atp.tdm.websocket.bulkaction.drop;
 
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.qubership.atp.tdm.AbstractTestDataTest;
 import org.qubership.atp.tdm.model.CommonResults;
 import org.qubership.atp.tdm.model.DropResults;
 import org.qubership.atp.tdm.model.bulkaction.BulkActionConfig;
 import org.qubership.atp.tdm.model.bulkaction.BulkActionResult;
 import org.qubership.atp.tdm.model.mail.bulkaction.BulkDropMailSender;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.WebSocketSession;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class BulkDataDropHandlerTest  extends AbstractTestDataTest {
 
@@ -45,13 +46,11 @@ public class BulkDataDropHandlerTest  extends AbstractTestDataTest {
 
     BulkDataDropHandler bulkDataDropHandler;
 
-
     @BeforeEach
     public void setUp() throws Exception {
         bulkDataDropHandler = new BulkDataDropHandler(executorService, catalogRepository, environmentsService,
                 testDataService, bulkDropMailSender, currentTime, lockManager, tdmMdcHelper);
     }
-
 
     @Test
     public void runBulkAction_dropTable_bulkActionIsCorrect() throws Exception {
@@ -114,6 +113,8 @@ public class BulkDataDropHandlerTest  extends AbstractTestDataTest {
                 bulkDataDropHandler.runBulkAction(session, executor, lazyEnvironments, bulkActionConfig, processId);
         BulkActionResult bulkActionResult = futures.get(0).get();
 
+        Assertions.assertNotNull(bulkActionResult);
+        Assertions.assertEquals(expectedBulkActionResult, bulkActionResult);
         Assertions.assertNull(catalogRepository.findByTableName(tableName));
 
         catalogRepository.deleteByTableName(tableName);
