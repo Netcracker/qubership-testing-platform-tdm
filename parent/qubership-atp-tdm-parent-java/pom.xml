@@ -29,7 +29,7 @@
         <owasp.encoder.version>2.5.5.0</owasp.encoder.version>
         <tomcat.embed.version>9.0.110</tomcat.embed.version>
 
-        <atp.auth.version>1.2.75</atp.auth.version>
+        <atp.auth.version>1.2.81-SNAPSHOT</atp.auth.version>
         <atp-export-import-lib.version>0.2.46</atp-export-import-lib.version>
 
         <atp.crypt.version>0.0.24</atp.crypt.version>
