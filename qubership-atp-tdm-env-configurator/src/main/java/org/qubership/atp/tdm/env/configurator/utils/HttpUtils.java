@@ -16,11 +16,16 @@
 
 package org.qubership.atp.tdm.env.configurator.utils;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
-import org.apache.hc.core5.ssl.SSLContextBuilder;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
+import org.apache.hc.client5.http.ssl.TrustAllStrategy;
+import org.apache.hc.core5.ssl.SSLContexts;
 
 public class HttpUtils {
 
@@ -31,11 +36,27 @@ public class HttpUtils {
      */
     public static HttpClientBuilder createTrustAllHttpClientBuilder() {
         try {
-            SSLContextBuilder builder = new SSLContextBuilder();
-            builder.loadTrustMaterial(null, (chain, authType) -> true);
-            SSLConnectionSocketFactory sslsf = new
-                    SSLConnectionSocketFactory(builder.build(), NoopHostnameVerifier.INSTANCE);
-            return HttpClients.custom().setSSLSocketFactory(sslsf);
+            // The below #1-4 steps code is written by KAG using AI assistance, after upgrading to httpclient5
+            // 1. Create an SSLContext that trusts all certificates
+            SSLContext sslContext = SSLContexts.custom()
+                    .loadTrustMaterial(null, TrustAllStrategy.INSTANCE)
+                    .build();
+
+            // 2. Create an SSLConnectionSocketFactory using the SSLContext
+            SSLConnectionSocketFactory sslSocketFactory = SSLConnectionSocketFactoryBuilder.create()
+                    .setSslContext(sslContext)
+                    .build();
+
+            // 3. Create a ConnectionManager and set the SSL socket factory on it
+            PoolingHttpClientConnectionManager connectionManager =
+                    PoolingHttpClientConnectionManagerBuilder.create()
+                            .setSSLSocketFactory(sslSocketFactory)
+                            .build();
+
+            // 4. Build the HttpClient and set the custom ConnectionManager
+            return HttpClients.custom()
+                    .setConnectionManager(connectionManager)
+                    .setConnectionManagerShared(true); // Important for resource management
         } catch (Exception e) {
             return HttpClientBuilder.create();
         }

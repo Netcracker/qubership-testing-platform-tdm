@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -35,8 +35,8 @@ import lombok.Getter;
 @EnableConfigurationProperties(LiquibaseProperties.class)
 public class SpringLiquibaseConfig {
 
-    private DataSource dataSource;
-    private LiquibaseProperties properties;
+    private final DataSource dataSource;
+    private final LiquibaseProperties properties;
 
     @Value("${spring.application.name}")
     private String applicationName;
@@ -61,7 +61,6 @@ public class SpringLiquibaseConfig {
         liquibase.setDefaultSchema(this.properties.getDefaultSchema());
         liquibase.setDropFirst(this.properties.isDropFirst());
         liquibase.setShouldRun(this.properties.isEnabled());
-        liquibase.setLabels(this.properties.getLabels());
         Map<String, String> parameters = this.properties.getParameters();
         if (null == parameters) {
             parameters = new HashMap<>();
