@@ -303,7 +303,22 @@
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>6.2.1</version>
+                <version>7.9.0</version>
+                <configuration>
+                    <generatorName>spring</generatorName>
+                    <output>${project.build.directory}/generated-sources</output>
+                    <modelNameSuffix>Dto</modelNameSuffix>
+                    <skipOverwrite>false</skipOverwrite>
+                    <generateModelTests>false</generateModelTests>
+                    <configOptions>
+                        <useSpringBoot3>true</useSpringBoot3>
+                        <useJakartaEe>true</useJakartaEe>
+                        <java8>true</java8>
+                        <interfaceOnly>true</interfaceOnly>
+                        <useTags>true</useTags>
+                        <skipDefaultInterface>true</skipDefaultInterface>
+                    </configOptions>
+                </configuration>
                 <executions>
                     <execution>
                         <id>environments-controller-v1.yaml</id>
@@ -312,22 +327,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.parent.parent.basedir}/qubership-atp-tdm-rest-openapi-specifications/v1/environments-controller-v1.yaml
-                            </inputSpec>
+                            <inputSpec>${project.parent.parent.basedir}/qubership-atp-tdm-rest-openapi-specifications/v1/environments-controller-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.tdm.env.configurator.controllers.api</apiPackage>
-                            <modelPackage>org.qubership.atp.tdm.env.configurator.controllers.api.dto.environments
-                            </modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
+                            <modelPackage>org.qubership.atp.tdm.env.configurator.controllers.api.dto.environments</modelPackage>
                         </configuration>
                     </execution>
                     <execution>
@@ -337,20 +339,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>${basedir}/target/apispecs/api/environments/v1/openapi-project-v1.yaml
-                            </inputSpec>
+                            <inputSpec>${basedir}/target/apispecs/api/environments/v1/openapi-project-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.tdm.env.configurator.clients.api</apiPackage>
                             <modelPackage>org.qubership.atp.tdm.env.configurator.api.dto.project</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -360,19 +351,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
                             <inputSpec>${basedir}/target/apispecs/api/environments/v1/openapi-system-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.tdm.env.configurator.clients.api</apiPackage>
                             <modelPackage>org.qubership.atp.tdm.env.configurator.api.dto.project</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -382,20 +363,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>${basedir}/target/apispecs/api/environments/v1/openapi-environments-v1.yaml
-                            </inputSpec>
+                            <inputSpec>${basedir}/target/apispecs/api/environments/v1/openapi-environments-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.tdm.env.configurator.clients.api</apiPackage>
                             <modelPackage>org.qubership.atp.tdm.env.configurator.api.dto.environments</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                 </executions>

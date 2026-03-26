@@ -753,6 +753,7 @@
                 <version>3.15.0</version>
                 <configuration>
                     <release>${java.version}</release>
+                    <parameters>true</parameters>
                 </configuration>
             </plugin>
             <plugin>
@@ -903,7 +904,22 @@
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>6.2.1</version>
+                <version>7.9.0</version>
+                <configuration>
+                    <generatorName>spring</generatorName>
+                    <output>${project.build.directory}/generated-sources</output>
+                    <modelNameSuffix>Dto</modelNameSuffix>
+                    <skipOverwrite>false</skipOverwrite>
+                    <generateModelTests>false</generateModelTests>
+                    <configOptions>
+                        <useSpringBoot3>true</useSpringBoot3>
+                        <useJakartaEe>true</useJakartaEe>
+                        <java8>true</java8>
+                        <interfaceOnly>true</interfaceOnly>
+                        <useTags>true</useTags>
+                        <skipDefaultInterface>true</skipDefaultInterface>
+                    </configOptions>
+                </configuration>
                 <executions>
                     <execution>
                         <id>atp-action-controller-v1.yaml</id>
@@ -912,21 +928,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.parent.parent.parent.basedir}/qubership-atp-tdm-rest-openapi-specifications/v1/atp-action-controller-v1.yaml
-                            </inputSpec>
+                            <inputSpec>${project.parent.parent.parent.basedir}/qubership-atp-tdm-rest-openapi-specifications/v1/atp-action-controller-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.tdm.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.tdm.controllers.api.dto.actions</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -936,21 +940,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.parent.parent.parent.basedir}/qubership-atp-tdm-rest-openapi-specifications/v1/data-cleanup-controller-v1.yaml
-                            </inputSpec>
+                            <inputSpec>${project.parent.parent.parent.basedir}/qubership-atp-tdm-rest-openapi-specifications/v1/data-cleanup-controller-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.tdm.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.tdm.controllers.api.dto.cleanup</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -960,21 +952,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.parent.parent.parent.basedir}/qubership-atp-tdm-rest-openapi-specifications/v1/data-refresh-controller-v1.yaml
-                            </inputSpec>
+                            <inputSpec>${project.parent.parent.parent.basedir}/qubership-atp-tdm-rest-openapi-specifications/v1/data-refresh-controller-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.tdm.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.tdm.controllers.api.dto.refresh</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -984,21 +964,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.parent.parent.parent.basedir}/qubership-atp-tdm-rest-openapi-specifications/v1/statistics-controller-v1.yaml
-                            </inputSpec>
+                            <inputSpec>${project.parent.parent.parent.basedir}/qubership-atp-tdm-rest-openapi-specifications/v1/statistics-controller-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.tdm.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.tdm.controllers.api.dto.statistics</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -1008,21 +976,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.parent.parent.parent.basedir}/qubership-atp-tdm-rest-openapi-specifications/v1/test-data-controller-v1.yaml
-                            </inputSpec>
+                            <inputSpec>${project.parent.parent.parent.basedir}/qubership-atp-tdm-rest-openapi-specifications/v1/test-data-controller-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.tdm.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.tdm.controllers.api.dto.testdata</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -1032,21 +988,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.parent.parent.parent.basedir}/qubership-atp-tdm-rest-openapi-specifications/v1/versions-controller-v1.yaml
-                            </inputSpec>
+                            <inputSpec>${project.parent.parent.parent.basedir}/qubership-atp-tdm-rest-openapi-specifications/v1/versions-controller-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.tdm.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.tdm.controllers.api.dto.versions</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -1056,21 +1000,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.parent.parent.parent.basedir}/qubership-atp-tdm-backend/src/main/resources/apispecs/api/charts/chart-controller-v1.yaml
-                            </inputSpec>
+                            <inputSpec>${project.parent.parent.parent.basedir}/qubership-atp-tdm-backend/src/main/resources/apispecs/api/charts/chart-controller-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.tdm.clients.api</apiPackage>
                             <modelPackage>org.qubership.atp.tdm.clients.api.dto.chart</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                 </executions>
