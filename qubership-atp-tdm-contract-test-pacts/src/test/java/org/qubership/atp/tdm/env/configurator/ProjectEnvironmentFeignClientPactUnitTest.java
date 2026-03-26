@@ -19,13 +19,12 @@ package org.qubership.atp.tdm.env.configurator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.migrationsupport.rules.ExternalResourceSupport;
 import org.qubership.atp.auth.springbootstarter.config.FeignConfiguration;
 import org.qubership.atp.tdm.env.configurator.api.dto.project.EnvironmentResDto;
 import org.qubership.atp.tdm.env.configurator.api.dto.project.ProjectFullVer1ViewDto;
@@ -50,18 +49,22 @@ import au.com.dius.pact.consumer.dsl.PactDslJsonArray;
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslResponse;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
-import au.com.dius.pact.consumer.junit.PactProviderRule;
-import au.com.dius.pact.consumer.junit.PactVerification;
+import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
+import au.com.dius.pact.consumer.junit5.PactTestFor;
+import au.com.dius.pact.core.model.PactSpecVersion;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 
 @EnableFeignClients(clients = {ProjectEnvironmentFeignClient.class})
-@ExtendWith(ExternalResourceSupport.class)
+@ExtendWith(PactConsumerTestExt.class)
 @SpringJUnitConfig(classes = {ProjectEnvironmentFeignClientPactUnitTest.TestApp.class})
 @Import({JacksonAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class, FeignConfiguration.class,
         FeignAutoConfiguration.class})
 @TestPropertySource(
-        properties = {"feign.atp.environments.name=atp-environments", "feign.atp.environments.route=", "feign.atp.environments.url=http://localhost:8888"})
+        properties = {"feign.atp.environments.name=atp-environments",
+                "feign.atp.environments.route=",
+                "feign.atp.environments.url=http://localhost:8888"})
+@PactTestFor(providerName = "atp-environments", port = "8888", pactVersion = PactSpecVersion.V3)
 public class ProjectEnvironmentFeignClientPactUnitTest {
 
     @Configuration
@@ -72,33 +75,35 @@ public class ProjectEnvironmentFeignClientPactUnitTest {
     @Autowired
     ProjectEnvironmentFeignClient projectEnvFeignClient;
 
-    @Rule
-    public PactProviderRule mockProvider = new PactProviderRule("atp-environments", "localhost", 8888, this);
-
     @Test
-    @PactVerification()
+    @PactTestFor(pactMethod = "createPact")
     public void allPass() {
         UUID projectId = UUID.fromString("7c9dafe9-2cd1-4ffc-ae54-45867f2b9701");
 
         ResponseEntity<List<ProjectFullVer2ViewDto>> result1 = projectEnvFeignClient.getAllProjects(null, false);
         Assertions.assertEquals(200, result1.getStatusCode().value());
-        Assertions.assertTrue(result1.getHeaders().get("Content-Type").contains("application/json"));
+        Assertions.assertTrue(Objects.requireNonNull(result1.getHeaders().get("Content-Type"))
+                .contains("application/json"));
 
         ResponseEntity<ProjectFullVer1ViewDto> result2 = projectEnvFeignClient.getProject(projectId, true);
         Assertions.assertEquals(200, result2.getStatusCode().value());
-        Assertions.assertTrue(result2.getHeaders().get("Content-Type").contains("application/json"));
+        Assertions.assertTrue(Objects.requireNonNull(result2.getHeaders().get("Content-Type"))
+                .contains("application/json"));
 
         ResponseEntity<List<EnvironmentResDto>> result3 = projectEnvFeignClient.getEnvironments(projectId, false);
         Assertions.assertEquals(200, result3.getStatusCode().value());
-        Assertions.assertTrue(result3.getHeaders().get("Content-Type").contains("application/json"));
+        Assertions.assertTrue(Objects.requireNonNull(result3.getHeaders().get("Content-Type"))
+                .contains("application/json"));
 
         ResponseEntity<List<SystemEnvironmentsViewDto>> result4 = projectEnvFeignClient.getAllShortSystemsOnProject(projectId);
         Assertions.assertEquals(200, result4.getStatusCode().value());
-        Assertions.assertTrue(result4.getHeaders().get("Content-Type").contains("application/json"));
+        Assertions.assertTrue(Objects.requireNonNull(result4.getHeaders().get("Content-Type"))
+                .contains("application/json"));
 
         ResponseEntity<List<SystemFullVer2ViewDto>> result5 = projectEnvFeignClient.getProjectSystems(projectId, null, false);
         Assertions.assertEquals(200, result5.getStatusCode().value());
-        Assertions.assertTrue(result5.getHeaders().get("Content-Type").contains("application/json"));
+        Assertions.assertTrue(Objects.requireNonNull(result5.getHeaders().get("Content-Type"))
+                .contains("application/json"));
     }
 
     @Pact(consumer = "atp-tdm")
@@ -117,8 +122,8 @@ public class ProjectEnvironmentFeignClientPactUnitTest {
                 .stringType("shortName")
                 .array("environments").object().closeArray();
 
+        Assertions.assertNotNull(object);
         DslPart projectFullVer2Res = new PactDslJsonArray().template(object);
-
 
         DslPart projectFullVer1Res = new PactDslJsonBody()
                 .integerType("created")
@@ -143,6 +148,7 @@ public class ProjectEnvironmentFeignClientPactUnitTest {
                 .uuid("projectId")
                 .array("systems").object().closeArray();
 
+        Assertions.assertNotNull(object1);
         DslPart environmentRes = new PactDslJsonArray().template(object1);
 
         DslPart object2 = new PactDslJsonBody()
@@ -150,6 +156,7 @@ public class ProjectEnvironmentFeignClientPactUnitTest {
                 .uuid("id")
                 .array("environmentIds").object().closeArray();
 
+        Assertions.assertNotNull(object2);
         DslPart systemEnvironmentsViewDtoList = new PactDslJsonArray().template(object2);
 
         DslPart object3 = new PactDslJsonBody()
@@ -173,6 +180,7 @@ public class ProjectEnvironmentFeignClientPactUnitTest {
                 .array("environments").object().closeArray()
                 .array("connections").object().closeArray();
 
+        Assertions.assertNotNull(object3);
         DslPart systemFullVer2ViewDto = new PactDslJsonArray().template(object3);
 
         PactDslResponse response = builder
@@ -224,9 +232,7 @@ public class ProjectEnvironmentFeignClientPactUnitTest {
                 .willRespondWith()
                 .status(200)
                 .headers(headers)
-                .body(systemFullVer2ViewDto)
-
-                ;
+                .body(systemFullVer2ViewDto);
 
         return response.toPact();
     }

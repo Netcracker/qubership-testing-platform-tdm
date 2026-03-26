@@ -18,13 +18,12 @@ package org.qubership.atp.tdm.env.configurator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.migrationsupport.rules.ExternalResourceSupport;
 import org.qubership.atp.auth.springbootstarter.config.FeignConfiguration;
 import org.qubership.atp.tdm.env.configurator.api.dto.project.SystemFullVer1ViewDto;
 import org.qubership.atp.tdm.env.configurator.service.client.SystemEnvironmentFeignClient;
@@ -43,18 +42,22 @@ import au.com.dius.pact.consumer.dsl.DslPart;
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslResponse;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
-import au.com.dius.pact.consumer.junit.PactProviderRule;
-import au.com.dius.pact.consumer.junit.PactVerification;
+import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
+import au.com.dius.pact.consumer.junit5.PactTestFor;
+import au.com.dius.pact.core.model.PactSpecVersion;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 
 @EnableFeignClients(clients = {SystemEnvironmentFeignClient.class})
-@ExtendWith(ExternalResourceSupport.class)
+@ExtendWith(PactConsumerTestExt.class)
 @SpringJUnitConfig(classes = {SystemEnvironmentFeignClientPactUnitTest.TestApp.class})
 @Import({JacksonAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class, FeignConfiguration.class,
         FeignAutoConfiguration.class})
 @TestPropertySource(
-        properties = {"feign.atp.environments.name=atp-environments", "feign.atp.environments.route=", "feign.atp.environments.url=http://localhost:8888"})
+        properties = {"feign.atp.environments.name=atp-environments",
+                "feign.atp.environments.route=",
+                "feign.atp.environments.url=http://localhost:8888"})
+@PactTestFor(providerName = "atp-environments", port = "8888", pactVersion = PactSpecVersion.V3)
 public class SystemEnvironmentFeignClientPactUnitTest {
 
     @Configuration
@@ -65,19 +68,15 @@ public class SystemEnvironmentFeignClientPactUnitTest {
     @Autowired
     SystemEnvironmentFeignClient systemEnvFeignClient;
 
-    @Rule
-    public PactProviderRule mockProvider = new PactProviderRule("atp-environments", "localhost", 8888, this);
-
     @Test
-    @PactVerification()
+    @PactTestFor(pactMethod = "createPact")
     public void allPass() {
         UUID id = UUID.fromString("7c9dafe9-2cd1-4ffc-ae54-45867f2b9701");
 
         ResponseEntity<SystemFullVer1ViewDto> result1 = systemEnvFeignClient.getSystem(id, true);
         Assertions.assertEquals(200, result1.getStatusCode().value());
-        Assertions.assertTrue(result1.getHeaders().get("Content-Type").contains("application/json"));
-
-
+        Assertions.assertTrue(Objects.requireNonNull(result1.getHeaders().get("Content-Type"))
+                .contains("application/json"));
     }
 
     @Pact(consumer = "atp-tdm")
@@ -105,6 +104,7 @@ public class SystemEnvironmentFeignClientPactUnitTest {
                 .array("environmentIds").object().closeArray()
                 .array("connections").object().closeArray();
 
+        Assertions.assertNotNull(object);
         PactDslResponse response = builder
                 .given("all ok")
                 .uponReceiving("GET /api/systems/{systemId} OK")
@@ -114,8 +114,7 @@ public class SystemEnvironmentFeignClientPactUnitTest {
                 .willRespondWith()
                 .status(200)
                 .headers(headers)
-                .body(object)
-                ;
+                .body(object);
 
         return response.toPact();
     }

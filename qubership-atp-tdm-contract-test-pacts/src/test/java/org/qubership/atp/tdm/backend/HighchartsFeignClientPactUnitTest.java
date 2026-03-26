@@ -19,11 +19,9 @@ package org.qubership.atp.tdm.backend;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.migrationsupport.rules.ExternalResourceSupport;
 import org.qubership.atp.auth.springbootstarter.config.FeignConfiguration;
 import org.qubership.atp.tdm.service.client.HighchartsFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,19 +38,23 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import au.com.dius.pact.consumer.dsl.PactDslResponse;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
-import au.com.dius.pact.consumer.junit.PactProviderRule;
-import au.com.dius.pact.consumer.junit.PactVerification;
+import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
+import au.com.dius.pact.consumer.junit5.PactTestFor;
+import au.com.dius.pact.core.model.PactSpecVersion;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 
 
 @EnableFeignClients(clients = {HighchartsFeignClient.class})
-@ExtendWith(ExternalResourceSupport.class)
+@ExtendWith(PactConsumerTestExt.class)
 @SpringJUnitConfig(classes = {HighchartsFeignClientPactUnitTest.TestApp.class})
 @Import({JacksonAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class, FeignConfiguration.class,
         FeignAutoConfiguration.class})
 @TestPropertySource(
-        properties = {"feign.atp.highcharts.name=atp-environments", "feign.atp.highcharts.route=", "feign.atp.highcharts.url=http://localhost:8888"})
+        properties = {"feign.atp.highcharts.name=atp-environments",
+                "feign.atp.highcharts.route=",
+                "feign.atp.highcharts.url=http://localhost:8888"})
+@PactTestFor(providerName = "atp-charts", port = "8888", pactVersion = PactSpecVersion.V3)
 public class HighchartsFeignClientPactUnitTest {
 
     @Configuration
@@ -62,12 +64,8 @@ public class HighchartsFeignClientPactUnitTest {
     @Autowired
     HighchartsFeignClient highchartsFeignClient;
 
-    @Rule
-    public PactProviderRule mockProvider = new PactProviderRule("atp-charts", "localhost", 8888, this);
-
-
     @Test
-    @PactVerification()
+    @PactTestFor(pactMethod = "createPact")
     public void allPass() {
         String body = """
                 {
