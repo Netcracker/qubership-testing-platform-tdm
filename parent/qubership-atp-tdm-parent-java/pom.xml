@@ -3,7 +3,7 @@
     <parent>
         <artifactId>qubership-atp-tdm</artifactId>
         <groupId>org.qubership.atp.tdm</groupId>
-        <version>1.2.99-SNAPSHOT</version>
+        <version>2.0.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -13,12 +13,12 @@
     <packaging>pom</packaging>
 
     <properties>
-        <spring.boot.version>2.7.18</spring.boot.version>
-        <spring.cloud.version>2021.0.8</spring.cloud.version>
-        <logback.version>1.2.13</logback.version>
+        <spring.boot.version>3.3.13</spring.boot.version>
+        <spring.cloud.version>2023.0.6</spring.cloud.version>
+        <logback.version>1.5.18</logback.version>
         <logstash.gelf.version>1.14.1</logstash.gelf.version>
         <google.guava.version>32.0.1-jre</google.guava.version>
-        <mockito.all.version>1.9.5</mockito.all.version>
+        <mockito.all.version>5.23.0</mockito.all.version>
         <swagger.version>1.5.3</swagger.version>
         <hikariCP.version>4.0.3</hikariCP.version>
         <postgresql.version>42.3.9</postgresql.version>
@@ -29,12 +29,11 @@
         <owasp.encoder.version>2.5.5.0</owasp.encoder.version>
         <tomcat.embed.version>9.0.110</tomcat.embed.version>
 
-        <atp.auth.version>1.2.80</atp.auth.version>
-        <atp-export-import-lib.version>0.2.46</atp-export-import-lib.version>
-
-        <atp.crypt.version>0.0.24</atp.crypt.version>
-        <atp.integration.version>0.2.42</atp.integration.version>
-        <atp.common.version>0.0.47</atp.common.version>
+        <atp.auth.version>2.0.2-SNAPSHOT</atp.auth.version>
+        <atp-export-import-lib.version>1.0.0-SNAPSHOT</atp-export-import-lib.version>
+        <atp.crypt.version>1.0.0-SNAPSHOT</atp.crypt.version>
+        <atp.integration.version>1.0.0-SNAPSHOT</atp.integration.version>
+        <atp.common.version>1.0.0-SNAPSHOT</atp.common.version>
     </properties>
 
     <dependencyManagement>
@@ -68,7 +67,7 @@
             <dependency>
                 <groupId>org.springframework.kafka</groupId>
                 <artifactId>spring-kafka</artifactId>
-                <version>2.9.11</version>
+                <version>3.0.17</version>
             </dependency>
             <dependency>
                 <groupId>commons-collections</groupId>
@@ -87,14 +86,14 @@
                 <version>1.5.4</version>
             </dependency>
             <dependency>
-                <artifactId>bcprov-jdk15on</artifactId>
+                <artifactId>bcprov-jdk18on</artifactId>
                 <groupId>org.bouncycastle</groupId>
-                <version>1.67</version>
+                <version>1.80</version>
             </dependency>
             <dependency>
                 <groupId>io.undertow</groupId>
                 <artifactId>undertow-core</artifactId>
-                <version>2.2.39.Final</version>
+                <version>2.3.21.Final</version>
             </dependency>
             <dependency>
                 <groupId>io.projectreactor.netty</groupId>
@@ -129,7 +128,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-web</artifactId>
-                <version>5.7.13</version>
+                <version>6.3.10</version>
             </dependency>
             <dependency>
                 <groupId>org.owasp.esapi</groupId>
@@ -212,6 +211,14 @@
                         <groupId>log4j</groupId>
                         <artifactId>log4j</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-lang3</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -287,7 +294,7 @@
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
+                <artifactId>mockito-core</artifactId>
                 <version>${mockito.all.version}</version>
                 <scope>test</scope>
             </dependency>

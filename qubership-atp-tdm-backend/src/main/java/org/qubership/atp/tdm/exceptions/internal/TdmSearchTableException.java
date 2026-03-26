@@ -16,12 +16,9 @@
 
 package org.qubership.atp.tdm.exceptions.internal;
 
-import static java.lang.String.format;
-
+import org.qubership.atp.tdm.exceptions.TdmInternalException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import org.qubership.atp.tdm.exceptions.TdmInternalException;
 
 @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "TDM-0017")
 public class TdmSearchTableException extends TdmInternalException {
@@ -29,10 +26,10 @@ public class TdmSearchTableException extends TdmInternalException {
     public static final String DEFAULT_MESSAGE = "Table %s wasn't found.";
 
     public TdmSearchTableException(String tableName) {
-        super(format(DEFAULT_MESSAGE, "[" + tableName + "]"));
+        super(DEFAULT_MESSAGE.formatted("[" + tableName + "]"));
     }
 
     public TdmSearchTableException(String tableName, String project, String system) {
-        super(format(DEFAULT_MESSAGE, format("[%s] under project [%s] and system [%s]", tableName, project, system)));
+        super(DEFAULT_MESSAGE.formatted("[%s] under project [%s] and system [%s]".formatted(tableName, project, system)));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -32,8 +32,6 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.CronExpression;
@@ -61,7 +59,6 @@ import org.qubership.atp.tdm.repo.TestDataTableRepository;
 import org.qubership.atp.tdm.service.DataRefreshService;
 import org.qubership.atp.tdm.service.SchedulerService;
 import org.qubership.atp.tdm.utils.ValidateCronExpression;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -69,6 +66,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Preconditions;
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -93,7 +91,6 @@ public class DataRefreshServiceImpl implements DataRefreshService {
     /**
      * Default constructor.
      */
-    @Autowired
     public DataRefreshServiceImpl(@Nonnull EnvironmentsService environmentsService,
                                   @Nonnull SchedulerService schedulerService,
                                   @Nonnull RefreshConfigRepository repository,
@@ -253,7 +250,7 @@ public class DataRefreshServiceImpl implements DataRefreshService {
         log.info("Run data refresh for table with name: {}, save occupied data: {}", tableName, saveOccupiedData);
         Server server = sqlRepository.getServer(tableName, catalogRepository, environmentsService);
         Optional<TestDataTableImportInfo> importInfo = importInfoRepository.findById(tableName);
-        if (!importInfo.isPresent()) {
+        if (importInfo.isEmpty()) {
             throw new RuntimeException("Import info not exist for table: " + tableName);
         }
         if (saveOccupiedData) {

@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package org.qubership.atp.tdm.exceptions.db;
 
-import static java.lang.String.format;
-
 import org.qubership.atp.tdm.exceptions.TdmInternalException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -28,6 +26,6 @@ public class TdmDbCheckColumnNameException extends TdmInternalException {
     public static final String DEFAULT_MESSAGE = "Parameter [%s] must not contain the symbol: \"";
 
     public TdmDbCheckColumnNameException(String param) {
-        super(format(DEFAULT_MESSAGE, param));
+        super(DEFAULT_MESSAGE.formatted(param));
     }
 }

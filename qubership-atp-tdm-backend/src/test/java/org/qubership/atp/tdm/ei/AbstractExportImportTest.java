@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -20,21 +20,20 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.qubership.atp.ei.node.dto.ExportFormat;
+import org.qubership.atp.ei.node.dto.ExportImportData;
+import org.qubership.atp.ei.node.dto.ExportScope;
+import org.qubership.atp.tdm.AbstractTestDataTest;
 import org.qubership.atp.tdm.model.TestDataTableCatalog;
 import org.qubership.atp.tdm.model.ei.ExportImportObject;
 
 import com.google.gson.Gson;
-import org.qubership.atp.ei.node.dto.ExportImportData;
-import org.qubership.atp.ei.node.dto.ExportFormat;
-import org.qubership.atp.ei.node.dto.ExportScope;
-import org.qubership.atp.tdm.AbstractTestDataTest;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -61,7 +60,7 @@ public abstract class AbstractExportImportTest extends AbstractTestDataTest {
         createDateCleanupConfig(table);
         createFlagsTable(tableName);
         exportExecutor.exportToFolder(new ExportImportData(exportImportProjectId, exportScope, ExportFormat.ATP),
-                Paths.get(""));
+                Path.of(""));
         File file = new File("ExportImportObject/" + exportImportProjectId + ".json");
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;

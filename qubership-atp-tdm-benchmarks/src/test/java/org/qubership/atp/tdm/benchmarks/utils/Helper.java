@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -19,28 +19,25 @@ package org.qubership.atp.tdm.benchmarks.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.qubership.atp.tdm.model.cleanup.CleanupSettings;
 import org.apache.commons.io.IOUtils;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
-
-import org.qubership.atp.tdm.model.ColumnType;
 import org.qubership.atp.tdm.model.TestDataTableCatalog;
+import org.qubership.atp.tdm.model.cleanup.CleanupSettings;
 import org.qubership.atp.tdm.model.cleanup.TestDataCleanupConfig;
 import org.qubership.atp.tdm.model.table.column.TestDataTableColumn;
 import org.qubership.atp.tdm.model.table.column.TestDataTableColumnIdentity;
 import org.qubership.atp.tdm.repo.CatalogRepository;
 import org.qubership.atp.tdm.service.CleanupService;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public class Helper {
 

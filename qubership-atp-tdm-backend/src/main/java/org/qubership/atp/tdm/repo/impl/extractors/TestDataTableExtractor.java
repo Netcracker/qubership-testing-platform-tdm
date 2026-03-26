@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -24,9 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.qubership.atp.tdm.model.DateFormatter;
 import org.qubership.atp.tdm.model.table.TestDataTable;
 import org.qubership.atp.tdm.model.table.TestDataTableOrder;
@@ -37,6 +34,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -92,8 +91,8 @@ public class TestDataTableExtractor implements ResultSetExtractor<TestDataTable>
     }
 
     private Object formatColumn(Object value) {
-        if (value instanceof Timestamp) {
-            value = DateFormatter.DB_DATE_FORMATTER.format(new Timestamp(((Timestamp) value).getTime()));
+        if (value instanceof Timestamp timestamp) {
+            value = DateFormatter.DB_DATE_FORMATTER.format(new Timestamp(timestamp.getTime()));
             return  value;
         }
         return value;

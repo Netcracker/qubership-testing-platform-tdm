@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -30,8 +30,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -67,13 +65,16 @@ import org.qubership.atp.tdm.service.CleanupService;
 import org.qubership.atp.tdm.service.SchedulerService;
 import org.qubership.atp.tdm.utils.DataUtils;
 import org.qubership.atp.tdm.utils.ValidateCronExpression;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Preconditions;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 
+@DependsOnDatabaseInitialization
 @Slf4j
 @Service
 public class CleanupServiceImpl implements CleanupService {
@@ -99,7 +100,6 @@ public class CleanupServiceImpl implements CleanupService {
     /**
      * Default constructor.
      */
-    @Autowired
     public CleanupServiceImpl(@Nonnull EnvironmentsService environmentsService,
                               @Nonnull SchedulerService schedulerService,
                               @Nonnull CleanupConfigRepository repository,
@@ -326,7 +326,7 @@ public class CleanupServiceImpl implements CleanupService {
             LocalDate cleanupDate = DataUtils.calculateExpiredData(config.getSearchDate());
             return runCleanupByDate(tableName, cleanupDate);
         } else {
-            log.error(String.format(TdmUndefinedCleanupCriteriaException.DEFAULT_MESSAGE, tableName));
+            log.error(TdmUndefinedCleanupCriteriaException.DEFAULT_MESSAGE.formatted(tableName));
             throw new TdmUndefinedCleanupCriteriaException(tableName);
         }
     }

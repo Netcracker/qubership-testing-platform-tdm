@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -24,8 +24,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
+import org.qubership.atp.common.lock.LockManager;
+import org.qubership.atp.integration.configuration.mdc.MdcUtils;
+import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
+import org.qubership.atp.tdm.env.configurator.service.EnvironmentsService;
 import org.qubership.atp.tdm.exceptions.websocket.TdmGetEnvironmentNameException;
 import org.qubership.atp.tdm.exceptions.websocket.TdmParseRequestException;
 import org.qubership.atp.tdm.exceptions.websocket.TdmProcessBulkActionFuturesException;
@@ -48,10 +50,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.qubership.atp.common.lock.LockManager;
-import org.qubership.atp.integration.configuration.mdc.MdcUtils;
-import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
-import org.qubership.atp.tdm.env.configurator.service.EnvironmentsService;
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -170,7 +169,7 @@ public abstract class BulkActionsHandler extends TextWebSocketHandler {
         try {
             return objectMapper.readValue(payload, BulkActionConfig.class);
         } catch (IOException e) {
-            log.error(String.format(TdmParseRequestException.DEFAULT_MESSAGE, message), e);
+            log.error(TdmParseRequestException.DEFAULT_MESSAGE.formatted(message), e);
             throw new TdmParseRequestException(message.toString());
         }
     }
@@ -205,7 +204,7 @@ public abstract class BulkActionsHandler extends TextWebSocketHandler {
         try {
             sendMessage(session, payloadText);
         } catch (Exception e) {
-            log.error(String.format(TdmSendMessageException.DEFAULT_MESSAGE, payloadText), e);
+            log.error(TdmSendMessageException.DEFAULT_MESSAGE.formatted(payloadText), e);
             throw new TdmSendMessageException(payloadText);
         }
     }
@@ -223,7 +222,7 @@ public abstract class BulkActionsHandler extends TextWebSocketHandler {
         try {
             return objectMapper.writeValueAsString(results);
         } catch (Exception e) {
-            log.error(String.format(TdmWriteBulkActionResultsAsStringException.DEFAULT_MESSAGE, results), e);
+            log.error(TdmWriteBulkActionResultsAsStringException.DEFAULT_MESSAGE.formatted(results), e);
             throw new TdmWriteBulkActionResultsAsStringException(results.toString());
         }
     }

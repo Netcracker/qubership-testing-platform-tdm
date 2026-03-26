@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
 import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.integration.configuration.model.MailRequest;
 import org.qubership.atp.integration.configuration.service.MailSenderService;
@@ -44,7 +42,6 @@ import org.qubership.atp.tdm.model.statistics.available.TableAvailableDataStats;
 import org.qubership.atp.tdm.service.StatisticsService;
 import org.qubership.atp.tdm.service.client.HighchartsFeignClient;
 import org.qubership.atp.tdm.utils.AvailableStatisticUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -56,6 +53,7 @@ import org.springframework.web.multipart.MultipartFile;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -79,7 +77,6 @@ public class AvailableDataStatisticsMailSender {
     /**
      * AvailableDataStatisticsMailSender Constructor.
      */
-    @Autowired
     private AvailableDataStatisticsMailSender(@Nonnull Configuration configuration,
                                               @Nonnull StatisticsService statisticsService,
                                               @Nonnull MailSenderService mailSender,
@@ -122,7 +119,7 @@ public class AvailableDataStatisticsMailSender {
         MailRequest mailRequest = new MailRequest();
         mailRequest.setFrom(mailSenderFrom);
         mailRequest.setTo(monitoring.getRecipients());
-        mailRequest.setSubject(String.format(mailSenderSubject, projectName));
+        mailRequest.setSubject(mailSenderSubject.formatted(projectName));
 
         try {
             AvailableDataByColumnStats statistics = statisticsService.getAvailableDataInColumn(systemId, environmentId);
@@ -131,7 +128,7 @@ public class AvailableDataStatisticsMailSender {
             List<MultipartFile> images = buildImages(statistics);
             String content = buildMessageContent(configuration, statistics, environmentName,
                     monitoring.getThreshold(), images.stream()
-                            .map(image -> String.format(IMAGE_TEMPLATE, image.getOriginalFilename()))
+                            .map(image -> IMAGE_TEMPLATE.formatted(image.getOriginalFilename()))
                             .collect(Collectors.toList()));
             log.trace("Message content: {}", content);
             mailRequest.setContent(content);
@@ -232,7 +229,7 @@ public class AvailableDataStatisticsMailSender {
                 highchartJsonPath + highchartJsonTemplate, categories, chartSeriesList));
 
         if (!response.getStatusCode().is2xxSuccessful()) {
-            String errorMessage = String.format("Status code isn't successfull: %s", response.getStatusCode().value());
+            String errorMessage = "Status code isn't successfull: %s".formatted(response.getStatusCode().value());
             log.error(errorMessage);
             throw new TdmGetImageFromHighchartException(errorMessage);
         }
@@ -243,7 +240,7 @@ public class AvailableDataStatisticsMailSender {
             multipartFileToSend = new MockMultipartFile("application", fileName,
                     MediaType.APPLICATION_OCTET_STREAM.toString(), stream);
         } catch (Exception e) {
-            log.error(String.format(TdmMultipartFileException.DEFAULT_MESSAGE, e.getMessage()), e);
+            log.error(TdmMultipartFileException.DEFAULT_MESSAGE.formatted(e.getMessage()), e);
             throw new TdmMultipartFileException(e.getMessage());
         }
         return multipartFileToSend;

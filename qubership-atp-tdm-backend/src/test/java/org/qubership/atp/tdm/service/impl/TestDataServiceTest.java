@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,19 +16,33 @@
 
 package org.qubership.atp.tdm.service.impl;
 
-import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.qubership.atp.tdm.AbstractTestDataTest;
 import org.qubership.atp.tdm.ExcelRowsReader;
 import org.qubership.atp.tdm.env.configurator.exceptions.internal.TdmEnvDbConnectionException;
 import org.qubership.atp.tdm.exceptions.db.TdmDbJdbsTemplateException;
+import org.qubership.atp.tdm.exceptions.db.TdmDbRowNotFoundException;
 import org.qubership.atp.tdm.exceptions.internal.TdmEnvironmentSystemException;
 import org.qubership.atp.tdm.model.DropResults;
-import org.qubership.atp.tdm.exceptions.db.TdmDbRowNotFoundException;
 import org.qubership.atp.tdm.model.EnvsList;
 import org.qubership.atp.tdm.model.ImportTestDataStatistic;
 import org.qubership.atp.tdm.model.ProjectInformation;
@@ -36,18 +50,7 @@ import org.qubership.atp.tdm.model.TestDataTableCatalog;
 import org.qubership.atp.tdm.model.table.TableColumnValues;
 import org.qubership.atp.tdm.model.table.TestDataTable;
 import org.qubership.atp.tdm.model.table.TestDataTableFilter;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class TestDataServiceTest extends AbstractTestDataTest {
 
@@ -363,8 +366,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         TestDataTableCatalog result = tableCatalogs.stream()
                 .filter(t -> tableTitle.equals(t.getTableTitle()))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException(String.format("Table with title [%s] was not found.",
-                        tableTitle)));
+                .orElseThrow(() -> new RuntimeException("Table with title [%s] was not found.".formatted(tableTitle)));
 
         Assertions.assertNotNull(result);
         TestDataTable testDataTable = testDataService.getTestData(result.getTableName());
@@ -659,7 +661,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
     public void testDataService_importSqlTestDataWrongEnvironment_returnErrorMessage() {
         when(environmentsService.getEnvNameById(any())).thenThrow(new RuntimeException());
         List<ImportTestDataStatistic> expectedStatistic = new ArrayList<>();
-        String error = String.format("Environment: [%s] was not found.", environmentId);
+        String error = "Environment: [%s] was not found.".formatted(environmentId);
         ImportTestDataStatistic statistic = new ImportTestDataStatistic(environmentId.toString(),
                 error, 0);
         expectedStatistic.add(statistic);
@@ -676,7 +678,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         String systemName = "Wrong Test System";
         when(environmentsService.getFullSystemByName(any(), any(), any())).thenThrow(new RuntimeException());
         List<ImportTestDataStatistic> expectedStatistic = new ArrayList<>();
-        String error = String.format("System with name[%s] for environment[%s] was not found.", systemName,
+        String error = "System with name[%s] for environment[%s] was not found.".formatted(systemName,
                 environmentId);
         ImportTestDataStatistic statistic = new ImportTestDataStatistic(environmentName,
                 error, 0);
@@ -694,7 +696,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         when(environmentsService.getFullSystemByName(any(), any(), any())).thenReturn(systemErrorConnectionName);
 
         List<ImportTestDataStatistic> expectedStatistic = new ArrayList<>();
-        String error = format(TdmEnvDbConnectionException.DEFAULT_MESSAGE, "DB");
+        String error = TdmEnvDbConnectionException.DEFAULT_MESSAGE.formatted("DB");
         ImportTestDataStatistic statistic = new ImportTestDataStatistic(environmentName,
                 error, 0);
         expectedStatistic.add(statistic);
@@ -830,7 +832,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         testDataService.getTableRow(projectId, systemId, wrongTableTitle, "sim",
                 "8901260720040140811", false);
         } catch (RuntimeException re) {
-            String message = String.format("Table [%s] under project [%s] and system [%s] wasn't found.",
+            String message = "Table [%s] under project [%s] and system [%s] wasn't found.".formatted(
                     wrongTableTitle, projectId, systemId);
             Assertions.assertEquals(message, re.getMessage());
         } finally {

@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,21 +16,21 @@
 
 package org.qubership.atp.tdm.model.statistics;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Transient;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.proxy.HibernateProxy;
 import org.qubership.atp.tdm.utils.scheduler.ScheduleConfig;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,6 +42,7 @@ import lombok.NoArgsConstructor;
 @IdClass(SystemEnvironmentModel.class)
 public class TestAvailableDataMonitoring implements ScheduleConfig, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3055608819732633976L;
 
     @Id
@@ -90,10 +91,10 @@ public class TestAvailableDataMonitoring implements ScheduleConfig, Serializable
         if (obj == null) {
             return false;
         }
-        Class<?> objectEffectiveClass = obj instanceof HibernateProxy
-                ? ((HibernateProxy) obj).getHibernateLazyInitializer().getPersistentClass() : obj.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy
-                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        Class<?> objectEffectiveClass = obj instanceof HibernateProxy hp
+                ? hp.getHibernateLazyInitializer().getPersistentClass() : obj.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy hp
+                ? hp.getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != objectEffectiveClass) {
             return false;
         }

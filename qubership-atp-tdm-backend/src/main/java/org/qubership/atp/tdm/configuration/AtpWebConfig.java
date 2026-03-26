@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ package org.qubership.atp.tdm.configuration;
 import java.io.IOException;
 import java.util.Properties;
 
-import javax.annotation.Nonnull;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -33,12 +31,14 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
+import jakarta.annotation.Nonnull;
+
 @Configuration
 public class AtpWebConfig implements WebMvcConfigurer {
 
     static final String APP_PROPERTIES = "application.properties";
 
-    @Value("${spring.resources.static-locations}")
+    @Value("${spring.web.resources.static-locations}")
     private String webLocation;
     @Value("${atp-tdm.web.root-page}")
     private String rootPage;

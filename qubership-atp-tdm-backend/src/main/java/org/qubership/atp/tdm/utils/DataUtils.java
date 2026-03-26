@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -31,14 +31,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nonnull;
-
-import org.springframework.util.FileSystemUtils;
-
 import org.qubership.atp.tdm.exceptions.db.TdmDbCheckColumnNameException;
 import org.qubership.atp.tdm.exceptions.db.TdmDbCheckQueryException;
 import org.qubership.atp.tdm.exceptions.db.TdmDbCheckTableNameException;
 import org.qubership.atp.tdm.model.statistics.StatisticsInterval;
+import org.springframework.util.FileSystemUtils;
+
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -154,9 +153,9 @@ public class DataUtils {
      */
     public static void checkColumnName(String params) {
         if (params != null && params.contains("\"")) {
-                log.error(String.format(TdmDbCheckColumnNameException.DEFAULT_MESSAGE, params));
-                throw new TdmDbCheckColumnNameException(params);
-            }
+            log.error(TdmDbCheckColumnNameException.DEFAULT_MESSAGE.formatted(params));
+            throw new TdmDbCheckColumnNameException(params);
+        }
     }
 
     /**
@@ -167,7 +166,7 @@ public class DataUtils {
             Pattern pattern = Pattern.compile("^[a-zA-Z_0-9]+$");
             Matcher matcher = pattern.matcher(name);
             if (!matcher.find()) {
-                log.error(String.format(TdmDbCheckTableNameException.DEFAULT_MESSAGE, name));
+                log.error(TdmDbCheckTableNameException.DEFAULT_MESSAGE.formatted(name));
                 throw new TdmDbCheckTableNameException(name);
             }
         }

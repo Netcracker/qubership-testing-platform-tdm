@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -20,17 +20,16 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-
-import com.google.gson.Gson;
 import org.qubership.atp.tdm.model.mail.charts.ChartSeries;
 import org.qubership.atp.tdm.model.table.TableColumnValues;
+
+import com.google.gson.Gson;
 
 public class AvailableStatisticUtils {
     private static final int CATEGORY_COEF = 20;
@@ -61,10 +60,10 @@ public class AvailableStatisticUtils {
             categories = categories.stream().map(string -> string.replace("\"","\\\"")).collect(Collectors.toList());
             File file = new File(pathToTemplate);
             String canonical = file.getCanonicalPath();
-            jsonString = StringUtils.join(Files.readAllLines(Paths.get(canonical)), "");
-            jsonString = String.format(jsonString,
+            jsonString = StringUtils.join(Files.readAllLines(Path.of(canonical)), "");
+            jsonString = jsonString.formatted(
                     categories.size() * CATEGORY_COEF + 100,
-                    StringUtils.join(categories,"\",\""),
+                    StringUtils.join(categories, "\",\""),
                     new Gson().toJson(chartSeriesList));
         } catch (IOException e) {
             throw new RuntimeException("Wrong highchart configuration: " + e.getMessage(), e);
@@ -76,11 +75,11 @@ public class AvailableStatisticUtils {
      * Available Data Query.
      */
     public static String availableDataQuery(TableColumnValues columnValues, String activeColumn) {
-        return String.format(TestDataQueries.GET_AVAILABLE_DATA_FOR_EACH_VALUE,
+        return TestDataQueries.GET_AVAILABLE_DATA_FOR_EACH_VALUE.formatted(
                 activeColumn,
                 columnValues.getTableName(),
                 activeColumn,
-                String.join("','",columnValues.getValues()),
+                String.join("','", columnValues.getValues()),
                 activeColumn);
     }
 }

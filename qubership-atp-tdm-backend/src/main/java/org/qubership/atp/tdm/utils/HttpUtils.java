@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -45,7 +44,7 @@ public class HttpUtils {
             throw new FileNotFoundException(file == null ? "null" : file.getPath());
         }
 
-        Path baseDir = Paths.get(TMP_DIR).toAbsolutePath().normalize();
+        Path baseDir = Path.of(TMP_DIR).toAbsolutePath().normalize();
         Path safePath = baseDir.resolve(file.getName()).normalize();
         if (!safePath.startsWith(baseDir)) {
             throw new SecurityException("Bad filename");

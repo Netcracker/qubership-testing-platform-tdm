@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -30,8 +30,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.persistence.Query;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
@@ -44,6 +42,8 @@ import org.qubership.atp.tdm.model.table.OrderType;
 import org.qubership.atp.tdm.model.table.TestDataTableFilter;
 import org.qubership.atp.tdm.model.table.TestDataTableOrder;
 import org.qubership.atp.tdm.model.table.conditions.search.SearchConditionType;
+
+import jakarta.persistence.Query;
 
 public class UsersOccupyStatisticUtils {
 
@@ -66,7 +66,7 @@ public class UsersOccupyStatisticUtils {
      * @return SQL native query.
      */
     public static String generateRequest(UsersOccupyStatisticRequest request, EnvironmentsService environmentsService) {
-        return String.format(GET_OCCUPIED_BY_USERS_TABLE,
+        return GET_OCCUPIED_BY_USERS_TABLE.formatted(
                 generateSummFields(request.getDateFrom(), request.getDateTo()),
                 request.getProjectId(),
                 request.getDateFrom(),
@@ -89,10 +89,7 @@ public class UsersOccupyStatisticUtils {
         StringBuilder stringBuilder = new StringBuilder();
         datesBetween.forEach(
                 date -> {
-                    stringBuilder.append(String.format(
-                            SUMM_TEMPLATE,
-                            LocalDate.parse(date),
-                            date));
+                    stringBuilder.append(SUMM_TEMPLATE.formatted(LocalDate.parse(date), date));
                 }
         );
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
@@ -189,9 +186,9 @@ public class UsersOccupyStatisticUtils {
                     value = lazySystemList.stream().map(LazySystem::getId)
                             .map(UUID::toString)
                             .collect(Collectors.joining("','", "'", "'"));
-                    return String.format(IN_LIST_FILTER_TEMPLATE, field, value);
+                    return IN_LIST_FILTER_TEMPLATE.formatted(field, value);
                 } else {
-                    return String.format(EMPTY_LIST_FILTER_TEMPLATE, field);
+                    return EMPTY_LIST_FILTER_TEMPLATE.formatted(field);
                 }
             case ENVIRONMENT:
                 String envSearchValue = value;
@@ -213,9 +210,9 @@ public class UsersOccupyStatisticUtils {
                             .map(LazyEnvironment::getId)
                             .map(UUID::toString)
                             .collect(Collectors.joining("','", "'", "'"));
-                    return String.format(IN_LIST_FILTER_TEMPLATE, field, value);
+                    return IN_LIST_FILTER_TEMPLATE.formatted(field, value);
                 } else {
-                    return String.format(EMPTY_LIST_FILTER_TEMPLATE, field);
+                    return EMPTY_LIST_FILTER_TEMPLATE.formatted(field);
                 }
             default:
                 return databaseFiltering(filter, field, value);
@@ -242,10 +239,10 @@ public class UsersOccupyStatisticUtils {
                 return "";
         }
         if (!filter.isCaseSensitive()) {
-            field = String.format(UPPER_CASE_TEMPLATE, field);
-            value = String.format(UPPER_CASE_TEMPLATE, value);
+            field = UPPER_CASE_TEMPLATE.formatted(field);
+            value = UPPER_CASE_TEMPLATE.formatted(value);
         }
-        return String.format(FILTER_TEMPLATE, field, value);
+        return FILTER_TEMPLATE.formatted(field, value);
     }
 
     /**
@@ -290,7 +287,7 @@ public class UsersOccupyStatisticUtils {
         if (order == null) {
             order = new TestDataTableOrder("occupied_by", OrderType.ASC);
         }
-        return String.format(ORDER_BY_TEMPLATE, order.getColumnName(), order.getOrderType(OrderType.ASC).toString());
+        return ORDER_BY_TEMPLATE.formatted(order.getColumnName(), order.getOrderType(OrderType.ASC).toString());
     }
 
     /**

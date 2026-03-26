@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -23,9 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import org.qubership.atp.tdm.model.ColumnValues;
+import org.qubership.atp.tdm.model.DropResults;
+import org.qubership.atp.tdm.model.EnvsList;
+import org.qubership.atp.tdm.model.ImportTestDataStatistic;
+import org.qubership.atp.tdm.model.TestDataTableCatalog;
+import org.qubership.atp.tdm.model.ei.TdmDataToExport;
 import org.qubership.atp.tdm.model.statistics.DateStatistics;
 import org.qubership.atp.tdm.model.table.TableColumnValues;
 import org.qubership.atp.tdm.model.table.TestDataFlagsTable;
@@ -34,12 +37,8 @@ import org.qubership.atp.tdm.model.table.TestDataTableFilter;
 import org.qubership.atp.tdm.model.table.TestDataTableOrder;
 import org.springframework.web.multipart.MultipartFile;
 
-import org.qubership.atp.tdm.model.ColumnValues;
-import org.qubership.atp.tdm.model.DropResults;
-import org.qubership.atp.tdm.model.EnvsList;
-import org.qubership.atp.tdm.model.ImportTestDataStatistic;
-import org.qubership.atp.tdm.model.TestDataTableCatalog;
-import org.qubership.atp.tdm.model.ei.TdmDataToExport;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public interface TestDataService {
 

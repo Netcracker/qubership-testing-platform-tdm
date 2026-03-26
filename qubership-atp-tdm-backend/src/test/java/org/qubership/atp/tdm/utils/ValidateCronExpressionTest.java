@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -15,10 +15,9 @@
  */
 
 package org.qubership.atp.tdm.utils;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qubership.atp.tdm.exceptions.internal.TdmValidateCronException;
-import org.junit.Assert;
-import org.junit.Test;
 
 public class ValidateCronExpressionTest {
 
@@ -28,8 +27,8 @@ public class ValidateCronExpressionTest {
         try {
             ValidateCronExpression.validate(incorrectCron);
         } catch (Exception e) {
-            String errorMessage = String.format(TdmValidateCronException.DEFAULT_MESSAGE, incorrectCron);
-            Assert.assertEquals(errorMessage, e.getMessage());
+            String errorMessage = TdmValidateCronException.DEFAULT_MESSAGE.formatted(incorrectCron);
+            Assertions.assertEquals(errorMessage, e.getMessage());
         }
     }
 
@@ -39,8 +38,8 @@ public class ValidateCronExpressionTest {
         try {
             ValidateCronExpression.validate(incorrectCron);
         } catch (Exception e) {
-            String errorMessage = String.format(TdmValidateCronException.DEFAULT_MESSAGE, incorrectCron);
-            Assert.assertEquals(errorMessage, e.getMessage());
+            String errorMessage = TdmValidateCronException.DEFAULT_MESSAGE.formatted(incorrectCron);
+            Assertions.assertEquals(errorMessage, e.getMessage());
         }
     }
 
@@ -50,8 +49,8 @@ public class ValidateCronExpressionTest {
         try {
             ValidateCronExpression.validate(incorrectCron);
         } catch (Exception e) {
-            String errorMessage = String.format(TdmValidateCronException.DEFAULT_MESSAGE, incorrectCron);
-            Assert.assertEquals(errorMessage, e.getMessage());
+            String errorMessage = TdmValidateCronException.DEFAULT_MESSAGE.formatted(incorrectCron);
+            Assertions.assertEquals(errorMessage, e.getMessage());
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -19,14 +19,11 @@ package org.qubership.atp.tdm.service.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-
+import org.qubership.atp.tdm.repo.CatalogRepository;
 import org.qubership.atp.tdm.service.DeploymentService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import org.qubership.atp.tdm.repo.CatalogRepository;
-
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -35,7 +32,6 @@ public class DeploymentServiceImpl implements DeploymentService {
 
     private final CatalogRepository catalogRepository;
 
-    @Autowired
     public DeploymentServiceImpl(@Nonnull CatalogRepository catalogRepository) {
         this.catalogRepository = catalogRepository;
     }

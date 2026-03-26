@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -29,26 +29,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-
+import org.qubership.atp.integration.configuration.model.MailRequest;
+import org.qubership.atp.integration.configuration.service.MailSenderService;
+import org.qubership.atp.tdm.env.configurator.service.EnvironmentsService;
 import org.qubership.atp.tdm.model.statistics.TestDataTableUsersMonitoring;
 import org.qubership.atp.tdm.model.statistics.report.UsersStatisticsReportObject;
 import org.qubership.atp.tdm.service.StatisticsService;
 import org.qubership.atp.tdm.service.impl.MetricService;
 import org.qubership.atp.tdm.utils.DataUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import org.qubership.atp.integration.configuration.model.MailRequest;
-import org.qubership.atp.integration.configuration.service.MailSenderService;
-import org.qubership.atp.tdm.env.configurator.service.EnvironmentsService;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -67,13 +65,13 @@ public class UsersStatisticsMailSender {
     private final String mailSenderSubject;
     private final String mailSenderTemplate;
     private final String mailSenderPath;
-    private static final String EMPTY_HTML_CONTENT = "Statistic by Users.\n"
-            + "Please, find CSV file with statistic in attachment";
+    private static final String EMPTY_HTML_CONTENT = """
+            Statistic by Users.
+            Please, find CSV file with statistic in attachment""";
 
     /**
      * UsersStatisticsMailSender Constructor.
      */
-    @Autowired
     private UsersStatisticsMailSender(@Value("${mail.sender.from}") String mailSenderFrom,
                                  @Nonnull Configuration configuration,
                                  @Nonnull StatisticsService statisticsService,
@@ -119,7 +117,7 @@ public class UsersStatisticsMailSender {
                 if (monitoring.isHtmlReport()) {
                     content = buildMessageContent(configuration, usersStatisticsReportObject);
                 }
-                mailRequest.setSubject(String.format(mailSenderSubject, usersStatisticsReportObject.getProjectName()));
+                mailRequest.setSubject(mailSenderSubject.formatted(usersStatisticsReportObject.getProjectName()));
                 mailRequest.setContent(content);
                 if (monitoring.isCsvReport()) {
                     File attachment = statisticsService.getCsvReportByUsers(monitoring.getProjectId(),
@@ -149,7 +147,7 @@ public class UsersStatisticsMailSender {
                 } catch (Exception ex) {
                     log.error("Project by Id not found.", ex);
                 }
-                mailRequest.setSubject(String.format(mailSenderSubject, "Project: " + projectName));
+                mailRequest.setSubject(mailSenderSubject.formatted("Project: " + projectName));
                 mailRequest.setContent(messageError);
                 mailSender.send(mailRequest);
                 throw e;

@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -27,9 +27,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.common.lock.LockManager;
 import org.qubership.atp.tdm.env.configurator.model.Connection;
@@ -51,11 +48,12 @@ import org.qubership.atp.tdm.repo.TestDataTableRepository;
 import org.qubership.atp.tdm.repo.impl.SystemColumns;
 import org.qubership.atp.tdm.service.ColumnService;
 import org.qubership.atp.tdm.utils.TestDataUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -80,7 +78,6 @@ public class ColumnServiceImpl implements ColumnService {
      * Default constructor.
      */
     @Lazy
-    @Autowired
     public ColumnServiceImpl(@Nonnull CatalogRepository catalogRepository, @Nonnull ColumnRepository columnRepository,
                              @Nonnull EnvironmentsService environmentsService,
                              @Nonnull TestDataTableRepository testDataTableRepository,
@@ -211,7 +208,7 @@ public class ColumnServiceImpl implements ColumnService {
 
     private String getHttpUrlParamValue(Map<String, String> parameters, String httpUrlParam) {
         if (!parameters.containsKey(httpUrlParam)) {
-            throw new IllegalArgumentException(String.format("Parameter [%s] was not found.", httpUrlParam));
+            throw new IllegalArgumentException("Parameter [%s] was not found.".formatted(httpUrlParam));
         }
         return parameters.get(httpUrlParam);
     }

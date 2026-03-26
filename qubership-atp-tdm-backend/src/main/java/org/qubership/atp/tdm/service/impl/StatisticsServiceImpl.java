@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package org.qubership.atp.tdm.service.impl;
 
+import static java.time.temporal.ChronoUnit.DAYS;
 import static org.qubership.atp.tdm.utils.AvailableStatisticUtils.availableDataQuery;
 import static org.qubership.atp.tdm.utils.DateFormatters.FULL_DATE_FORMATTER;
 import static org.qubership.atp.tdm.utils.TestDataQueries.GET_COUNT_OF_ROWS;
-import static java.time.temporal.ChronoUnit.DAYS;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -45,26 +45,11 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.CronExpression;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
-import org.qubership.atp.tdm.service.SchedulerService;
-import org.qubership.atp.tdm.service.StatisticsService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import com.google.common.base.Preconditions;
 import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
 import org.qubership.atp.tdm.env.configurator.service.EnvironmentsService;
 import org.qubership.atp.tdm.exceptions.internal.TdmAvailableStatisticActiveColumnException;
@@ -114,9 +99,22 @@ import org.qubership.atp.tdm.repo.TestAvailableDataMonitoringRepository;
 import org.qubership.atp.tdm.repo.TestDataMonitoringRepository;
 import org.qubership.atp.tdm.repo.TestDataUsersMonitoringRepository;
 import org.qubership.atp.tdm.repo.impl.SystemColumns;
+import org.qubership.atp.tdm.service.SchedulerService;
+import org.qubership.atp.tdm.service.StatisticsService;
 import org.qubership.atp.tdm.service.TestDataService;
 import org.qubership.atp.tdm.utils.UsersOccupyStatisticUtils;
 import org.qubership.atp.tdm.utils.ValidateCronExpression;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import com.google.common.base.Preconditions;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -151,7 +149,6 @@ public class StatisticsServiceImpl implements StatisticsService {
     /**
      * Default constructor.
      */
-    @Autowired
     public StatisticsServiceImpl(@Nonnull StatisticsRepository statisticsRepository,
                                  @Nonnull TestDataMonitoringRepository monitoringRepository,
                                  @Nonnull TestDataUsersMonitoringRepository userMonitoringRepository,
@@ -777,7 +774,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 LocalDate.parse(request.getDateFrom()));
         fillEnvironmentsAndSystems(tableValues,tables);
         int countOfRows = ((BigInteger) entityManager
-                .createNativeQuery(String.format(GET_COUNT_OF_ROWS, generatedQuery)).getResultList().get(0)).intValue();
+                .createNativeQuery(GET_COUNT_OF_ROWS.formatted(generatedQuery)).getResultList().get(0)).intValue();
         return new UsersOccupyStatisticResponse(tableValues, countOfRows);
     }
 
@@ -910,7 +907,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             monitoringConfig = new TestAvailableDataMonitoring(config.getSystemId(), config.getEnvironmentId());
         }
         if (!config.getColumnKeys().contains(config.getActiveColumnKey())) {
-            log.error(String.format(TdmAvailableStatisticColumnException.DEFAULT_MESSAGE, config.getActiveColumnKey()));
+            log.error(TdmAvailableStatisticColumnException.DEFAULT_MESSAGE.formatted(config.getActiveColumnKey()));
             throw new TdmAvailableStatisticColumnException(config.getActiveColumnKey());
         }
         if (StringUtils.isNotEmpty(config.getActiveColumnKey())) {

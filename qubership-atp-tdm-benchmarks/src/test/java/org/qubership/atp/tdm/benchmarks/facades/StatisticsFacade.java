@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -20,14 +20,14 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.qubership.atp.tdm.model.statistics.ConsumedStatistics;
 import org.qubership.atp.tdm.model.statistics.GeneralStatisticsItem;
 import org.qubership.atp.tdm.repo.TestDataTableRepository;
 import org.qubership.atp.tdm.service.StatisticsService;
 import org.qubership.atp.tdm.service.TestDataService;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public class StatisticsFacade extends GeneralFacade {
 

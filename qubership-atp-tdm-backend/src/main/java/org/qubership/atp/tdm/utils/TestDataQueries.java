@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -60,15 +60,15 @@ public class TestDataQueries {
 
     public static final String DELETE_UNOCCUPIED_ROWS = "DELETE FROM %s where \"SELECTED\" = false";
 
-    public static final String GET_TEST_DATA_AVAILABILITY_ITEM = ""
-            + "SELECT * FROM "
-            + "(SELECT COUNT(*) as available FROM %s WHERE \"SELECTED\" = false) available, "
-            + "(SELECT COUNT(*) as occupied FROM %s WHERE \"SELECTED\" = true) occupied,"
-            + "(SELECT COUNT(*) FROM %s\n"
-            + "WHERE \"SELECTED\" = true\n"
-            + "AND \"OCCUPIED_DATE\" >= '%s'::TIMESTAMP WITH TIME ZONE\n"
-            + "AND \"OCCUPIED_DATE\" <= '%s'::TIMESTAMP WITH TIME ZONE) occupiedToday,"
-            + "(SELECT COUNT(*) as total FROM %s ) total";
+    public static final String GET_TEST_DATA_AVAILABILITY_ITEM = """
+            SELECT * FROM \
+            (SELECT COUNT(*) as available FROM %s WHERE "SELECTED" = false) available, \
+            (SELECT COUNT(*) as occupied FROM %s WHERE "SELECTED" = true) occupied,\
+            (SELECT COUNT(*) FROM %s
+            WHERE "SELECTED" = true
+            AND "OCCUPIED_DATE" >= '%s'::TIMESTAMP WITH TIME ZONE
+            AND "OCCUPIED_DATE" <= '%s'::TIMESTAMP WITH TIME ZONE) occupiedToday,\
+            (SELECT COUNT(*) as total FROM %s ) total""";
 
     public static final String GET_TEST_DATA_CONSUMPTION_ITEM = ""
             + "SELECT date, SUM(count) as count FROM ( "

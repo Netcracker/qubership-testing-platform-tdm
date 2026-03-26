@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -25,8 +25,12 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
+import org.qubership.atp.ei.node.ImportExecutor;
+import org.qubership.atp.ei.node.dto.ExportImportData;
+import org.qubership.atp.ei.node.dto.ValidationResult;
+import org.qubership.atp.ei.node.services.ObjectLoaderFromDiskService;
+import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
+import org.qubership.atp.tdm.env.configurator.service.EnvironmentsService;
 import org.qubership.atp.tdm.model.TestDataTableCatalog;
 import org.qubership.atp.tdm.model.TestDataTableImportInfo;
 import org.qubership.atp.tdm.model.cleanup.TestDataCleanupConfig;
@@ -38,15 +42,6 @@ import org.qubership.atp.tdm.model.table.TestDataFlagsTable;
 import org.qubership.atp.tdm.model.table.TestDataTable;
 import org.qubership.atp.tdm.model.table.column.TestDataTableColumn;
 import org.qubership.atp.tdm.model.table.column.TestDataTableColumnIdentity;
-import org.springframework.stereotype.Service;
-
-import org.qubership.atp.ei.node.ImportExecutor;
-import org.qubership.atp.ei.node.dto.ExportImportData;
-import org.qubership.atp.ei.node.dto.ValidationResult;
-import org.qubership.atp.ei.node.services.ObjectLoaderFromDiskService;
-import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
-import org.qubership.atp.tdm.env.configurator.service.EnvironmentsService;
-
 import org.qubership.atp.tdm.repo.CatalogRepository;
 import org.qubership.atp.tdm.repo.CleanupConfigRepository;
 import org.qubership.atp.tdm.repo.ColumnRepository;
@@ -56,6 +51,9 @@ import org.qubership.atp.tdm.repo.TestDataColumnFlagsRepository;
 import org.qubership.atp.tdm.repo.TestDataMonitoringRepository;
 import org.qubership.atp.tdm.repo.TestDataTableRepository;
 import org.qubership.atp.tdm.repo.impl.SystemColumns;
+import org.springframework.stereotype.Service;
+
+import jakarta.annotation.Nonnull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

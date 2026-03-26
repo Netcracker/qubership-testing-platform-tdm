@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -24,8 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-
+import org.qubership.atp.tdm.exceptions.internal.TdmStatisticsException;
 import org.qubership.atp.tdm.model.TestDataOccupyStatistic;
 import org.qubership.atp.tdm.model.TestDataTableCatalog;
 import org.qubership.atp.tdm.model.statistics.ConsumedStatistics;
@@ -36,7 +35,6 @@ import org.qubership.atp.tdm.model.statistics.GeneralStatisticsItem;
 import org.qubership.atp.tdm.model.statistics.OutdatedStatistics;
 import org.qubership.atp.tdm.model.statistics.OutdatedStatisticsInner;
 import org.qubership.atp.tdm.model.statistics.OutdatedStatisticsItem;
-import org.qubership.atp.tdm.model.statistics.StatisticsInterval;
 import org.qubership.atp.tdm.model.statistics.StatisticsItem;
 import org.qubership.atp.tdm.model.statistics.report.StatisticsReport;
 import org.qubership.atp.tdm.repo.ProjectInformationRepository;
@@ -47,12 +45,10 @@ import org.qubership.atp.tdm.repo.impl.extractors.OutdatedStatisticsExtractor;
 import org.qubership.atp.tdm.repo.impl.extractors.TestDataExtractorProvider;
 import org.qubership.atp.tdm.utils.DataUtils;
 import org.qubership.atp.tdm.utils.TestDataQueries;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import org.qubership.atp.tdm.exceptions.internal.TdmStatisticsException;
-
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -68,7 +64,6 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
     /**
      * TestDataRepositoryImpl Constructor.
      */
-    @Autowired
     public StatisticsRepositoryImpl(@Nonnull JdbcTemplate jdbcTemplate,
                                     @Nonnull TestDataExtractorProvider extractorProvider,
                                     @Nonnull ProjectInformationRepository projectInformationRepository) {
@@ -212,15 +207,14 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
 
             try {
                 OutdatedStatisticsExtractor extractor = extractorProvider.outdatedStatisticsExtractor();
-                String query = String.format(TestDataQueries.GET_TEST_DATA_OUTDATED_ITEM,
+                String query = TestDataQueries.GET_TEST_DATA_OUTDATED_ITEM.formatted(
                         occupyStatisticItem.getTableName().toLowerCase());
                 dbOutput = jdbcTemplate.query(query, extractor, dateFrom.toString(), dateTo.toString(),
                         occupyStatisticItem.getTableName().toLowerCase(),
                         occupyStatisticItem.getTableName().toLowerCase(),
                         dateFrom.plusDays(expirationDate).toString());
             } catch (Exception e) {
-                log.error(String.format(TdmStatisticsException.DEFAULT_MESSAGE,
-                        occupyStatisticItem.getTableName()), e);
+                log.error(TdmStatisticsException.DEFAULT_MESSAGE.formatted(occupyStatisticItem.getTableName()), e);
                 throw new TdmStatisticsException(occupyStatisticItem.getTableName());
             }
 
@@ -369,8 +363,8 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
         List<String> result = new ArrayList<>();
         for (String tableName : tableNames) {
             log.info("Processing table: " + tableName);
-            jdbcTemplate.update(String.format(TestDataQueries.ALTER_OCCUPIED_DATE_COLUMN, tableName));
-            int updated = jdbcTemplate.update(String.format(TestDataQueries.UPDATE_OCCUPIED_DATE, tableName));
+            jdbcTemplate.update(TestDataQueries.ALTER_OCCUPIED_DATE_COLUMN.formatted(tableName));
+            int updated = jdbcTemplate.update(TestDataQueries.UPDATE_OCCUPIED_DATE.formatted(tableName));
             if (updated > 0) {
                 String message = "OCCUPIED_DATE Column was updated in the table: " + tableName
                         + " . Affected rows: " + updated;
@@ -390,7 +384,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
     private GeneralStatisticsItem getGeneralStatisticsItem(TestDataTableCatalog item, Map<String, String> map) {
         GeneralStatisticsExtractor extractor = extractorProvider.generalStatisticsExtractor(item.getTableTitle());
         GeneralStatisticsItem statisticsItem = jdbcTemplate.query(
-                String.format(TestDataQueries.GET_TEST_DATA_AVAILABILITY_ITEM,
+                TestDataQueries.GET_TEST_DATA_AVAILABILITY_ITEM.formatted(
                         item.getTableName().toLowerCase(), item.getTableName().toLowerCase(),
                         item.getTableName().toLowerCase(), map.get("startTimeStamp"),
                         map.get("endTimeStamp"), item.getTableName().toLowerCase()), extractor);

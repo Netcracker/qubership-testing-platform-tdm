@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,12 +16,9 @@
 
 package org.qubership.atp.tdm.exceptions.websocket;
 
-import static java.lang.String.format;
-
+import org.qubership.atp.tdm.exceptions.TdmInternalException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import org.qubership.atp.tdm.exceptions.TdmInternalException;
 
 @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "TDM-1004")
 public class TdmWriteBulkActionResultsAsStringException extends TdmInternalException {
@@ -29,6 +26,6 @@ public class TdmWriteBulkActionResultsAsStringException extends TdmInternalExcep
     public static final String DEFAULT_MESSAGE = "Error while writing bulk action results as string: %s";
 
     public TdmWriteBulkActionResultsAsStringException(String actionResult) {
-        super(format(DEFAULT_MESSAGE, actionResult));
+        super(DEFAULT_MESSAGE.formatted(actionResult));
     }
 }

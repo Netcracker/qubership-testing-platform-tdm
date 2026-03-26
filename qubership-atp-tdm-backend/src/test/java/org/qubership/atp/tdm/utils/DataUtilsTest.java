@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,19 +16,18 @@
 
 package org.qubership.atp.tdm.utils;
 
+import java.time.LocalDate;
+import java.util.UUID;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qubership.atp.tdm.AbstractTestDataTest;
 import org.qubership.atp.tdm.exceptions.db.TdmDbCheckColumnNameException;
 import org.qubership.atp.tdm.exceptions.db.TdmDbCheckQueryException;
 import org.qubership.atp.tdm.exceptions.db.TdmDbCheckTableNameException;
 import org.qubership.atp.tdm.model.TestDataTableCatalog;
 import org.qubership.atp.tdm.model.cleanup.TestDataCleanupConfig;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-import java.util.UUID;
 
 public class DataUtilsTest extends AbstractTestDataTest {
 
@@ -68,7 +67,7 @@ public class DataUtilsTest extends AbstractTestDataTest {
         try {
             DataUtils.checkTableName(tableName);
         } catch (Exception e) {
-            String message = String.format(TdmDbCheckTableNameException.DEFAULT_MESSAGE, tableName);
+            String message = TdmDbCheckTableNameException.DEFAULT_MESSAGE.formatted(tableName);
             Assertions.assertEquals(message, e.getMessage());
         }
     }
@@ -85,7 +84,7 @@ public class DataUtilsTest extends AbstractTestDataTest {
         try {
             DataUtils.checkColumnName(columnName);
         } catch (Exception e) {
-            String message = String.format(TdmDbCheckColumnNameException.DEFAULT_MESSAGE, columnName);
+            String message = TdmDbCheckColumnNameException.DEFAULT_MESSAGE.formatted(columnName);
             Assertions.assertEquals(message, e.getMessage());
         }
     }

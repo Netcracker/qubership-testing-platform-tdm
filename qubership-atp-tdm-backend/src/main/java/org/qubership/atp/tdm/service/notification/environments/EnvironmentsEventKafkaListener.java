@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -17,11 +17,8 @@
 package org.qubership.atp.tdm.service.notification.environments;
 
 import static org.qubership.atp.tdm.service.notification.environments.EnvironmentEventType.DELETE;
-import static java.lang.String.format;
 
 import java.io.IOException;
-
-import javax.annotation.Nonnull;
 
 import org.qubership.atp.tdm.exceptions.kafka.TdmKafkaListenerReadEventException;
 import org.qubership.atp.tdm.mdc.TdmMdcHelper;
@@ -31,6 +28,7 @@ import org.slf4j.MDC;
 import org.springframework.kafka.annotation.KafkaListener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -60,7 +58,7 @@ public class EnvironmentsEventKafkaListener implements EnvironmentEventListener 
         try {
             environmentEvent = objectMapper.readValue(event, EnvironmentEvent.class);
         } catch (IOException e) {
-            log.error(String.format(TdmKafkaListenerReadEventException.DEFAULT_MESSAGE, event), e);
+            log.error(TdmKafkaListenerReadEventException.DEFAULT_MESSAGE.formatted(event), e);
             throw new TdmKafkaListenerReadEventException(event);
         }
         tdmMdcHelper.putEnvironmentEventFields(environmentEvent);

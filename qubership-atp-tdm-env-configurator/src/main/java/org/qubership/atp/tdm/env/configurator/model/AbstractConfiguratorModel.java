@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 import org.qubership.atp.tdm.env.configurator.utils.Utils;
+
 import lombok.Data;
 
 @Data
@@ -51,7 +52,7 @@ public class AbstractConfiguratorModel {
                 .findAny()
                 .orElseThrow(() -> {
                     String message = "Not found object with :[%s].";
-                    return new NoSuchElementException(String.format(message, id));
+                    return new NoSuchElementException(message.formatted(id));
                 });
     }
 }

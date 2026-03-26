@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -31,9 +31,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.codecs.OracleCodec;
 import org.owasp.esapi.reference.DefaultEncoder;
@@ -44,6 +41,8 @@ import org.qubership.atp.tdm.model.table.TestDataTable;
 import org.qubership.atp.tdm.utils.TestDataUtils;
 import org.slf4j.MDC;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import liquibase.repackaged.net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import liquibase.repackaged.net.sf.jsqlparser.statement.Statement;
 import liquibase.repackaged.net.sf.jsqlparser.statement.select.Select;
@@ -131,8 +130,8 @@ public class SqlTestDataCleaner implements TestDataCleaner {
                 } catch (SQLSyntaxErrorException e) {
                     throw new SQLSyntaxErrorException("Incorrect SQL syntax.", e);
                 } catch (Exception e) {
-                    log.error(String.format(TdmDeleteRowException.DEFAULT_MESSAGE,
-                            row.get("ROW_ID"), testDataTable.getName()), e);
+                    log.error(TdmDeleteRowException.DEFAULT_MESSAGE.formatted(row.get("ROW_ID"),
+                            testDataTable.getName()), e);
                     throw new TdmDeleteRowException(row.get("ROW_ID").toString(), testDataTable.getName());
                 }
             }

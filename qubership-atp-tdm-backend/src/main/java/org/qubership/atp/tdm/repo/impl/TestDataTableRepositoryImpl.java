@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 
 package org.qubership.atp.tdm.repo.impl;
-
-import static java.lang.String.format;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -49,9 +47,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.hibernate.boot.model.naming.IllegalIdentifierException;
@@ -93,7 +88,6 @@ import org.qubership.atp.tdm.utils.TestDataQueries;
 import org.qubership.atp.tdm.utils.TestDataTableCreator;
 import org.qubership.atp.tdm.utils.TestDataUtils;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -114,6 +108,8 @@ import com.healthmarketscience.sqlbuilder.CustomSql;
 import com.healthmarketscience.sqlbuilder.UpdateQuery;
 import com.healthmarketscience.sqlbuilder.custom.postgresql.PgBinaryCondition;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbColumn;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -147,7 +143,6 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
     /**
      * TestDataTableRepository Constructor.
      */
-    @Autowired
     public TestDataTableRepositoryImpl(@Nonnull JdbcTemplate jdbcTemplate,
                                        @Nonnull PlatformTransactionManager transactionManager,
                                        @Nonnull SqlRepository sqlRepository,
@@ -175,7 +170,7 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
         DataUtils.checkTableName(tableName);
         long currentTimeMillis = java.lang.System.currentTimeMillis();
         File destination = new File(excelImportDirectory + "/"
-                + format(EXCEL_IMPORT_FILE_MASK, currentTimeMillis));
+                + EXCEL_IMPORT_FILE_MASK.formatted(currentTimeMillis));
         writeFileOnDiscSpace(file, destination);
         try {
             try (OPCPackage opcPackage = OPCPackage.open(destination)) {
@@ -184,7 +179,7 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
                 return importTestData(tableName, exists, loader.process());
             }
         } catch (SQLException | BadSqlGrammarException ex) {
-            log.error(format(TdmDbExecuteQueryException.DEFAULT_MESSAGE, ex.getMessage()), ex);
+            log.error(TdmDbExecuteQueryException.DEFAULT_MESSAGE.formatted(ex.getMessage()), ex);
             throw new TdmDbExecuteQueryException(ex.getMessage());
         } catch (TdmInternalException tdmInternalException) {
             throw tdmInternalException;
@@ -203,7 +198,7 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
             log.debug("File writing success");
             sourceFile.getInputStream().close();
         } catch (Exception e) {
-            log.error(format(TdmWriteFileException.DEFAULT_MESSAGE,
+            log.error(TdmWriteFileException.DEFAULT_MESSAGE.formatted(
                     sourceFile.getName(), destinationFile.getName(), e.getMessage()), e);
             throw new TdmWriteFileException(sourceFile.getName(), destinationFile.getName(), e.getMessage());
         }
@@ -288,7 +283,7 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
             for (String queryColumnName : queryColumnNames) {
                 if (!existingColumns.contains(queryColumnName)) {
                     log.debug("Table:[{}]. Alter new column:[{}]", tableName, queryColumnName);
-                    jdbcTemplate.execute(format(TestDataQueries.ADD_NEW_COLUMN_VARCHAR,
+                    jdbcTemplate.execute(TestDataQueries.ADD_NEW_COLUMN_VARCHAR.formatted(
                             tableName, queryColumnName));
                 }
             }
@@ -561,7 +556,7 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
         parameters.addValue("user", occupiedBy);
         try {
             int updatedRowsCount = namedParameterJdbcTemplate.update(
-                    format(TestDataQueries.OCCUPY_TEST_DATA, tableName, date), parameters);
+                    TestDataQueries.OCCUPY_TEST_DATA.formatted(tableName, date), parameters);
             if (updatedRowsCount == 0) {
                 throw new TdmTestDataOccupiedException();
             }
@@ -579,7 +574,7 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
         DataUtils.checkColumnName(tableName);
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("ids", rows);
-        namedParameterJdbcTemplate.update(format(TestDataQueries.RELEASE_TEST_DATA, tableName), parameters);
+        namedParameterJdbcTemplate.update(TestDataQueries.RELEASE_TEST_DATA.formatted(tableName), parameters);
         updateLastUsage(tableName);
     }
 
@@ -626,34 +621,34 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         DataUtils.checkColumnName(tableName);
         parameters.addValue("ids", rows);
-        namedParameterJdbcTemplate.update(format(TestDataQueries.DELETE_ROWS_BY_ID, tableName), parameters);
+        namedParameterJdbcTemplate.update(TestDataQueries.DELETE_ROWS_BY_ID.formatted(tableName), parameters);
     }
 
     @Override
     public void deleteAllRows(@Nonnull String tableName) {
         log.info("Deleting all rows from table with name: [{}]", tableName);
         DataUtils.checkColumnName(tableName);
-        jdbcTemplate.execute(format(TestDataQueries.DELETE_ALL_TABLE_ROWS, tableName));
+        jdbcTemplate.execute(TestDataQueries.DELETE_ALL_TABLE_ROWS.formatted(tableName));
     }
 
     @Override
     public int deleteRowsByDate(@Nonnull String tableName, @Nonnull LocalDate date) {
         log.info("Deleting rows from table with name [{}] by date", tableName);
         DataUtils.checkColumnName(tableName);
-        return jdbcTemplate.update(format(TestDataQueries.DELETE_ROWS_BY_DATE, tableName, date));
+        return jdbcTemplate.update(TestDataQueries.DELETE_ROWS_BY_DATE.formatted(tableName, date));
     }
 
     @Override
     public int getCountRows(@Nonnull String tableName) {
         DataUtils.checkTableName(tableName);
-        return jdbcTemplate.queryForObject(format(TestDataQueries.GET_COUNT_ROWS, tableName), Integer.class);
+        return jdbcTemplate.queryForObject(TestDataQueries.GET_COUNT_ROWS.formatted(tableName), Integer.class);
     }
 
     @Override
     public void deleteUnoccupiedRows(@Nonnull String tableName) {
         log.info("Deleting unoccupied rows from table with name: [{}]", tableName);
         DataUtils.checkColumnName(tableName);
-        jdbcTemplate.execute(format(TestDataQueries.DELETE_UNOCCUPIED_ROWS, tableName));
+        jdbcTemplate.execute(TestDataQueries.DELETE_UNOCCUPIED_ROWS.formatted(tableName));
     }
 
     @Override
@@ -676,14 +671,14 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
     public void dropTable(@Nonnull String tableName) {
         log.info("Dropping a table with name: [{}]", tableName);
         DataUtils.checkTableName(tableName);
-        jdbcTemplate.execute(format(TestDataQueries.DROP_TABLE, tableName));
+        jdbcTemplate.execute(TestDataQueries.DROP_TABLE.formatted(tableName));
     }
 
     @Override
     public void truncateTable(@Nonnull String tableName) {
         log.info("Truncating a table with name: [{}]", tableName);
         DataUtils.checkTableName(tableName);
-        jdbcTemplate.execute(format(TestDataQueries.TRUNCATE_TABLE, tableName));
+        jdbcTemplate.execute(TestDataQueries.TRUNCATE_TABLE.formatted(tableName));
     }
 
     @Override
@@ -703,11 +698,11 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
         if (occupied == null) {
             log.debug("GET_COLUMN_DISTINCT_VALUES");
             return new ColumnValues(jdbcTemplate.queryForList(
-                    format(TestDataQueries.GET_COLUMN_DISTINCT_VALUES, columnName, tableName), String.class));
+                    TestDataQueries.GET_COLUMN_DISTINCT_VALUES.formatted(columnName, tableName), String.class));
         } else {
             log.debug("GET_COLUMN_DISTINCT_VALUES_BY_OCCUPIED");
             return new ColumnValues(jdbcTemplate.queryForList(
-                    format(TestDataQueries.GET_COLUMN_DISTINCT_VALUES_BY_OCCUPIED,
+                    TestDataQueries.GET_COLUMN_DISTINCT_VALUES_BY_OCCUPIED.formatted(
                             columnName, tableName), String.class, occupied));
         }
     }
@@ -720,21 +715,21 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
         try {
             if (columnType.equals("varchar")) {
                 Integer columnValueSize = jdbcTemplate.queryForObject(
-                        format(TestDataQueries.GET_COLUMN_CHARACTER_LENGTH, columnName, tableName), Integer.class);
+                        TestDataQueries.GET_COLUMN_CHARACTER_LENGTH.formatted(columnName, tableName), Integer.class);
                 if (columnValueSize != null && columnValueSize > 50000) {
                     return 50;
                 }
             }
         } catch (Exception e) {
-            log.debug(format("Error by get character length for column: %s. Message: %s", columnName, e.getMessage()));
+            log.debug("Error by get character length for column: %s. Message: %s".formatted(columnName, e.getMessage()));
         }
         if (occupied == null) {
             log.debug("GET_COLUMN_DISTINCT_VALUES");
             return jdbcTemplate.queryForObject(
-                    format(TestDataQueries.GET_COLUMN_DISTINCT_VALUES_COUNT, columnName, tableName), Integer.class);
+                    TestDataQueries.GET_COLUMN_DISTINCT_VALUES_COUNT.formatted(columnName, tableName), Integer.class);
         } else {
             return jdbcTemplate.queryForObject(
-                    format(TestDataQueries.GET_COLUMN_DISTINCT_VALUES_BY_OCCUPIED_COUNT, columnName, tableName),
+                    TestDataQueries.GET_COLUMN_DISTINCT_VALUES_BY_OCCUPIED_COUNT.formatted(columnName, tableName),
                     Integer.class, occupied);
         }
     }
@@ -823,7 +818,7 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
             if (ALTER_COLUMN_HARD_MODE.equals(alterColumnMode)) {
                 recreateTable(tableName, columns);
             } else {
-                columnsBuff.forEach(columnName -> jdbcTemplate.execute(format(query, tableName, columnName)));
+                columnsBuff.forEach(columnName -> jdbcTemplate.execute(query.formatted(tableName, columnName)));
             }
             log.info("Missing columns successfully added.");
         }
@@ -846,18 +841,18 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             public void doInTransactionWithoutResult(@Nonnull TransactionStatus status) {
                 jdbcTemplate.execute(TestDataQueries.BEGIN_WORK);
-                jdbcTemplate.execute(format(TestDataQueries.LOCK_TABLE, tableName));
+                jdbcTemplate.execute(TestDataQueries.LOCK_TABLE.formatted(tableName));
                 String tmpTableName = tableName + "_";
                 TestDataTableCreator tableCreator = new TestDataTableCreator(tmpTableName);
                 columns.forEach(tableCreator::buildColumn);
                 jdbcTemplate.execute(tableCreator.createTableQuery());
                 String currentColumnNames = String.join("\" , \"", currentColumns);
-                String insertQuery = format(TestDataQueries.INSERT_DATA, tmpTableName, currentColumnNames,
+                String insertQuery = TestDataQueries.INSERT_DATA.formatted(tmpTableName, currentColumnNames,
                         currentColumnNames, tableName);
                 log.debug("Recreating table:[{}], data insert query:[{}]", tableName, insertQuery);
                 jdbcTemplate.execute(insertQuery);
-                jdbcTemplate.execute(format(TestDataQueries.DROP_TABLE, tableName));
-                jdbcTemplate.execute(format(TestDataQueries.RENAME_TABLE, tmpTableName, tableName));
+                jdbcTemplate.execute(TestDataQueries.DROP_TABLE.formatted(tableName));
+                jdbcTemplate.execute(TestDataQueries.RENAME_TABLE.formatted(tmpTableName, tableName));
                 jdbcTemplate.execute(TestDataQueries.COMMIT_WORK);
             }
         });
@@ -899,7 +894,7 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
     public String getFirstRecordFromDataStorageTable(@Nonnull String tableName, @Nonnull String columnName) {
         DataUtils.checkColumnName(columnName);
         DataUtils.checkTableName(tableName);
-        return jdbcTemplate.queryForObject(format(TestDataQueries.GET_FIRST_RECORD_FROM_DATA_STORAGE_TABLE,
+        return jdbcTemplate.queryForObject(TestDataQueries.GET_FIRST_RECORD_FROM_DATA_STORAGE_TABLE.formatted(
                 columnName, tableName), String.class);
     }
 

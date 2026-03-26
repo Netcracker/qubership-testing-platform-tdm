@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,13 +30,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
+import org.qubership.atp.tdm.matchers.JsonMatcher;
 import org.qubership.atp.tdm.model.ColumnType;
 import org.qubership.atp.tdm.model.FilterType;
 import org.qubership.atp.tdm.model.table.column.TestDataTableColumn;
 import org.qubership.atp.tdm.model.table.column.TestDataTableColumnIdentity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.qubership.atp.tdm.matchers.JsonMatcher;
 
 public class TableSerializerTest {
 
@@ -172,6 +172,6 @@ public class TableSerializerTest {
     }
 
     private String readErFromFile(String path) throws IOException {
-        return new String(Files.readAllBytes(Paths.get(path)));
+        return new String(Files.readAllBytes(Path.of(path)));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -23,17 +23,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
+import org.qubership.atp.tdm.model.ColumnType;
+import org.qubership.atp.tdm.model.FilterType;
+import org.qubership.atp.tdm.model.table.column.TestDataTableColumn;
+import org.qubership.atp.tdm.repo.impl.SystemColumns;
 import org.qubership.atp.tdm.utils.TestDataTableConvertor;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import org.qubership.atp.tdm.model.ColumnType;
-import org.qubership.atp.tdm.model.FilterType;
-import org.qubership.atp.tdm.model.table.column.TestDataTableColumn;
-import org.qubership.atp.tdm.repo.impl.SystemColumns;
+import jakarta.annotation.Nonnull;
 
 public class TableSerializer extends JsonSerializer<TestDataTable> {
 
