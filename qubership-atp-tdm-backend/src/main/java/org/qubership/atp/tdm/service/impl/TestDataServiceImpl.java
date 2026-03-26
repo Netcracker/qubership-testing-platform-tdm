@@ -539,7 +539,7 @@ public class TestDataServiceImpl implements TestDataService {
                 if (Objects.nonNull(project)) {
                     Optional<Environment> environment = project.getEnvironments().stream()
                             .filter(env -> env.getSystems().stream().map(AbstractConfiguratorModel::getId)
-                                    .collect(Collectors.toList())
+                                    .toList()
                                     .contains(catalog.getSystemId())).findFirst();
                     environment.ifPresent(rnv -> catalog.setEnvironmentId(rnv.getId()));
                 }

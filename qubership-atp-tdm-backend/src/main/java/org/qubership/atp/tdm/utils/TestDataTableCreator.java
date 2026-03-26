@@ -91,7 +91,7 @@ public class TestDataTableCreator {
 
     public class InsertRowQuery {
 
-        private InsertQuery insertQuery;
+        private final InsertQuery insertQuery;
 
         InsertRowQuery() {
             insertQuery = new InsertQuery(dbTable);

@@ -17,7 +17,6 @@
 package org.qubership.atp.tdm.service.impl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.qubership.atp.tdm.model.TestDataTableCatalog;
 import org.qubership.atp.tdm.model.table.TestDataFlagsTable;
@@ -73,7 +72,7 @@ public class TestDataFlagsServiceImpl implements TestDataFlagsService {
         List<TestDataFlagsTable> flagsTableList = catalogRepository.findAllByProjectIdAndTableTitle(
                 testDataCatalog.getProjectId(),
                 testDataCatalog.getTableTitle()).stream().map(catalog -> new TestDataFlagsTable(catalog.getTableName(),
-                validateUnoccupiedResources)).collect(Collectors.toList());
+                validateUnoccupiedResources)).toList();
         flagsTableList.forEach(testDataFlagsTable -> {
             testDataColumnFlagsRepository.save(testDataFlagsTable);
             log.info("Flag {} has been installed for table: {}",

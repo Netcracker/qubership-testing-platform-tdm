@@ -114,7 +114,7 @@ public class SqlRepositoryImpl implements SqlRepository {
         String dbType = server.getProperty("db_type");
         String dbDriverName = getDbDriverName(dbType);
         try (Connection connection = createConnection(server)) {
-            JdbcTemplate jdbcTemplate = null;
+            JdbcTemplate jdbcTemplate;
             if (server.getProperty("jdbc_url").isEmpty()) {
                 String jdbcUrl = createConnectionString(dbType, server);
                 jdbcTemplate = new JdbcTemplate(createDataSource(dbDriverName, jdbcUrl,

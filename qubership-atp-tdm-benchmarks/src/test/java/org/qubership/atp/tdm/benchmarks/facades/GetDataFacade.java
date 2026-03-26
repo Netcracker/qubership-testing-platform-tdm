@@ -87,18 +87,13 @@ public class GetDataFacade extends GeneralFacade {
     }
 
     public String getTableName(String filterName) {
-        switch (filterName) {
-            case "FilterEquals":
-                return TEST_DATA_TABLE_FILTER_EQUALS;
-            case "FilterContains":
-                return TEST_DATA_TABLE_FILTER_CONTAINS;
-            case "FilterDates":
-                return TEST_DATA_TABLE_FILTER_DATES;
-            case "Pagination":
-                return TEST_DATA_TABLE_PAGINATION;
-            default:
-                return StringUtils.EMPTY;
-        }
+        return switch (filterName) {
+            case "FilterEquals" -> TEST_DATA_TABLE_FILTER_EQUALS;
+            case "FilterContains" -> TEST_DATA_TABLE_FILTER_CONTAINS;
+            case "FilterDates" -> TEST_DATA_TABLE_FILTER_DATES;
+            case "Pagination" -> TEST_DATA_TABLE_PAGINATION;
+            default -> StringUtils.EMPTY;
+        };
     }
 
     private List<String> filterValues() {

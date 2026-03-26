@@ -81,7 +81,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
                 catalog.getSystemId());
         catalogRepository.deleteByTableName("table_name_project");
 
-        Assertions.assertEquals(catalogList.get(0).getTableName(), catalog.getTableName());
+        Assertions.assertEquals(catalogList.getFirst().getTableName(), catalog.getTableName());
     }
 
     @Test
@@ -93,7 +93,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
                 catalog.getSystemId());
         catalogRepository.deleteByTableName("table_name_project_system");
 
-        Assertions.assertEquals(catalogList.get(0).getTableName(), catalog.getTableName());
+        Assertions.assertEquals(catalogList.getFirst().getTableName(), catalog.getTableName());
     }
 
     @Test
@@ -106,7 +106,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         List<TestDataTableCatalog> tablesCatalog = testDataService
                 .getTestDataTablesCatalog(catalog.getProjectId(), notExistSystemId);
         catalogRepository.deleteByTableName(tableName);
-        Assertions.assertEquals(tablesCatalog.size(), 0);
+        Assertions.assertEquals(0, tablesCatalog.size());
     }
 
     @Test
@@ -119,7 +119,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         List<TestDataTableCatalog> tablesCatalog = testDataService
                 .getTestDataTablesCatalog(notExistProjectId, null);
         catalogRepository.deleteByTableName(tableName);
-        Assertions.assertEquals(tablesCatalog.size(), 0);
+        Assertions.assertEquals(0, tablesCatalog.size());
     }
 
     @Test
@@ -153,7 +153,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
 
         deleteTestDataTableIfExists(tableName);
 
-        Assertions.assertEquals("8901260720040140822", actualTable.getData().get(0).get("sim"));
+        Assertions.assertEquals("8901260720040140822", actualTable.getData().getFirst().get("sim"));
     }
 
     @Test
@@ -169,7 +169,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
 
         deleteTestDataTableIfExists(tableName);
 
-        Assertions.assertEquals("8901260720040140973", actualTable.getData().get(0).get("sim"));
+        Assertions.assertEquals("8901260720040140973", actualTable.getData().getFirst().get("sim"));
     }
 
     @Test
@@ -232,7 +232,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
 
         deleteTestDataTableIfExists(tableName);
 
-        Assertions.assertEquals("8901260720040140822", actualTable.getData().get(0).get("sim"));
+        Assertions.assertEquals("8901260720040140822", actualTable.getData().getFirst().get("sim"));
     }
 
     @Test
@@ -249,7 +249,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
 
         deleteTestDataTableIfExists(tableName);
 
-        Assertions.assertEquals("TeSt AutoMatioN 2", actualTable.getData().get(0).get("Assignment"));
+        Assertions.assertEquals("TeSt AutoMatioN 2", actualTable.getData().getFirst().get("Assignment"));
     }
 
 
@@ -280,7 +280,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
                 null, false);
 
         Map<String, Object> expectedRow = expectedTable.getData().get(3);
-        Map<String, Object> actualRow = actualTable.getData().get(0);
+        Map<String, Object> actualRow = actualTable.getData().getFirst();
         for (String key : expectedRow.keySet()) {
             Object expectedValue = expectedRow.get(key);
             Object actualValue = actualRow.get(key);
@@ -291,7 +291,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
     }
 
     @Test
-    public void testDataService_getOccupiedRows_returnOnlyOccupiedRows() {
+    public void testDataService_getOccupiedRows_returnOnlyOccupiedRows() throws Exception {
         String tableName = "tdm_test_get_occupied_rows_test_data_one";
         try {
             createTestDataTable(tableName);
@@ -303,8 +303,6 @@ public class TestDataServiceTest extends AbstractTestDataTest {
             table = testDataService.getTestData(tableName, null, null, new ArrayList<>(), null, true);
             List<UUID> actualRowIds = extractRowIds(table.getData());
             Assertions.assertEquals(actualRowIds, rowIdsToOccupy);
-        } catch (Exception e) {
-            throw e;
         } finally {
             deleteTestDataTableIfExists(tableName);
             catalogRepository.deleteByTableName(tableName);
@@ -332,7 +330,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
     }
 
     @Test
-    public void importExcelTestData_addNewColumnsToTable_newColumnsCreationAndFill() throws IOException {
+    public void importExcelTestData_addNewColumnsToTable_newColumnsCreationAndFill() {
         UUID projectId = UUID.randomUUID();
         String tableTitle = "tdm_test_import_excel_new_columns_test_data";
         try {
@@ -533,7 +531,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         File erFile = getResourcesFile(TABLE_TO_EXCEL_FILE);
         File arFile = testDataService.getTestDataTableAsExcelFile(tableName);
 
-        List<List<String>> erRows = ExcelRowsReader.read(erFile).collect(Collectors.toList());
+        List<List<String>> erRows = ExcelRowsReader.read(erFile).toList();
         List<List<String>> erRowsPerformed = ExcelRowsReader.read(erFile).collect(Collectors.toList());
         List<List<String>> arRows = ExcelRowsReader.read(arFile).collect(Collectors.toList());
         for (int j = 1; j < erRows.size(); ++j) {
@@ -563,7 +561,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
             splitList.add(row.split(","));
         }
         int j = 0;
-        erRowsPerformed.add(erRows.get(0));
+        erRowsPerformed.add(erRows.getFirst());
         for (String element : erRows.subList(1, erRows.size())) {
             String[] splitDemo = element.split(",");
             String[] splitResult = new String[splitDemo.length + 1];
@@ -748,7 +746,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         catalogRepository.deleteByTableName("tdm_test_second_environments_table");
 
         Assertions.assertEquals(expectedEnvsList.getItems().size(), actualEnvsList.getItems().size());
-        Assertions.assertTrue(actualEnvsList.getItems().equals(expectedEnvsList.getItems()));
+        Assertions.assertEquals(actualEnvsList.getItems(), expectedEnvsList.getItems());
     }
 
     @Test
@@ -962,7 +960,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
 
     @Test
     public void testDataService_createTableBySql_updateBySql_returnConnectionException() {
-        when(environmentsService.getConnectionsSystemById(any())).thenReturn(Arrays.asList(dbConnectionErrorCredentials));
+        when(environmentsService.getConnectionsSystemById(any())).thenReturn(List.of(dbConnectionErrorCredentials));
         String tableName = "tdm_test_sql_update_sql_source_table";
         createTestDataTable(tableName);
 
@@ -998,10 +996,10 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         List<TableColumnValues> actualResult = testDataService.getDistinctTablesColumnValues(system2, environmentId,
                 "sim");
 
-        Assertions.assertTrue(expectedColumnsList.containsAll(actualResult.get(0).getValues())
-                && actualResult.get(0).getValues().containsAll(expectedColumnsList));
-        Assertions.assertEquals(tableName.toLowerCase(), actualResult.get(0).getTableName());
-        Assertions.assertEquals(tableTitle, actualResult.get(0).getTableTitle());
+        Assertions.assertTrue(expectedColumnsList.containsAll(actualResult.getFirst().getValues())
+                && actualResult.getFirst().getValues().containsAll(expectedColumnsList));
+        Assertions.assertEquals(tableName.toLowerCase(), actualResult.getFirst().getTableName());
+        Assertions.assertEquals(tableTitle, actualResult.getFirst().getTableTitle());
     }
 
     @Test
@@ -1023,6 +1021,6 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         deleteTestDataTableIfExists("tdm_get_full_link_from_table_cell");
         catalogRepository.deleteByTableName("tdm_get_full_link_from_table_cell");
 
-        Assertions.assertEquals(actualLink, "51");
+        Assertions.assertEquals("51", actualLink);
     }
 }

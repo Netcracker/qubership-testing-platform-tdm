@@ -16,7 +16,6 @@
 
 package org.qubership.atp.tdm.configuration;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -95,8 +94,7 @@ public class QuartzConfig {
      */
     @Bean
     @DependsOnDatabaseInitialization
-    public SchedulerFactoryBean schedulerFactoryBean(DataSource dataSource, JobFactory jobFactory)
-            throws IOException {
+    public SchedulerFactoryBean schedulerFactoryBean(DataSource dataSource, JobFactory jobFactory) {
         SchedulerFactoryBean factory = new SchedulerFactoryBean();
         factory.setDataSource(dataSource);
         factory.setJobFactory(jobFactory);

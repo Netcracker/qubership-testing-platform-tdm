@@ -16,6 +16,7 @@
 
 package org.qubership.atp.tdm.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -442,14 +443,14 @@ public class CleanupServiceImpl implements CleanupService {
 
     @Nonnull
     private TestDataCleaner initCleaner(@Nullable String className)
-            throws IllegalAccessException, InstantiationException {
+            throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         Preconditions.checkArgument(StringUtils.isNotEmpty(className), "Class name is null or empty");
         Class<?> clazz = CLASS_METHOD_WHITE_LIST.get(className);
         if (!TestDataCleaner.class.isAssignableFrom(clazz)) {
             throw new IllegalArgumentException(
                     "Class '" + className + "' doesn't implement TestDataCleaner interface");
         }
-        return (TestDataCleaner) clazz.newInstance();
+        return (TestDataCleaner) clazz.getDeclaredConstructor().newInstance();
     }
 
     /**

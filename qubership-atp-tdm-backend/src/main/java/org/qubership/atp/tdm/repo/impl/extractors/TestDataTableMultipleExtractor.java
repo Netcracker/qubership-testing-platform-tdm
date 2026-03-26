@@ -40,7 +40,7 @@ public class TestDataTableMultipleExtractor implements ResultSetExtractor<TestDa
 
     private final ColumnService columnService;
     private final String tableName;
-    private TestDataType testDataType;
+    private final TestDataType testDataType;
 
     TestDataTableMultipleExtractor(@Nonnull ColumnService columnService, @Nonnull String tableName,
                                    @Nonnull TestDataType testDataType) {

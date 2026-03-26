@@ -70,8 +70,8 @@ public class TestDataQueries {
             AND "OCCUPIED_DATE" <= '%s'::TIMESTAMP WITH TIME ZONE) occupiedToday,\
             (SELECT COUNT(*) as total FROM %s ) total""";
 
-    public static final String GET_TEST_DATA_CONSUMPTION_ITEM = ""
-            + "SELECT date, SUM(count) as count FROM ( "
+    public static final String GET_TEST_DATA_CONSUMPTION_ITEM =
+            "SELECT date, SUM(count) as count FROM ( "
             + "SELECT date, count FROM "
             + "( "
             + "SELECT TO_CHAR(occupied_date, 'YYYY-MM-dd') as date, COUNT(*) as count "
@@ -81,8 +81,8 @@ public class TestDataQueries {
             + ") as statistics "
             + "GROUP BY date ORDER BY date";
 
-    public static final String GET_TEST_DATA_OUTDATED_ITEM = ""
-            + "SELECT date, SUM(created) AS created, SUM(consumed) AS consumed, SUM(outdated) AS outdated "
+    public static final String GET_TEST_DATA_OUTDATED_ITEM =
+            "SELECT date, SUM(created) AS created, SUM(consumed) AS consumed, SUM(outdated) AS outdated "
             + "FROM ((SELECT TO_CHAR(\"CREATED_WHEN\", 'YYYY-MM-dd') AS date, COUNT(*) as created, 0 consumed, 0 "
             + "outdated "
             + "FROM %s WHERE \"SELECTED\" = false AND (\"CREATED_WHEN\" BETWEEN ?::date AND ?::date) "

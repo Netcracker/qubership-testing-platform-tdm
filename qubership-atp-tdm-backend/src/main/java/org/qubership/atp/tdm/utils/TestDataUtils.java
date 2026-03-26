@@ -51,7 +51,7 @@ public class TestDataUtils {
         List<String> columnNames = Arrays.stream(columns).map(c -> {
             c = c.trim();
             return c;
-        }).collect(Collectors.toList());;
+        }).collect(Collectors.toList());
         log.debug("Column names parsed:[{}]", columnNames);
         return columnNames;
     }
@@ -132,9 +132,8 @@ public class TestDataUtils {
      * Returns connection.
      */
     public static Connection getConnection(List<Connection> connections, String type) {
-        Connection connection = connections.stream().filter(sys -> type.equalsIgnoreCase(sys.getName()))
+        return connections.stream().filter(sys -> type.equalsIgnoreCase(sys.getName()))
                 .findFirst()
                 .orElseThrow(() -> new TdmEnvDbConnectionException(type));
-        return connection;
     }
 }

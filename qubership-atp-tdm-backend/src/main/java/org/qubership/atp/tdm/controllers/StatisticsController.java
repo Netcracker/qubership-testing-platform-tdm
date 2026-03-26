@@ -104,7 +104,7 @@ public class StatisticsController /* implements StatisticsControllerApi */ {
                                                                  @RequestParam String dateTo,
                                                                  @RequestParam String expirationDate) {
         return statisticsService.getTestDataConsumptionWhitOutdated(projectId, systemId,
-                LocalDate.parse(dateFrom), LocalDate.parse(dateTo), Integer.valueOf(expirationDate));
+                LocalDate.parse(dateFrom), LocalDate.parse(dateTo), Integer.parseInt(expirationDate));
     }
 
     @Operation(description = "Get test data by created when date.")

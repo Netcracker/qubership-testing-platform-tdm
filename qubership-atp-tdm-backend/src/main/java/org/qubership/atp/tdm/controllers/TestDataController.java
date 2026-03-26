@@ -315,7 +315,7 @@ public class TestDataController /* implements TestDataControllerApi */ {
                 validateUnoccupiedResources, pickUpFullLinkFromTableCell);
     }
 
-    @Operation(description = "Check flag \'is unoccupied validation\'.")
+    @Operation(description = "Check flag 'is unoccupied validation'.")
     @PreAuthorize("@entityAccess.checkAccess("
             + "T(org.qubership.atp.tdm.utils.UsersManagementEntities).TEST_DATA.getName(),"
             + "@catalogRepository.findByTableName(#tableName).getProjectId(), 'READ')")
@@ -338,7 +338,7 @@ public class TestDataController /* implements TestDataControllerApi */ {
     }
 
     /**
-     * Replaces macroses (related to internal TDM table) with real values.
+     * Replaces macros (related to internal TDM table) with real values.
      *
      * @param tableName - table name
      * @param query     - source query

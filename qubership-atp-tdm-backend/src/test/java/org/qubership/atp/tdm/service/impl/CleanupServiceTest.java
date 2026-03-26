@@ -370,7 +370,7 @@ public class CleanupServiceTest extends AbstractTestDataTest {
         TestDataCleanupConfig cleanupConfig = createSqlCleanupConfig(table, false);
         CleanupSettings cleanupSettings = cleanupService.getCleanupSettings(cleanupConfig.getId());
         Assertions.assertEquals(cleanupConfig, cleanupSettings.getTestDataCleanupConfig());
-        Assertions.assertEquals(environmentId, cleanupSettings.getEnvironmentsList().get(0));
+        Assertions.assertEquals(environmentId, cleanupSettings.getEnvironmentsList().getFirst());
         cleanupRepository.deleteAll();
         catalogRepository.deleteByTableName(tableName);
     }
@@ -392,7 +392,7 @@ public class CleanupServiceTest extends AbstractTestDataTest {
         mockEnvironmentService(envsList,systemId1,systemId2);
         List<String> resultTables = cleanupService.getTablesByTableNameAndEnvironmentsListWithSameSystemName(
                 envsList,
-                expectedList.get(0)
+                expectedList.getFirst()
         );
         Collections.sort(resultTables);
         Assertions.assertEquals(expectedList, resultTables);

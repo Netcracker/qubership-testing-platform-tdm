@@ -19,7 +19,6 @@ package org.qubership.atp.tdm.service.impl;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -80,7 +79,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
 
         List<ResponseMessage> responseMessages = atpActionService.refreshTables(lazyProject.getName(),
                 lazyEnvironment.getName(), system.getName(), tableTitle);
-        ResponseMessage actualResponseMessage = responseMessages.get(0);
+        ResponseMessage actualResponseMessage = responseMessages.getFirst();
 
         deleteTestDataTableIfExists(tableName);
         catalogRepository.deleteByTableName(tableName);
@@ -106,7 +105,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
 
         List<ResponseMessage> responseMessages = atpActionService.refreshTables(lazyProject.getName(),
                 lazyEnvironment.getName(), system.getName(), tableTitle);
-        ResponseMessage actualResponseMessage = responseMessages.get(0);
+        ResponseMessage actualResponseMessage = responseMessages.getFirst();
 
         deleteTestDataTableIfExists(tableName);
         catalogRepository.deleteByTableName(tableName);
@@ -412,7 +411,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
     }
 
     @Test
-    public void atpOccupyTestDataFullRow_wrongTable_tableWasNotFoundErrorMessage() throws IOException {
+    public void atpOccupyTestDataFullRow_wrongTable_tableWasNotFoundErrorMessage() {
         String tableTitle = "Wrong Table Title";
         List<ResponseMessage> responseMessages = atpActionService.occupyTestDataFullRow(lazyProject.getName(),
                 lazyEnvironment.getName(), system.getName(), tableTitle, Collections.emptyList());
@@ -1146,7 +1145,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
                     Collections.singletonList(addInfoToRow));
             TestDataTable table = testDataService.getTestData(catalog.getTableName(), null, null,
                     filters, null, false);
-            Assertions.assertEquals("ZLAB04\r\nZLAB109", table.getData().get(0).get("environment"));
+            Assertions.assertEquals("ZLAB04\r\nZLAB109", table.getData().getFirst().get("environment"));
         } else {
             UpdateRowRequest updateRow = (UpdateRowRequest) changeRowRequest;
             responseMessages = atpActionService.updateTestData(lazyProject.getName(),
@@ -1154,7 +1153,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
                     Collections.singletonList(updateRow));
             TestDataTable table = testDataService.getTestData(catalog.getTableName(), null, null,
                     filters, null, false);
-            Assertions.assertEquals("ZLAB109", table.getData().get(0).get("environment"));
+            Assertions.assertEquals("ZLAB109", table.getData().getFirst().get("environment"));
         }
 
         ResponseMessage responseMessage = responseMessages.stream().findFirst().orElse(new ResponseMessage());

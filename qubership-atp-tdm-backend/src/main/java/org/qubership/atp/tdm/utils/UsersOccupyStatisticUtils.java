@@ -88,9 +88,7 @@ public class UsersOccupyStatisticUtils {
                 LocalDate.parse(dateTo));
         StringBuilder stringBuilder = new StringBuilder();
         datesBetween.forEach(
-                date -> {
-                    stringBuilder.append(SUMM_TEMPLATE.formatted(LocalDate.parse(date), date));
-                }
+                date -> stringBuilder.append(SUMM_TEMPLATE.formatted(LocalDate.parse(date), date))
         );
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         return stringBuilder.toString();
@@ -158,11 +156,10 @@ public class UsersOccupyStatisticUtils {
      * @param environmentsService EnvironmentService
      * @return String with one filter
      */
-    public static String chooseFilterType(
-            TestDataTableFilter filter,
-            UUID projectId,
-            EnvironmentsService environmentsService) {
-        String value = filter.getValues().get(0);
+    public static String chooseFilterType(TestDataTableFilter filter,
+                                          UUID projectId,
+                                          EnvironmentsService environmentsService) {
+        String value = filter.getValues().getFirst();
         String field = STATS_PREFIX + filter.getColumn();
         SearchConditionType conditionType = SearchConditionType.find(filter.getSearchCondition());
         switch (UsersOccupyFields.find(filter.getColumn())) {

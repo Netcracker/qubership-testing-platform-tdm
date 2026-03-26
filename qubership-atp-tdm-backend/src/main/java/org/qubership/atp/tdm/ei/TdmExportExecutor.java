@@ -68,7 +68,7 @@ public class TdmExportExecutor implements ExportExecutor {
     private final TestDataColumnFlagsRepository testDataColumnFlagsRepository;
 
     @Override
-    public void exportToFolder(ExportImportData exportData, Path path) throws Exception {
+    public void exportToFolder(ExportImportData exportData, Path path) {
         Set<String> exportScopeAtpTdmTables = exportData.getExportScope().getEntities()
                 .getOrDefault(ServiceScopeEntities.ENTITY_ATP_TDM_TABLES.getValue(), new HashSet<>());
         if (CollectionUtils.isNotEmpty(exportScopeAtpTdmTables)) {

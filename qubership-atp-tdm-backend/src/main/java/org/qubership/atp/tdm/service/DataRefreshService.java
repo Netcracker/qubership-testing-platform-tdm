@@ -37,7 +37,7 @@ public interface DataRefreshService {
     RefreshResults runRefresh(@Nonnull String tableName,
                               boolean saveOccupiedData) throws Exception;
 
-    List<RefreshResults> runRefresh(@Nonnull String tableName, @Nonnull Integer queryTimeout, @Nonnull boolean allEnv,
+    List<RefreshResults> runRefresh(@Nonnull String tableName, @Nonnull Integer queryTimeout, boolean allEnv,
                                     boolean saveOccupiedData) throws Exception;
 
     String getNextScheduledRun(String cronExpression) throws ParseException;

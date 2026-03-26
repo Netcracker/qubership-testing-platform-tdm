@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.common.lock.LockManager;
@@ -208,8 +207,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
                             } else {
                                 columnsExists = false;
                                 log.warn("Occupation test data to return several rows. Response column with name: [{}] "
-                                                + "was not found.",
-                                        responseColumnName);
+                                                + "was not found.", responseColumnName);
                                 responseMessages.add(new ResponseMessage(ResponseType.ERROR,
                                         "Column with name \"%s\" was not found!".formatted(responseColumnName)));
                             }
@@ -319,7 +317,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
                 }
                 List<UUID> rowIds = testDataTable.stream()
                         .map(row -> UUID.fromString(String.valueOf(row.get("ROW_ID"))))
-                        .collect(Collectors.toList());
+                        .toList();
                 allRowIds.addAll(rowIds);
 
                 offset += UPDATE_TEST_DATA_LIMIT;
@@ -591,7 +589,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
         TestDataCleanupConfig cleanupConfigId = cleanupConfigRepository.findById(tableCatalog.getCleanupConfigId())
                         .orElseThrow(() ->
                                 new TdmSearchCleanupConfigException(tableCatalog.getCleanupConfigId().toString()));
-        CleanupResults cleanupResults = null;
+        CleanupResults cleanupResults;
         try {
             cleanupResults = cleanupService.runCleanup(tableCatalog.getTableName(), cleanupConfigId);
             testDataTableRepository.updateLastUsage(tableCatalog.getTableName());

@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController()
 public class EnvironmentsController /* implements EnvironmentsControllerApi */ {
 
-    private EnvironmentsService service;
+    private final EnvironmentsService service;
 
     public EnvironmentsController(EnvironmentsService service) {
         this.service = service;

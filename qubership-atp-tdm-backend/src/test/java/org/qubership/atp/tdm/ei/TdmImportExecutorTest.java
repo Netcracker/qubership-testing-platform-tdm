@@ -91,7 +91,7 @@ public class TdmImportExecutorTest extends AbstractExportImportTest {
     }
 
     @Test
-    public void importData_importFile_importedSuccessfully() throws Exception {
+    public void importData_importFile_importedSuccessfully() {
         importExecutor.validateData(new ExportImportData(exportImportProjectId, new ExportScope(), ExportFormat.ATP),
                 Path.of(validImportFile));
         importExecutor.importData(new ExportImportData(exportImportProjectId, new ExportScope(), ExportFormat.ATP),
@@ -101,7 +101,7 @@ public class TdmImportExecutorTest extends AbstractExportImportTest {
     }
 
     @Test
-    public void validateData_validateImportingFile_fileIsValid() throws Exception {
+    public void validateData_validateImportingFile_fileIsValid() {
         ValidationResult validationResult = importExecutor.validateData(new ExportImportData(exportImportProjectId,
                         new ExportScope(),
                         ExportFormat.ATP),
@@ -110,7 +110,7 @@ public class TdmImportExecutorTest extends AbstractExportImportTest {
     }
 
     @Test
-    public void validateData_validateImportingFile_thereAreNoMessagesInValidationResult() throws Exception {
+    public void validateData_validateImportingFile_thereAreNoMessagesInValidationResult() {
         ValidationResult validationResult = importExecutor.validateData(new ExportImportData(exportImportProjectId,
                         new ExportScope(),
                         ExportFormat.ATP),
@@ -119,17 +119,17 @@ public class TdmImportExecutorTest extends AbstractExportImportTest {
     }
 
     @Test
-    public void validateData_validateImportingFile_thereIsNoProjectInEnvsService() throws Exception {
+    public void validateData_validateImportingFile_thereIsNoProjectInEnvsService() {
         ValidationResult validationResult = importExecutor.validateData(new ExportImportData(exportImportProjectId,
                         new ExportScope(),
                         ExportFormat.ATP),
                 Path.of(thereIsNoProjectInEnvServiceImportFile));
         Assertions.assertEquals("Project with id:[13fec4c4-9c27-42e2-a4b3-250415525603] wasn't found in env service.",
-                validationResult.getMessages().get(0));
+                validationResult.getMessages().getFirst());
     }
 
     @Test
-    public void validateData_validateImportingFile_thereIsNoProjectInEnvsServiceFileIsIncorrect() throws Exception {
+    public void validateData_validateImportingFile_thereIsNoProjectInEnvsServiceFileIsIncorrect() {
         ValidationResult validationResult = importExecutor.validateData(new ExportImportData(exportImportProjectId,
                         new ExportScope(),
                         ExportFormat.ATP),
@@ -138,17 +138,17 @@ public class TdmImportExecutorTest extends AbstractExportImportTest {
     }
 
     @Test
-    public void validateData_validateImportingFile_thereIsNoEnvironmentInEnvsService() throws Exception {
+    public void validateData_validateImportingFile_thereIsNoEnvironmentInEnvsService() {
         ValidationResult validationResult = importExecutor.validateData(new ExportImportData(exportImportProjectId,
                         new ExportScope(),
                         ExportFormat.ATP),
                 Path.of(thereIsNoEnvironmentInEnvServiceImportFile));
         Assertions.assertEquals("Environment with id:[da027247-bb3b-41cf-a8e8-247a368065e1] wasn't found in env service.",
-                validationResult.getMessages().get(0));
+                validationResult.getMessages().getFirst());
     }
 
     @Test
-    public void validateData_validateImportingFile_thereIsNoEnvironmentInEnvsServiceFileIsIncorrect() throws Exception {
+    public void validateData_validateImportingFile_thereIsNoEnvironmentInEnvsServiceFileIsIncorrect() {
         ValidationResult validationResult = importExecutor.validateData(new ExportImportData(exportImportProjectId,
                         new ExportScope(),
                         ExportFormat.ATP),
@@ -157,17 +157,17 @@ public class TdmImportExecutorTest extends AbstractExportImportTest {
     }
 
     @Test
-    public void validateData_validateImportingFile_thereIsNoSystemInEnvsService() throws Exception {
+    public void validateData_validateImportingFile_thereIsNoSystemInEnvsService() {
         ValidationResult validationResult = importExecutor.validateData(new ExportImportData(exportImportProjectId,
                         new ExportScope(),
                         ExportFormat.ATP),
                 Path.of(thereIsNoSystemInEnvServiceImportFile));
         Assertions.assertEquals("System with id:[dc42601e-54c5-4511-bd5b-bc588b343051] wasn't found in env service.",
-                validationResult.getMessages().get(0));
+                validationResult.getMessages().getFirst());
     }
 
     @Test
-    public void validateData_validateImportingFile_thereIsNoSystemInEnvsServiceFileIsIncorrect() throws Exception {
+    public void validateData_validateImportingFile_thereIsNoSystemInEnvsServiceFileIsIncorrect() {
         ValidationResult validationResult = importExecutor.validateData(new ExportImportData(exportImportProjectId,
                         new ExportScope(),
                         ExportFormat.ATP),

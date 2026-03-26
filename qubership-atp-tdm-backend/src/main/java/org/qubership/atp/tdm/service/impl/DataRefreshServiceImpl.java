@@ -173,7 +173,7 @@ public class DataRefreshServiceImpl implements DataRefreshService {
                 .stream()
                 .filter(importInfo -> importInfo.getTableQuery().equals(tableQuery))
                 .map(TestDataTableImportInfo::getTableName)
-                .collect(Collectors.toList());
+                .toList();
 
         return catalogList.stream().filter(c -> importInfoList.contains(c.getTableName())).collect(Collectors.toList());
     }

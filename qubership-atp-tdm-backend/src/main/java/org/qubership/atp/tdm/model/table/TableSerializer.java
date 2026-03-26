@@ -203,7 +203,7 @@ public class TableSerializer extends JsonSerializer<TestDataTable> {
         jsonGenerator.writeFieldName("links");
         jsonGenerator.writeStartArray();
         for (String value : cellValue.split(LINK_DELIMITER)) {
-            String finalLink = "";
+            String finalLink;
             if (columnLink.contains("${")) {
                 finalLink = TestDataTableConvertor.replaceParams(columns, columnLink);
                 jsonGenerator.writeStartObject();

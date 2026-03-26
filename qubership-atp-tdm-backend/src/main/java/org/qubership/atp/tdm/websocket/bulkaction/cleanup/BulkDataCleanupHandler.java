@@ -84,7 +84,7 @@ public class BulkDataCleanupHandler extends BulkActionsHandler {
                 .filter(c -> cleanupConfigRepository.findById(c.getCleanupConfigId())
                         .orElseThrow(() ->
                                 new TdmSearchCleanupConfigException(c.getCleanupConfigId().toString()))
-                        .isEnabled()).collect(Collectors.toList());
+                        .isEnabled()).toList();
         Map<UUID, Optional<TestDataCleanupConfig>> testDataCleanUpConfigs = catalogList.stream()
                 .collect(Collectors.toMap(TestDataTableCatalog::getCleanupConfigId,
                 c -> cleanupConfigRepository.findById(c.getCleanupConfigId()), (a, b) -> b));
@@ -102,7 +102,7 @@ public class BulkDataCleanupHandler extends BulkActionsHandler {
                             CleanupResults cleanupResults = cleanupService
                                     .runCleanup(tableCatalog.getTableName(),
                                             testDataCleanUpConfigs.get(tableCatalog.getCleanupConfigId())
-                                                    .orElseThrow(() -> new TdmSearchCleanupConfigException()));
+                                                    .orElseThrow(TdmSearchCleanupConfigException::new));
                             return new BulkActionResult(tableCatalog.getTableTitle(), tableCatalog.getTableName(),
                                     envName, cleanupResults);
                         } catch (Exception e) {

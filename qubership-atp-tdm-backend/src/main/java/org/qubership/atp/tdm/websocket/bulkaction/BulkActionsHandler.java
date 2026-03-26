@@ -155,7 +155,6 @@ public abstract class BulkActionsHandler extends TextWebSocketHandler {
         });
     }
 
-
     private ExecutorService createExecutorService(boolean isExecuteInParallel) {
         if (isExecuteInParallel) {
             return Executors.newFixedThreadPool(NUMBER_OF_THREADS);

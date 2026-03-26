@@ -75,7 +75,7 @@ public class TdmImportExecutor implements ImportExecutor {
     private List<ExportImportObject> exportImportObjectList;
 
     @Override
-    public void importData(ExportImportData importData, Path path) throws Exception {
+    public void importData(ExportImportData importData, Path path) {
         log.info("start importData(importData: {}, workDir: {})", importData, path);
         exportImportObjectList.forEach(this::importData);
         exportImportObjectList.clear();
@@ -211,7 +211,7 @@ public class TdmImportExecutor implements ImportExecutor {
         List<ExportTable> tables = exportImportObject.getTables();
         List<UUID> lazyEnvironments =
                 environmentsService.getLazyEnvironmentsShort(projectId)
-                        .stream().map(LazyEnvironment::getId).collect(Collectors.toList());
+                        .stream().map(LazyEnvironment::getId).toList();
         tables.forEach(table -> {
             UUID envId = table.getEnvironmentId();
             UUID sysId = table.getSystemId();

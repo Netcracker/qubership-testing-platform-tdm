@@ -74,7 +74,7 @@ public class QueryEvaluator {
                 throw new TdmEvaluateQueryException(query);
             } else {
                 result = StringUtils.join(table.getData().stream()
-                        .map(data -> data.get(table.getColumns().get(0).getIdentity().getColumnName()))
+                        .map(data -> data.get(table.getColumns().getFirst().getIdentity().getColumnName()))
                         .collect(Collectors.toList()), ", ");
             }
             log.debug("Query result: {}", result);

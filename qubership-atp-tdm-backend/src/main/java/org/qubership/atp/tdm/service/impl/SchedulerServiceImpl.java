@@ -119,8 +119,9 @@ public class SchedulerServiceImpl implements SchedulerService {
     }
 
     /**
-     * delete job.
-     * @param jobKey
+     * Delete job.
+     *
+     * @param jobKey JobKey object to delete.
      * */
     @Transactional
     @Override

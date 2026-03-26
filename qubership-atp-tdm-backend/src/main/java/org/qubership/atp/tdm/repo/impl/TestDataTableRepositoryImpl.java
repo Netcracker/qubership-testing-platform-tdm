@@ -543,7 +543,7 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
             log.error(TdmCreateTestDataTableException.DEFAULT_MESSAGE);
             throw new TdmCreateTestDataTableException();
         } else {
-            return rows.get(0).containsKey(SystemColumns.ROW_ID.getName());
+            return rows.getFirst().containsKey(SystemColumns.ROW_ID.getName());
         }
     }
 
@@ -584,7 +584,7 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
         DataUtils.checkTableName(tableName);
         List<String> columns = new ArrayList<>(rows.stream()
                 .findFirst()
-                .orElseThrow(() -> new TdmInsertDataException()).keySet());
+                .orElseThrow(TdmInsertDataException::new).keySet());
         saveTestData(tableName, exists, columns, rows, skipSchemaUpdate);
     }
 
@@ -794,7 +794,7 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
             if (filter.getValues().isEmpty()) {
                 throw new IllegalIdentifierException("There is no values in filter: " + filter);
             } else {
-                String filterValue = filter.getValues().get(0); //It's not good, need to do refactor here
+                String filterValue = filter.getValues().getFirst(); //It's not good, need to do refactor here
                 BinaryCondition binaryCondition = searchCondition.create(column, filterValue);
                 query.addCondition(binaryCondition);
             }
