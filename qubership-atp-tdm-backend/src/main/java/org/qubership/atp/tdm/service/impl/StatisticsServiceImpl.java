@@ -24,7 +24,6 @@ import static org.qubership.atp.tdm.utils.TestDataQueries.GET_COUNT_OF_ROWS;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.nio.file.Files;
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -773,7 +772,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 queryResult,
                 LocalDate.parse(request.getDateFrom()));
         fillEnvironmentsAndSystems(tableValues,tables);
-        int countOfRows = ((BigInteger) entityManager
+        int countOfRows = ((Long) entityManager
                 .createNativeQuery(GET_COUNT_OF_ROWS.formatted(generatedQuery)).getResultList().getFirst()).intValue();
         return new UsersOccupyStatisticResponse(tableValues, countOfRows);
     }
@@ -969,7 +968,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             result.forEach(resultRow -> {
                 String key = String.valueOf(resultRow[0]);
                 if (columnValues.getValues().contains(key)) {
-                    tableStats.getOptions().put(key, ((BigInteger)resultRow[1]).intValue());
+                    tableStats.getOptions().put(key, ((Long)resultRow[1]).intValue());
                 }
             });
             columnValues.getValues().stream().forEach(value -> tableStats.getOptions().putIfAbsent(value,0));

@@ -264,9 +264,14 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         try {
             testDataService.getTestData(tableName, null, null, filters, null, false);
         } catch (InvalidDataAccessApiUsageException e) {
-            String message = "Unknown search condition type: end_with;" +
-                    " nested exception is java.lang.IllegalArgumentException: Unknown search condition type: end_with";
-            Assertions.assertEquals(message, e.getMessage());
+            String coreMessage = "Unknown search condition type: end_with";
+            String expectedMessage1 = coreMessage + "; nested exception is java.lang.IllegalArgumentException: "
+                    + coreMessage;
+            String actualMessage = e.getMessage();
+            Assertions.assertTrue(
+                    expectedMessage1.equals(actualMessage) || coreMessage.equals(actualMessage),
+                    "Expected message to be either '" + expectedMessage1 + "' or '" + coreMessage
+                            + "' but was: " + actualMessage);
         } finally {
             deleteTestDataTableIfExists(tableName);
         }
@@ -291,7 +296,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
     }
 
     @Test
-    public void testDataService_getOccupiedRows_returnOnlyOccupiedRows() throws Exception {
+    public void testDataService_getOccupiedRows_returnOnlyOccupiedRows() {
         String tableName = "tdm_test_get_occupied_rows_test_data_one";
         try {
             createTestDataTable(tableName);
