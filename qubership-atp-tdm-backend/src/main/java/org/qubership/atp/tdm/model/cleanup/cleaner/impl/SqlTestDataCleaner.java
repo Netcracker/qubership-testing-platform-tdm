@@ -43,12 +43,12 @@ import org.slf4j.MDC;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
-import liquibase.repackaged.net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import liquibase.repackaged.net.sf.jsqlparser.statement.Statement;
-import liquibase.repackaged.net.sf.jsqlparser.statement.select.Select;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.select.Select;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -170,16 +170,33 @@ public class SqlTestDataCleaner implements TestDataCleaner {
     }
 
     public boolean parseQuery() {
-        Statement statement = CCJSqlParserUtil.parse(query.trim().toUpperCase(Locale.ROOT));
+        // First, check for dangerous patterns
+        String normalizedQuery = query.trim().toUpperCase(Locale.ROOT);
+
+        // Basic SQL injection pattern check
+        if (normalizedQuery.contains(";") ||
+                normalizedQuery.contains("--") ||
+                normalizedQuery.contains("/*") ||
+                normalizedQuery.contains("EXEC") ||
+                normalizedQuery.contains("EXECUTE")) {
+            throw new SecurityException("Potentially dangerous SQL syntax");
+        }
+
+        // Parse the query (JSqlParser will catch syntax errors)
+        Statement statement;
+        try {
+            statement = CCJSqlParserUtil.parse(normalizedQuery);
+        } catch (Exception e) {
+            throw new SecurityException("Invalid SQL syntax", e);
+        }
+
+        // Verify it's a SELECT statement
         if (statement instanceof Select) {
             log.debug("This is a SELECT query.");
+            return true;
         } else {
             throw new SecurityException("Only SELECT statements are allowed!");
         }
-        if (query.contains(";") || query.contains("--") || query.contains("/*")) {
-            throw new SecurityException("Potentially dangerous SQL syntax");
-        }
-        return true;
     }
 
     private void validateIdentifier(String input) {
