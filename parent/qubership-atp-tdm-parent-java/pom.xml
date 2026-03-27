@@ -32,6 +32,7 @@
         <httpcore5.version>5.3.4</httpcore5.version>
         <undertow.version>2.3.21.Final</undertow.version>
         <kotlin.version>1.9.25</kotlin.version>
+        <mchange-commons-java.version>0.4.0</mchange-commons-java.version>
 
         <atp.auth.version>2.0.2-SNAPSHOT</atp.auth.version>
         <atp-export-import-lib.version>1.0.0-SNAPSHOT</atp-export-import-lib.version>
@@ -475,6 +476,22 @@
                 <groupId>com.github.jsqlparser</groupId>
                 <artifactId>jsqlparser</artifactId>
                 <version>4.9</version>
+            </dependency>
+            <dependency>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <version>2.3.2</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.mchange</groupId>
+                        <artifactId>mchange-commons-java</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>mchange-commons-java</artifactId>
+                <version>${mchange-commons-java.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
