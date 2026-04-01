@@ -124,7 +124,7 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
     private static final Pattern INDEX_COLUMN_PATTERN = Pattern.compile("\\$\\{'([^']+)'}");
     private static final Integer UPDATE_TEST_DATA_LIMIT = 100;
     private static final String EXCEL_IMPORT_FILE_MASK = "ExcelForImport_%s.xlsx";
-    private static final Integer COLUMN_SIZE_LIMIT_FOR_LIST_TYPE = 44;
+    private static final Integer COLUMN_SIZE_LIMIT_FOR_LIST_TYPE = 100;
 
     private final JdbcTemplate jdbcTemplate;
     private final PlatformTransactionManager transactionManager;
