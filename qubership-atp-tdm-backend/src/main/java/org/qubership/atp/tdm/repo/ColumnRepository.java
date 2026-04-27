@@ -22,7 +22,7 @@ import org.qubership.atp.tdm.model.table.column.TestDataTableColumn;
 import org.qubership.atp.tdm.model.table.column.TestDataTableColumnIdentity;
 import org.qubership.atp.tdm.utils.TestDataQueries;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.stereotype.Repository;
 
 import jakarta.annotation.Nonnull;
@@ -35,7 +35,7 @@ public interface ColumnRepository extends JpaRepository<TestDataTableColumn, Tes
 
     List<TestDataTableColumn> findAllByIdentityTableName(@Nonnull String tableName);
 
-    @Query(value = TestDataQueries.DISTINCT_COLUMN_BY_TABLE_NAME, nativeQuery = true)
+    @NativeQuery(TestDataQueries.DISTINCT_COLUMN_BY_TABLE_NAME)
     List<TestDataTableColumn> findDistinctByIdentityTableName();
 
     void deleteByIdentity_TableName(@Nonnull String tableName);

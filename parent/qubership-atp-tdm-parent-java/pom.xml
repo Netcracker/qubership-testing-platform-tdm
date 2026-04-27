@@ -13,8 +13,8 @@
     <packaging>pom</packaging>
 
     <properties>
-        <spring.boot.version>3.3.13</spring.boot.version>
-        <spring.cloud.version>2023.0.6</spring.cloud.version>
+        <spring.boot.version>3.5.14</spring.boot.version>
+        <spring.cloud.version>2025.0.2</spring.cloud.version>
         <slf4j.version>2.0.17</slf4j.version>
         <logback.version>1.5.18</logback.version>
         <logstash.gelf.version>1.14.1</logstash.gelf.version>
@@ -171,7 +171,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-web</artifactId>
-                <version>6.3.10</version>
+                <version>6.5.10</version>
             </dependency>
             <dependency>
                 <groupId>org.owasp.esapi</groupId>

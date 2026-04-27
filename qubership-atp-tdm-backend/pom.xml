@@ -1034,7 +1034,7 @@
                     <plugin>
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-maven-plugin</artifactId>
-                        <version>3.3.13</version>
+                        <version>3.5.14</version>
                         <executions>
                             <execution>
                                 <goals>
