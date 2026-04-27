@@ -35,11 +35,11 @@
         <mchange-commons-java.version>0.4.0</mchange-commons-java.version>
         <c3p0.version>0.12.0</c3p0.version>
 
-        <atp.auth.version>2.0.2-SNAPSHOT</atp.auth.version>
-        <atp-export-import-lib.version>1.0.0-SNAPSHOT</atp-export-import-lib.version>
-        <atp.crypt.version>1.0.0-SNAPSHOT</atp.crypt.version>
-        <atp.integration.version>1.0.0-SNAPSHOT</atp.integration.version>
-        <atp.common.version>1.0.0-SNAPSHOT</atp.common.version>
+        <atp.auth.version>2.0.3-SNAPSHOT</atp.auth.version>
+        <atp-export-import-lib.version>1.0.1-SNAPSHOT</atp-export-import-lib.version>
+        <atp.crypt.version>1.0.1-SNAPSHOT</atp.crypt.version>
+        <atp.integration.version>1.0.1-SNAPSHOT</atp.integration.version>
+        <atp.common.version>1.0.1-SNAPSHOT</atp.common.version>
     </properties>
 
     <dependencyManagement>
