@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.modelmapper.ModelMapper;
 import org.qubership.atp.tdm.env.configurator.EnvironmentHelper;
+import org.qubership.atp.tdm.env.configurator.configuration.ModelMapperConfig;
 import org.qubership.atp.tdm.env.configurator.model.Connection;
 import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
 import org.qubership.atp.tdm.env.configurator.model.LazyProject;
@@ -40,27 +41,40 @@ import org.qubership.atp.tdm.env.configurator.service.EnvironmentsService;
 import org.qubership.atp.tdm.env.configurator.service.client.EnvironmentFeignClient;
 import org.qubership.atp.tdm.env.configurator.service.client.ProjectEnvironmentFeignClient;
 import org.qubership.atp.tdm.env.configurator.service.client.SystemEnvironmentFeignClient;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {ModelMapperConfig.class, EnvironmentsServiceTest.TestConfig.class})
 public class EnvironmentsServiceTest {
 
-    private EnvironmentsService environmentsService;
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public DtoConvertService dtoConvertService(ModelMapper modelMapper) {
+            return new DtoConvertService(modelMapper);
+        }
+    }
 
-    @MockBean
+    @MockitoBean
     protected EnvironmentFeignClient environmentFeignClient;
-    @MockBean
+    @MockitoBean
     protected ProjectEnvironmentFeignClient projectEnvFeignClient;
-    @MockBean
+    @MockitoBean
     protected SystemEnvironmentFeignClient systemEnvironmentFeignClient;
-    @SpyBean
+    @Autowired
     protected ModelMapper modelMapper;
-    @SpyBean
+    @MockitoSpyBean
     protected DtoConvertService dtoConvertService;
+
+    private EnvironmentsService environmentsService;
 
     @BeforeEach
     public void setUp() {

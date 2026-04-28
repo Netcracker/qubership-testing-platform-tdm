@@ -40,11 +40,11 @@ import org.qubership.atp.tdm.model.table.column.TestDataTableColumn;
 import org.qubership.atp.tdm.model.table.column.TestDataTableColumnIdentity;
 import org.qubership.atp.tdm.repo.CleanupConfigRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 public class CleanupServiceTest extends AbstractTestDataTest {
 
-    @MockBean
+    @MockitoBean
     private MetricService metricServiceMock;
 
     @Autowired

@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,26 +16,6 @@
 
 package org.qubership.atp.tdm.service.notification.environments;
 
-import com.fasterxml.jackson.databind.ser.std.StringSerializer;
-import org.qubership.atp.tdm.AbstractTestDataTest;
-import org.qubership.atp.tdm.model.TestDataTableCatalog;
-import org.apache.kafka.clients.producer.ProducerConfig;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.jdbc.BadSqlGrammarException;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,13 +23,32 @@ import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.qubership.atp.tdm.AbstractTestDataTest;
+import org.qubership.atp.tdm.model.TestDataTableCatalog;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.BadSqlGrammarException;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
+
+import com.fasterxml.jackson.databind.ser.std.StringSerializer;
+
 @Disabled // only with local kafka
 public class EnvironmentEventKafkaListenerTest extends AbstractTestDataTest {
 
     private final CountDownLatch latch = new CountDownLatch(1);
     private final int delayForReceiveNotification = 5;
 
-    @SpyBean
+    @MockitoSpyBean
     EnvironmentsEventKafkaListener kafkaListener;
 
     @Value("${kafka.environments.topic}")
@@ -122,11 +121,7 @@ public class EnvironmentEventKafkaListenerTest extends AbstractTestDataTest {
     }
 
     private String createMessageToDeleteTable( EnvironmentEventType eventType) {
-        UUID entityId;
-        entityId = environmentId;
-
-        String data = "{\"id\": \"" + entityId + "\",\"eventType\": \"" + eventType + "\"}";
-        return data;
+        return "{\"id\": \"" + environmentId + "\",\"eventType\": \"" + eventType + "\"}";
     }
 
     @TestConfiguration
