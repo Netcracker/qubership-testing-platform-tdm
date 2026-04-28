@@ -22,7 +22,7 @@
         <mockito.all.version>5.23.0</mockito.all.version>
         <swagger.version>1.5.3</swagger.version>
         <hikariCP.version>4.0.3</hikariCP.version>
-        <postgresql.version>42.7.5</postgresql.version>
+        <postgresql.version>42.7.7</postgresql.version>
         <liquibase.version>4.23.2</liquibase.version>
         <svn.revision>local_build</svn.revision>
         <model.mapper.version>3.2.0</model.mapper.version>
@@ -34,6 +34,9 @@
         <kotlin.version>1.9.25</kotlin.version>
         <mchange-commons-java.version>0.4.0</mchange-commons-java.version>
         <c3p0.version>0.12.0</c3p0.version>
+
+        <reactor-bom.version>2024.0.17</reactor-bom.version>
+        <netty.version>4.1.132.Final</netty.version>
 
         <atp.auth.version>2.0.3-SNAPSHOT</atp.auth.version>
         <atp-export-import-lib.version>1.0.1-SNAPSHOT</atp-export-import-lib.version>
@@ -138,26 +141,44 @@
                 <artifactId>undertow-servlet</artifactId>
                 <version>${undertow.version}</version>
             </dependency>
+
+            <!-- Reactor BOM -->
             <dependency>
-                <groupId>io.projectreactor.netty</groupId>
-                <artifactId>reactor-netty-core</artifactId>
-                <version>1.0.39</version>
+                <groupId>io.projectreactor</groupId>
+                <artifactId>reactor-bom</artifactId>
+                <version>${reactor-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
+            <!-- Netty BOM (above Reactor) -->
             <dependency>
-                <groupId>io.projectreactor.netty</groupId>
-                <artifactId>reactor-netty-http</artifactId>
-                <version>1.0.39</version>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-handler</artifactId>
-                <version>4.1.125.Final</version>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http</artifactId>
+                <version>${netty.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-http2</artifactId>
-                <version>4.1.125.Final</version>
+                <version>${netty.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
@@ -393,16 +414,6 @@
                 <groupId>commons-fileupload</groupId>
                 <artifactId>commons-fileupload</artifactId>
                 <version>1.6.0</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-codec</artifactId>
-                <version>4.1.132.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-codec-http</artifactId>
-                <version>4.1.132.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.lz4</groupId>
