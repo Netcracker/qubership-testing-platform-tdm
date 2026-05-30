@@ -91,7 +91,6 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -218,30 +217,27 @@ public class TestDataTableRepositoryImpl implements TestDataTableRepository {
         List<Map<String, Object>> rowsBuf = new ArrayList<>();
         AtomicReference<Integer> refRows = new AtomicReference<>(0);
         try {
-            jdbcTemplate.query(query, new RowCallbackHandler() {
-                @Override
-                public void processRow(ResultSet resSet) throws SQLException {
-                    if (col.isEmpty()) {
-                        ResultSetMetaData metData = resSet.getMetaData();
-                        int columnCount = metData.getColumnCount();
-                        for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
-                            col.add(metData.getColumnName(columnIndex));
-                        }
+            jdbcTemplate.query(query, resultSet -> {
+                if (col.isEmpty()) {
+                    ResultSetMetaData metaData = resultSet.getMetaData();
+                    int columnCount = metaData.getColumnCount();
+                    for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+                        col.add(metaData.getColumnName(columnIndex));
                     }
-                    Map<String, Object> row = new HashMap<>();
-                    for (String column : col) {
-                        row.put(column, resSet.getObject(column));
+                }
+                Map<String, Object> row = new HashMap<>();
+                for (String column : col) {
+                    row.put(column, resultSet.getObject(column));
+                }
+                rowsBuf.add(row);
+                if (rowsBuf.size() == batchSize) {
+                    if (refRows.get() > 0) {
+                        saveTestData(tableName, true, col, rowsBuf, false);
+                    } else {
+                        saveTestData(tableName, exists, col, rowsBuf, true);
                     }
-                    rowsBuf.add(row);
-                    if (rowsBuf.size() == batchSize) {
-                        if (refRows.get() > 0) {
-                            saveTestData(tableName, true, col, rowsBuf, false);
-                        } else {
-                            saveTestData(tableName, exists, col, rowsBuf, true);
-                        }
-                        refRows.updateAndGet(v -> v + batchSize);
-                        rowsBuf.clear();
-                    }
+                    refRows.updateAndGet(v -> v + batchSize);
+                    rowsBuf.clear();
                 }
             });
         } catch (Exception e) {
