@@ -29,7 +29,7 @@
         <console.encoding>UTF-8</console.encoding>
         <scm.revision>${project.scm}</scm.revision>
         <tool.config.keys.prefix>${project.name}</tool.config.keys.prefix>
-        <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
     </properties>
 
     <name>org.qubership.atp.tdm:qubership-atp-tdm</name>
@@ -176,7 +176,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.5.5</version>
                     <configuration>
                         <argLine>-javaagent:${settings.localRepository}/org/mockito/mockito-core/5.23.0/mockito-core-5.23.0.jar -XX:+EnableDynamicAgentLoading</argLine>
                     </configuration>
