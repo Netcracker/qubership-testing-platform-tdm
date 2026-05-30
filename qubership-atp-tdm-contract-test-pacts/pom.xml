@@ -132,10 +132,6 @@
                     <artifactId>ktor-server-core</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.json</groupId>
-                    <artifactId>json</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>io.netty</groupId>
                     <artifactId>netty-codec</artifactId>
                 </exclusion>
