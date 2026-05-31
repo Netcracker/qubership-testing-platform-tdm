@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ package org.qubership.atp.tdm.repo.impl.extractors;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.annotation.Nonnull;
-
 import org.qubership.atp.tdm.model.statistics.GeneralStatisticsItem;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
+
+import jakarta.annotation.Nonnull;
 
 public class GeneralStatisticsExtractor implements ResultSetExtractor<GeneralStatisticsItem> {
 

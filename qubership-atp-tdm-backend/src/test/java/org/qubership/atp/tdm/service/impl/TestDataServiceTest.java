@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,19 +16,33 @@
 
 package org.qubership.atp.tdm.service.impl;
 
-import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.qubership.atp.tdm.AbstractTestDataTest;
 import org.qubership.atp.tdm.ExcelRowsReader;
 import org.qubership.atp.tdm.env.configurator.exceptions.internal.TdmEnvDbConnectionException;
 import org.qubership.atp.tdm.exceptions.db.TdmDbJdbsTemplateException;
+import org.qubership.atp.tdm.exceptions.db.TdmDbRowNotFoundException;
 import org.qubership.atp.tdm.exceptions.internal.TdmEnvironmentSystemException;
 import org.qubership.atp.tdm.model.DropResults;
-import org.qubership.atp.tdm.exceptions.db.TdmDbRowNotFoundException;
 import org.qubership.atp.tdm.model.EnvsList;
 import org.qubership.atp.tdm.model.ImportTestDataStatistic;
 import org.qubership.atp.tdm.model.ProjectInformation;
@@ -36,18 +50,7 @@ import org.qubership.atp.tdm.model.TestDataTableCatalog;
 import org.qubership.atp.tdm.model.table.TableColumnValues;
 import org.qubership.atp.tdm.model.table.TestDataTable;
 import org.qubership.atp.tdm.model.table.TestDataTableFilter;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class TestDataServiceTest extends AbstractTestDataTest {
 
@@ -78,7 +81,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
                 catalog.getSystemId());
         catalogRepository.deleteByTableName("table_name_project");
 
-        Assertions.assertEquals(catalogList.get(0).getTableName(), catalog.getTableName());
+        Assertions.assertEquals(catalogList.getFirst().getTableName(), catalog.getTableName());
     }
 
     @Test
@@ -90,7 +93,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
                 catalog.getSystemId());
         catalogRepository.deleteByTableName("table_name_project_system");
 
-        Assertions.assertEquals(catalogList.get(0).getTableName(), catalog.getTableName());
+        Assertions.assertEquals(catalogList.getFirst().getTableName(), catalog.getTableName());
     }
 
     @Test
@@ -103,7 +106,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         List<TestDataTableCatalog> tablesCatalog = testDataService
                 .getTestDataTablesCatalog(catalog.getProjectId(), notExistSystemId);
         catalogRepository.deleteByTableName(tableName);
-        Assertions.assertEquals(tablesCatalog.size(), 0);
+        Assertions.assertEquals(0, tablesCatalog.size());
     }
 
     @Test
@@ -116,7 +119,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         List<TestDataTableCatalog> tablesCatalog = testDataService
                 .getTestDataTablesCatalog(notExistProjectId, null);
         catalogRepository.deleteByTableName(tableName);
-        Assertions.assertEquals(tablesCatalog.size(), 0);
+        Assertions.assertEquals(0, tablesCatalog.size());
     }
 
     @Test
@@ -150,7 +153,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
 
         deleteTestDataTableIfExists(tableName);
 
-        Assertions.assertEquals("8901260720040140822", actualTable.getData().get(0).get("sim"));
+        Assertions.assertEquals("8901260720040140822", actualTable.getData().getFirst().get("sim"));
     }
 
     @Test
@@ -166,7 +169,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
 
         deleteTestDataTableIfExists(tableName);
 
-        Assertions.assertEquals("8901260720040140973", actualTable.getData().get(0).get("sim"));
+        Assertions.assertEquals("8901260720040140973", actualTable.getData().getFirst().get("sim"));
     }
 
     @Test
@@ -229,7 +232,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
 
         deleteTestDataTableIfExists(tableName);
 
-        Assertions.assertEquals("8901260720040140822", actualTable.getData().get(0).get("sim"));
+        Assertions.assertEquals("8901260720040140822", actualTable.getData().getFirst().get("sim"));
     }
 
     @Test
@@ -246,7 +249,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
 
         deleteTestDataTableIfExists(tableName);
 
-        Assertions.assertEquals("TeSt AutoMatioN 2", actualTable.getData().get(0).get("Assignment"));
+        Assertions.assertEquals("TeSt AutoMatioN 2", actualTable.getData().getFirst().get("Assignment"));
     }
 
 
@@ -261,9 +264,14 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         try {
             testDataService.getTestData(tableName, null, null, filters, null, false);
         } catch (InvalidDataAccessApiUsageException e) {
-            String message = "Unknown search condition type: end_with;" +
-                    " nested exception is java.lang.IllegalArgumentException: Unknown search condition type: end_with";
-            Assertions.assertEquals(message, e.getMessage());
+            String coreMessage = "Unknown search condition type: end_with";
+            String expectedMessage1 = coreMessage + "; nested exception is java.lang.IllegalArgumentException: "
+                    + coreMessage;
+            String actualMessage = e.getMessage();
+            Assertions.assertTrue(
+                    expectedMessage1.equals(actualMessage) || coreMessage.equals(actualMessage),
+                    "Expected message to be either '" + expectedMessage1 + "' or '" + coreMessage
+                            + "' but was: " + actualMessage);
         } finally {
             deleteTestDataTableIfExists(tableName);
         }
@@ -277,7 +285,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
                 null, false);
 
         Map<String, Object> expectedRow = expectedTable.getData().get(3);
-        Map<String, Object> actualRow = actualTable.getData().get(0);
+        Map<String, Object> actualRow = actualTable.getData().getFirst();
         for (String key : expectedRow.keySet()) {
             Object expectedValue = expectedRow.get(key);
             Object actualValue = actualRow.get(key);
@@ -300,8 +308,6 @@ public class TestDataServiceTest extends AbstractTestDataTest {
             table = testDataService.getTestData(tableName, null, null, new ArrayList<>(), null, true);
             List<UUID> actualRowIds = extractRowIds(table.getData());
             Assertions.assertEquals(actualRowIds, rowIdsToOccupy);
-        } catch (Exception e) {
-            throw e;
         } finally {
             deleteTestDataTableIfExists(tableName);
             catalogRepository.deleteByTableName(tableName);
@@ -329,7 +335,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
     }
 
     @Test
-    public void importExcelTestData_addNewColumnsToTable_newColumnsCreationAndFill() throws IOException {
+    public void importExcelTestData_addNewColumnsToTable_newColumnsCreationAndFill() {
         UUID projectId = UUID.randomUUID();
         String tableTitle = "tdm_test_import_excel_new_columns_test_data";
         try {
@@ -363,8 +369,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         TestDataTableCatalog result = tableCatalogs.stream()
                 .filter(t -> tableTitle.equals(t.getTableTitle()))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException(String.format("Table with title [%s] was not found.",
-                        tableTitle)));
+                .orElseThrow(() -> new RuntimeException("Table with title [%s] was not found.".formatted(tableTitle)));
 
         Assertions.assertNotNull(result);
         TestDataTable testDataTable = testDataService.getTestData(result.getTableName());
@@ -531,7 +536,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         File erFile = getResourcesFile(TABLE_TO_EXCEL_FILE);
         File arFile = testDataService.getTestDataTableAsExcelFile(tableName);
 
-        List<List<String>> erRows = ExcelRowsReader.read(erFile).collect(Collectors.toList());
+        List<List<String>> erRows = ExcelRowsReader.read(erFile).toList();
         List<List<String>> erRowsPerformed = ExcelRowsReader.read(erFile).collect(Collectors.toList());
         List<List<String>> arRows = ExcelRowsReader.read(arFile).collect(Collectors.toList());
         for (int j = 1; j < erRows.size(); ++j) {
@@ -561,7 +566,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
             splitList.add(row.split(","));
         }
         int j = 0;
-        erRowsPerformed.add(erRows.get(0));
+        erRowsPerformed.add(erRows.getFirst());
         for (String element : erRows.subList(1, erRows.size())) {
             String[] splitDemo = element.split(",");
             String[] splitResult = new String[splitDemo.length + 1];
@@ -659,7 +664,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
     public void testDataService_importSqlTestDataWrongEnvironment_returnErrorMessage() {
         when(environmentsService.getEnvNameById(any())).thenThrow(new RuntimeException());
         List<ImportTestDataStatistic> expectedStatistic = new ArrayList<>();
-        String error = String.format("Environment: [%s] was not found.", environmentId);
+        String error = "Environment: [%s] was not found.".formatted(environmentId);
         ImportTestDataStatistic statistic = new ImportTestDataStatistic(environmentId.toString(),
                 error, 0);
         expectedStatistic.add(statistic);
@@ -676,7 +681,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         String systemName = "Wrong Test System";
         when(environmentsService.getFullSystemByName(any(), any(), any())).thenThrow(new RuntimeException());
         List<ImportTestDataStatistic> expectedStatistic = new ArrayList<>();
-        String error = String.format("System with name[%s] for environment[%s] was not found.", systemName,
+        String error = "System with name[%s] for environment[%s] was not found.".formatted(systemName,
                 environmentId);
         ImportTestDataStatistic statistic = new ImportTestDataStatistic(environmentName,
                 error, 0);
@@ -694,7 +699,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         when(environmentsService.getFullSystemByName(any(), any(), any())).thenReturn(systemErrorConnectionName);
 
         List<ImportTestDataStatistic> expectedStatistic = new ArrayList<>();
-        String error = format(TdmEnvDbConnectionException.DEFAULT_MESSAGE, "DB");
+        String error = TdmEnvDbConnectionException.DEFAULT_MESSAGE.formatted("DB");
         ImportTestDataStatistic statistic = new ImportTestDataStatistic(environmentName,
                 error, 0);
         expectedStatistic.add(statistic);
@@ -746,7 +751,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         catalogRepository.deleteByTableName("tdm_test_second_environments_table");
 
         Assertions.assertEquals(expectedEnvsList.getItems().size(), actualEnvsList.getItems().size());
-        Assertions.assertTrue(actualEnvsList.getItems().equals(expectedEnvsList.getItems()));
+        Assertions.assertEquals(actualEnvsList.getItems(), expectedEnvsList.getItems());
     }
 
     @Test
@@ -830,7 +835,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         testDataService.getTableRow(projectId, systemId, wrongTableTitle, "sim",
                 "8901260720040140811", false);
         } catch (RuntimeException re) {
-            String message = String.format("Table [%s] under project [%s] and system [%s] wasn't found.",
+            String message = "Table [%s] under project [%s] and system [%s] wasn't found.".formatted(
                     wrongTableTitle, projectId, systemId);
             Assertions.assertEquals(message, re.getMessage());
         } finally {
@@ -960,7 +965,7 @@ public class TestDataServiceTest extends AbstractTestDataTest {
 
     @Test
     public void testDataService_createTableBySql_updateBySql_returnConnectionException() {
-        when(environmentsService.getConnectionsSystemById(any())).thenReturn(Arrays.asList(dbConnectionErrorCredentials));
+        when(environmentsService.getConnectionsSystemById(any())).thenReturn(List.of(dbConnectionErrorCredentials));
         String tableName = "tdm_test_sql_update_sql_source_table";
         createTestDataTable(tableName);
 
@@ -996,10 +1001,10 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         List<TableColumnValues> actualResult = testDataService.getDistinctTablesColumnValues(system2, environmentId,
                 "sim");
 
-        Assertions.assertTrue(expectedColumnsList.containsAll(actualResult.get(0).getValues())
-                && actualResult.get(0).getValues().containsAll(expectedColumnsList));
-        Assertions.assertEquals(tableName.toLowerCase(), actualResult.get(0).getTableName());
-        Assertions.assertEquals(tableTitle, actualResult.get(0).getTableTitle());
+        Assertions.assertTrue(expectedColumnsList.containsAll(actualResult.getFirst().getValues())
+                && actualResult.getFirst().getValues().containsAll(expectedColumnsList));
+        Assertions.assertEquals(tableName.toLowerCase(), actualResult.getFirst().getTableName());
+        Assertions.assertEquals(tableTitle, actualResult.getFirst().getTableTitle());
     }
 
     @Test
@@ -1021,6 +1026,6 @@ public class TestDataServiceTest extends AbstractTestDataTest {
         deleteTestDataTableIfExists("tdm_get_full_link_from_table_cell");
         catalogRepository.deleteByTableName("tdm_get_full_link_from_table_cell");
 
-        Assertions.assertEquals(actualLink, "51");
+        Assertions.assertEquals("51", actualLink);
     }
 }

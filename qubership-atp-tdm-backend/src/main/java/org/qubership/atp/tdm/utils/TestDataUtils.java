@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.qubership.atp.tdm.utils;
 
 import static org.qubership.atp.tdm.model.DateFormatter.DB_DATE_FORMATTER;
-import static java.lang.String.format;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
@@ -25,17 +24,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Iterables;
 import org.qubership.atp.tdm.env.configurator.exceptions.internal.TdmEnvDbConnectionException;
 import org.qubership.atp.tdm.env.configurator.model.Connection;
 import org.qubership.atp.tdm.env.configurator.model.Server;
 import org.qubership.atp.tdm.exceptions.internal.TdmJsonParsingException;
 import org.qubership.atp.tdm.model.table.TestDataTable;
 import org.qubership.atp.tdm.repo.impl.SystemColumns;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Iterables;
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -52,7 +51,7 @@ public class TestDataUtils {
         List<String> columnNames = Arrays.stream(columns).map(c -> {
             c = c.trim();
             return c;
-        }).collect(Collectors.toList());;
+        }).collect(Collectors.toList());
         log.debug("Column names parsed:[{}]", columnNames);
         return columnNames;
     }
@@ -104,7 +103,7 @@ public class TestDataUtils {
         try {
             return new ObjectMapper().writeValueAsString(rowContent);
         } catch (JsonProcessingException e) {
-            log.error(format(TdmJsonParsingException.DEFAULT_MESSAGE, rowContent), e);
+            log.error(TdmJsonParsingException.DEFAULT_MESSAGE.formatted(rowContent), e);
             throw new TdmJsonParsingException(rowContent);
         }
     }
@@ -133,9 +132,8 @@ public class TestDataUtils {
      * Returns connection.
      */
     public static Connection getConnection(List<Connection> connections, String type) {
-        Connection connection = connections.stream().filter(sys -> type.equalsIgnoreCase(sys.getName()))
+        return connections.stream().filter(sys -> type.equalsIgnoreCase(sys.getName()))
                 .findFirst()
                 .orElseThrow(() -> new TdmEnvDbConnectionException(type));
-        return connection;
     }
 }

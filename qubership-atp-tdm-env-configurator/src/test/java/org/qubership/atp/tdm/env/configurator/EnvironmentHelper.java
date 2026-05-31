@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -23,6 +23,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.qubership.atp.tdm.env.configurator.api.dto.environments.EnvironmentDto;
+import org.qubership.atp.tdm.env.configurator.api.dto.environments.EnvironmentFullVer1ViewDto;
+import org.qubership.atp.tdm.env.configurator.api.dto.environments.SystemFullVer1ViewDto;
+import org.qubership.atp.tdm.env.configurator.api.dto.environments.SystemNameViewDto;
+import org.qubership.atp.tdm.env.configurator.api.dto.project.EnvironmentResDto;
+import org.qubership.atp.tdm.env.configurator.api.dto.project.ProjectFullVer1ViewDto;
+import org.qubership.atp.tdm.env.configurator.api.dto.project.ProjectFullVer2ViewDto;
+import org.qubership.atp.tdm.env.configurator.api.dto.project.ProjectNameViewDto;
+import org.qubership.atp.tdm.env.configurator.api.dto.project.SystemEnvironmentsViewDto;
 import org.qubership.atp.tdm.env.configurator.model.Connection;
 import org.qubership.atp.tdm.env.configurator.model.Environment;
 import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
@@ -30,13 +39,6 @@ import org.qubership.atp.tdm.env.configurator.model.LazyProject;
 import org.qubership.atp.tdm.env.configurator.model.LazySystem;
 import org.qubership.atp.tdm.env.configurator.model.Project;
 import org.qubership.atp.tdm.env.configurator.model.System;
-
-import org.qubership.atp.tdm.env.configurator.api.dto.environments.EnvironmentDto;
-import org.qubership.atp.tdm.env.configurator.api.dto.environments.EnvironmentFullVer1ViewDto;
-import org.qubership.atp.tdm.env.configurator.api.dto.environments.SystemFullVer1ViewDto;
-import org.qubership.atp.tdm.env.configurator.api.dto.environments.SystemFullVer2ViewDto;
-import org.qubership.atp.tdm.env.configurator.api.dto.environments.SystemNameViewDto;
-import org.qubership.atp.tdm.env.configurator.api.dto.project.*;
 
 public class EnvironmentHelper {
 
@@ -57,16 +59,19 @@ public class EnvironmentHelper {
     public static final LazySystem lazySystem = new LazySystem() {{
         setName("System Name");
         setId(systemId);
+        //setEnvironmentIds(new ArrayList<>());
     }};
 
     private static final LazySystem lazySystemToms = new LazySystem() {{
         setName("Default");
         setId(tomsSystemId);
+        //setEnvironmentIds(new ArrayList<>());
     }};
 
     private static final LazySystem lazySystemRbm = new LazySystem() {{
         setName("SystemName");
         setId(rbmSystemId);
+        //setEnvironmentIds(new ArrayList<>());
     }};
 
     public static final LazyEnvironment lazyEnvironment = new LazyEnvironment() {{
@@ -112,14 +117,13 @@ public class EnvironmentHelper {
             }};
 
     public static final List<org.qubership.atp.tdm.env.configurator.api.dto.project.SystemFullVer2ViewDto>
-            systemsFullVer2ViewDtoP =
-            new ArrayList<org.qubership.atp.tdm.env.configurator.api.dto.project.SystemFullVer2ViewDto>() {{
-        add(systemFullVer2ViewDtoTOMS);
-        add(systemFullVer2ViewDtoRBM);
-    }};
+            systemsFullVer2ViewDtoP = new ArrayList<>() {{
+                add(systemFullVer2ViewDtoTOMS);
+                add(systemFullVer2ViewDtoRBM);
+            }};
 
     public static final List<SystemEnvironmentsViewDto> systemEnvironmentsViewDto
-            = new ArrayList<SystemEnvironmentsViewDto>(){{
+            = new ArrayList<>() {{
         add(systemEnvironmentsViewDtoTOMS);
         add(systemEnvironmentsViewDtoRBM);
     }};
@@ -127,6 +131,7 @@ public class EnvironmentHelper {
     public static final System system = new System() {{
         setName("System Name");
         setId(systemId);
+        //setConnections(new ArrayList<>());
     }};
 
     public static final Environment environment = new Environment() {{

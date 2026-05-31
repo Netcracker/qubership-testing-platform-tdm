@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -19,9 +19,6 @@ package org.qubership.atp.tdm.benchmarks.facades;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.qubership.atp.tdm.model.rest.ResponseMessage;
 import org.qubership.atp.tdm.model.rest.requests.AddInfoToRowRequest;
 import org.qubership.atp.tdm.model.rest.requests.GetRowRequest;
@@ -30,6 +27,9 @@ import org.qubership.atp.tdm.model.rest.requests.UpdateRowRequest;
 import org.qubership.atp.tdm.repo.TestDataTableRepository;
 import org.qubership.atp.tdm.service.AtpActionService;
 import org.qubership.atp.tdm.service.TestDataService;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public class AtpActionsFacade extends GeneralFacade {
 

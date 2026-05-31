@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -30,15 +30,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
+import org.qubership.atp.integration.configuration.mdc.MdcUtils;
 import org.qubership.atp.tdm.model.table.TestDataTable;
 import org.qubership.atp.tdm.model.table.column.TestDataTableColumn;
 import org.qubership.atp.tdm.model.table.column.TestDataTableColumnIdentity;
 import org.slf4j.MDC;
 import org.springframework.dao.DataAccessException;
 
-import org.qubership.atp.integration.configuration.mdc.MdcUtils;
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

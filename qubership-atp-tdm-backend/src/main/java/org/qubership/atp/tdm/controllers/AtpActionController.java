@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -18,19 +18,17 @@ package org.qubership.atp.tdm.controllers;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
+import org.qubership.atp.integration.configuration.configuration.AuditAction;
 import org.qubership.atp.tdm.model.rest.ResponseMessage;
 import org.qubership.atp.tdm.model.rest.requests.RestApiRequest;
 import org.qubership.atp.tdm.service.AtpActionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.qubership.atp.integration.configuration.configuration.AuditAction;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.annotation.Nonnull;
 
 @RequestMapping("/api/tdm/rest")
 @RestController()
@@ -38,7 +36,6 @@ public class AtpActionController /* implements AtpActionControllerApi */ {
 
     private final AtpActionService service;
 
-    @Autowired
     public AtpActionController(@Nonnull AtpActionService service) {
         this.service = service;
     }
@@ -53,7 +50,7 @@ public class AtpActionController /* implements AtpActionControllerApi */ {
     }
 
     /**
-     * Allow occupy records under ATP_USER.
+     * Allow to occupy records under ATP_USER.
      *
      * @param request - RestApiRequest
      * @return List of ResponseMessages

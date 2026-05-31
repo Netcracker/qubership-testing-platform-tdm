@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -40,11 +40,11 @@ import org.qubership.atp.tdm.model.table.column.TestDataTableColumn;
 import org.qubership.atp.tdm.model.table.column.TestDataTableColumnIdentity;
 import org.qubership.atp.tdm.repo.CleanupConfigRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 public class CleanupServiceTest extends AbstractTestDataTest {
 
-    @MockBean
+    @MockitoBean
     private MetricService metricServiceMock;
 
     @Autowired
@@ -177,7 +177,7 @@ public class CleanupServiceTest extends AbstractTestDataTest {
         try {
             cleanupService.saveCleanupConfig(cleanupSettings);
         } catch (Exception e) {
-            String errorMessage = String.format(TdmValidateCronException.DEFAULT_MESSAGE, incorrectCronExpression);
+            String errorMessage = TdmValidateCronException.DEFAULT_MESSAGE.formatted(incorrectCronExpression);
             Assertions.assertEquals(errorMessage, e.getMessage());
         } finally {
             cleanupRepository.deleteAll();
@@ -199,7 +199,7 @@ public class CleanupServiceTest extends AbstractTestDataTest {
         try {
             cleanupService.saveCleanupConfig(cleanupSettings);
         } catch (Exception e) {
-            String errorMessage = String.format(TdmValidateCronException.DEFAULT_MESSAGE, null);
+            String errorMessage = TdmValidateCronException.DEFAULT_MESSAGE.formatted(null);
             Assertions.assertEquals(errorMessage, e.getMessage());
         } finally {
             cleanupRepository.deleteAll();
@@ -370,7 +370,7 @@ public class CleanupServiceTest extends AbstractTestDataTest {
         TestDataCleanupConfig cleanupConfig = createSqlCleanupConfig(table, false);
         CleanupSettings cleanupSettings = cleanupService.getCleanupSettings(cleanupConfig.getId());
         Assertions.assertEquals(cleanupConfig, cleanupSettings.getTestDataCleanupConfig());
-        Assertions.assertEquals(environmentId, cleanupSettings.getEnvironmentsList().get(0));
+        Assertions.assertEquals(environmentId, cleanupSettings.getEnvironmentsList().getFirst());
         cleanupRepository.deleteAll();
         catalogRepository.deleteByTableName(tableName);
     }
@@ -392,7 +392,7 @@ public class CleanupServiceTest extends AbstractTestDataTest {
         mockEnvironmentService(envsList,systemId1,systemId2);
         List<String> resultTables = cleanupService.getTablesByTableNameAndEnvironmentsListWithSameSystemName(
                 envsList,
-                expectedList.get(0)
+                expectedList.getFirst()
         );
         Collections.sort(resultTables);
         Assertions.assertEquals(expectedList, resultTables);

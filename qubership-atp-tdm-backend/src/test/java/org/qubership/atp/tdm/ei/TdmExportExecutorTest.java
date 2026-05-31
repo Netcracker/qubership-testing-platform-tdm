@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package org.qubership.atp.tdm.ei;
 
-import org.qubership.atp.ei.node.dto.ExportScope;
+import java.util.UUID;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.qubership.atp.ei.node.dto.ExportScope;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.UUID;
 
 public class TdmExportExecutorTest extends AbstractExportImportTest {
 
@@ -54,35 +54,41 @@ public class TdmExportExecutorTest extends AbstractExportImportTest {
 
     @Test
     public void exportToFolder_exportProjectToSpecifiedFolder_dataExportedSuccessfullySystemIdIsValid() {
-        Assertions.assertEquals(systemId,
-                exportImportObject.getTables().stream().findFirst().get().getSystemId());
+        Assertions.assertEquals(systemId, exportImportObject.getTables().stream().findFirst()
+                .orElseThrow(() -> new IllegalStateException("No tables found")).getSystemId());
     }
 
     @Test
     public void exportToFolder_exportProjectToSpecifiedFolder_dataExportedSuccessfullyEnvironmentIdIsValid() {
         Assertions.assertEquals(environmentId,
-                exportImportObject.getTables().stream().findFirst().get().getEnvironmentId());
+                exportImportObject.getTables().stream().findFirst()
+                        .orElseThrow(() -> new IllegalStateException("No tables found")).getEnvironmentId());
     }
 
     @Test
     public void exportToFolder_exportProjectToSpecifiedFolder_dataExportedSuccessfullyTableNameIsValid() {
         Assertions.assertEquals(tableNamePositiveCase,
-                exportImportObject.getTables().stream().findFirst().get().getTableName());
+                exportImportObject.getTables().stream().findFirst()
+                        .orElseThrow(() -> new IllegalStateException("No tables found")).getTableName());
     }
 
     @Test
     public void exportToFolder_exportProjectToSpecifiedFolder_dataExportedSuccessfullyTableTitleIsValid() {
         Assertions.assertEquals(tableTitle,
-                exportImportObject.getTables().stream().findFirst().get().getTableTitle());
+                exportImportObject.getTables().stream().findFirst()
+                        .orElseThrow(() -> new IllegalStateException("No tables found")).getTableTitle());
     }
 
     @Test
     public void exportToFolder_exportProjectToSpecifiedFolder_dataExportedSuccessfullyDataExists() {
-        Assertions.assertFalse(exportImportObject.getTables().stream().findFirst().get().getData().isEmpty());
+        Assertions.assertFalse(exportImportObject.getTables().stream().findFirst()
+                .orElseThrow(() -> new IllegalStateException("No tables found")).getData().isEmpty());
     }
 
     @Test
     public void exportToFolder_exportProjectToSpecifiedFolder_dataExportedAndFlagsSetCorrectly() {
-        Assertions.assertFalse(exportImportObject.getTables().stream().findFirst().get().getFlagsTable().isUnoccupiedValidation());
+        Assertions.assertFalse(exportImportObject.getTables().stream().findFirst()
+                .orElseThrow(() -> new IllegalStateException("No tables found")).getFlagsTable()
+                .isUnoccupiedValidation());
     }
 }

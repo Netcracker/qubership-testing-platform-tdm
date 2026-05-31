@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -19,12 +19,17 @@ package org.qubership.atp.tdm.env.configurator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.qubership.atp.auth.springbootstarter.config.FeignConfiguration;
+import org.qubership.atp.tdm.env.configurator.api.dto.environments.EnvironmentFullVer1ViewDto;
+import org.qubership.atp.tdm.env.configurator.api.dto.environments.SystemFullVer1ViewDto;
+import org.qubership.atp.tdm.env.configurator.api.dto.environments.SystemFullVer2ViewDto;
+import org.qubership.atp.tdm.env.configurator.service.client.EnvironmentFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
@@ -33,32 +38,30 @@ import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import au.com.dius.pact.consumer.dsl.DslPart;
 import au.com.dius.pact.consumer.dsl.PactDslJsonArray;
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslResponse;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
-import au.com.dius.pact.consumer.junit.PactProviderRule;
-import au.com.dius.pact.consumer.junit.PactVerification;
+import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
+import au.com.dius.pact.consumer.junit5.PactTestFor;
+import au.com.dius.pact.core.model.PactSpecVersion;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
-import org.qubership.atp.auth.springbootstarter.config.FeignConfiguration;
-import org.qubership.atp.tdm.env.configurator.api.dto.environments.EnvironmentFullVer1ViewDto;
-import org.qubership.atp.tdm.env.configurator.api.dto.environments.SystemFullVer1ViewDto;
-import org.qubership.atp.tdm.env.configurator.api.dto.environments.SystemFullVer2ViewDto;
-import org.qubership.atp.tdm.env.configurator.service.client.EnvironmentFeignClient;
 
-@RunWith(SpringRunner.class)
 @EnableFeignClients(clients = {EnvironmentFeignClient.class})
-@ContextConfiguration(classes = {EnvironmentFeignClientPactUnitTest.TestApp.class})
+@ExtendWith(PactConsumerTestExt.class)
+@SpringJUnitConfig(classes = {EnvironmentFeignClientPactUnitTest.TestApp.class})
 @Import({JacksonAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class, FeignConfiguration.class,
         FeignAutoConfiguration.class})
 @TestPropertySource(
-        properties = {"feign.atp.environments.name=atp-environments", "feign.atp.environments.route=", "feign.atp.environments.url=http://localhost:8888"})
+        properties = {"feign.atp.environments.name=atp-environments",
+                "feign.atp.environments.route=",
+                "feign.atp.environments.url=http://localhost:8888"})
+@PactTestFor(providerName = "atp-environments", port = "8888", pactVersion = PactSpecVersion.V3)
 public class EnvironmentFeignClientPactUnitTest {
 
     @Configuration
@@ -68,21 +71,20 @@ public class EnvironmentFeignClientPactUnitTest {
     @Autowired
     EnvironmentFeignClient environmentFeignClient;
 
-    @Rule
-    public PactProviderRule mockProvider = new PactProviderRule("atp-environments", "localhost", 8888, this);
-
     @Test
-    @PactVerification()
+    @PactTestFor(pactMethod = "createPact")
     public void allPass() {
         UUID envId = UUID.fromString("7c9dafe9-2cd1-4ffc-ae54-45867f2b9701");
 
         ResponseEntity<EnvironmentFullVer1ViewDto> result1 = environmentFeignClient.getEnvironment(envId, true);
-        Assert.assertEquals(result1.getStatusCode().value(), 200);
-        Assert.assertTrue(result1.getHeaders().get("Content-Type").contains("application/json"));
+        Assertions.assertEquals(200, result1.getStatusCode().value());
+        Assertions.assertTrue(Objects.requireNonNull(result1.getHeaders().get("Content-Type"))
+                .contains("application/json"));
 
         ResponseEntity<List<SystemFullVer2ViewDto>> result2 = environmentFeignClient.getSystemV2(envId, "system_type", false);
-        Assert.assertEquals(result2.getStatusCode().value(), 200);
-        Assert.assertTrue(result2.getHeaders().get("Content-Type").contains("application/json"));
+        Assertions.assertEquals(200, result2.getStatusCode().value());
+        Assertions.assertTrue(Objects.requireNonNull(result2.getHeaders().get("Content-Type"))
+                .contains("application/json"));
 
     }
 
@@ -125,8 +127,10 @@ public class EnvironmentFeignClientPactUnitTest {
                 .array("environments").object().closeArray()
                 .array("connections").object().closeArray();
 
+        Assertions.assertNotNull(object1);
         DslPart systemFullVer2ViewRes = new PactDslJsonArray().template(object1);
 
+        Assertions.assertNotNull(environmentFullVer1ViewRes);
         PactDslResponse response = builder
                 .given("all ok")
                 .uponReceiving("GET /api/environments/{environmentId} OK")

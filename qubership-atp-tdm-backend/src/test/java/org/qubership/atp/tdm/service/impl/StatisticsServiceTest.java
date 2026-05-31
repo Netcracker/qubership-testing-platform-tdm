@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,28 +16,40 @@
 
 package org.qubership.atp.tdm.service.impl;
 
-import org.qubership.atp.tdm.AbstractTestDataTest;
-import org.qubership.atp.tdm.env.configurator.model.System;
-import org.qubership.atp.tdm.env.configurator.model.*;
-import org.qubership.atp.tdm.model.ProjectInformation;
-import org.qubership.atp.tdm.model.mail.charts.ChartSeries;
-import org.qubership.atp.tdm.model.statistics.*;
-import org.qubership.atp.tdm.model.statistics.available.AvailableDataByColumnStats;
-import org.qubership.atp.tdm.model.statistics.report.StatisticsReportElement;
-import org.qubership.atp.tdm.model.statistics.report.StatisticsReportEnvironment;
-import org.qubership.atp.tdm.model.statistics.report.StatisticsReportObject;
-import org.qubership.atp.tdm.model.statistics.report.UsersStatisticsReportElement;
-import org.qubership.atp.tdm.model.statistics.report.UsersStatisticsReportObject;
-import org.qubership.atp.tdm.model.table.TableColumnValues;
-import org.qubership.atp.tdm.model.table.TestDataTable;
-import org.qubership.atp.tdm.repo.TestAvailableDataMonitoringRepository;
-import org.qubership.atp.tdm.repo.TestDataUsersMonitoringRepository;
-import org.qubership.atp.tdm.utils.DataUtils;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.apache.commons.lang3.StringUtils;
-
+import org.qubership.atp.tdm.AbstractTestDataTest;
+import org.qubership.atp.tdm.env.configurator.model.Connection;
+import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
+import org.qubership.atp.tdm.env.configurator.model.LazyProject;
+import org.qubership.atp.tdm.env.configurator.model.LazySystem;
+import org.qubership.atp.tdm.env.configurator.model.Project;
+import org.qubership.atp.tdm.env.configurator.model.System;
+import org.qubership.atp.tdm.model.ProjectInformation;
+import org.qubership.atp.tdm.model.mail.charts.ChartSeries;
 import org.qubership.atp.tdm.model.statistics.AvailableDataStatisticsConfig;
 import org.qubership.atp.tdm.model.statistics.ConsumedStatistics;
 import org.qubership.atp.tdm.model.statistics.ConsumedStatisticsItem;
@@ -52,25 +64,21 @@ import org.qubership.atp.tdm.model.statistics.TestDataTableUsersMonitoring;
 import org.qubership.atp.tdm.model.statistics.UserGeneralStatisticsItem;
 import org.qubership.atp.tdm.model.statistics.UsersOccupyStatisticRequest;
 import org.qubership.atp.tdm.model.statistics.UsersOccupyStatisticResponse;
+import org.qubership.atp.tdm.model.statistics.available.AvailableDataByColumnStats;
+import org.qubership.atp.tdm.model.statistics.report.StatisticsReportElement;
+import org.qubership.atp.tdm.model.statistics.report.StatisticsReportEnvironment;
+import org.qubership.atp.tdm.model.statistics.report.StatisticsReportObject;
+import org.qubership.atp.tdm.model.statistics.report.UsersStatisticsReportElement;
+import org.qubership.atp.tdm.model.statistics.report.UsersStatisticsReportObject;
+import org.qubership.atp.tdm.model.table.TableColumnValues;
+import org.qubership.atp.tdm.model.table.TestDataTable;
+import org.qubership.atp.tdm.repo.TestAvailableDataMonitoringRepository;
+import org.qubership.atp.tdm.repo.TestDataUsersMonitoringRepository;
 import org.qubership.atp.tdm.utils.AvailableStatisticUtils;
+import org.qubership.atp.tdm.utils.DataUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.jdbc.Sql;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 
 @Sql({"/scripts.sql"})
@@ -83,7 +91,7 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
     private static final String DEFAULT_ASSIGNMENT = "across all";
     private static final String TABLE_NAME_FIRST = "test_table_statistic_availability_first";
     private static final String TABLE_NAME_SECOND = "test_table_statistic_availability_second";
-    private String cron = "0 0 9 ? * *";
+    private final String cron = "0 0 9 ? * *";
 
     private static final UUID systemIdSecond = UUID.randomUUID();
     private static final UUID environmentIdSecond = UUID.randomUUID();
@@ -119,7 +127,7 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
     private static final Project project = new Project() {{
         setName("Test Statistics Project");
         setId(projectId);
-        setEnvironments(Arrays.asList(environment));
+        setEnvironments(List.of(environment));
     }};
 
     private UsersOccupyStatisticRequest usersOccupyStatisticRequest;
@@ -164,14 +172,14 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
         availableItemFirst.setEnvironment(environment.getName());
         availableItemFirst.setSystem(system.getName());
         consumedItemFirstDays = new ConsumedStatisticsItem(TABLE_TITLE,
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(1L);
                     add(0L);
                 }});
         consumedItemFirstDays.setEnvironment(environment.getName());
         consumedItemFirstDays.setSystem(system.getName());
         consumedItemFirstWeeks = new ConsumedStatisticsItem(TABLE_TITLE,
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(1L);
                     add(0L);
                     add(0L);
@@ -184,7 +192,7 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
         consumedItemFirstWeeks.setEnvironment(environment.getName());
         consumedItemFirstWeeks.setSystem(system.getName());
         consumedItemFirstMonths = new ConsumedStatisticsItem(TABLE_TITLE,
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(1L);
                     add(0L);
                     add(0L);
@@ -194,22 +202,22 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
         consumedItemFirstMonths.setEnvironment(environment.getName());
         consumedItemFirstMonths.setSystem(system.getName());
         outdatedItemFirst = new OutdatedStatisticsItem(TABLE_TITLE,
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(5L);
                     add(0L);
                 }},
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(1L);
                     add(0L);
                 }},
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(0L);
                     add(0L);
                 }});
         outdatedItemFirst.setEnvironment(environment.getName());
         outdatedItemFirst.setSystem(system.getName());
         outdatedItemFirstWeeks = new OutdatedStatisticsItem(TABLE_TITLE,
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(5L);
                     add(0L);
                     add(0L);
@@ -219,7 +227,7 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
                     add(0L);
                     add(0L);
                 }},
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(1L);
                     add(0L);
                     add(0L);
@@ -229,7 +237,7 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
                     add(0L);
                     add(0L);
                 }},
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(0L);
                     add(0L);
                     add(0L);
@@ -242,21 +250,21 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
         outdatedItemFirstWeeks.setEnvironment(environment.getName());
         outdatedItemFirstWeeks.setSystem(system.getName());
         outdatedItemFirstMonths = new OutdatedStatisticsItem(TABLE_TITLE,
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(5L);
                     add(0L);
                     add(0L);
                     add(0L);
                     add(0L);
                 }},
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(1L);
                     add(0L);
                     add(0L);
                     add(0L);
                     add(0L);
                 }},
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(0L);
                     add(0L);
                     add(0L);
@@ -266,7 +274,7 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
         outdatedItemFirstMonths.setEnvironment(environment.getName());
         outdatedItemFirstMonths.setSystem(system.getName());
         createdWhenItemFirst = new DateStatisticsItem(TABLE_TITLE,
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(7L);
                     add(0L);
                 }});
@@ -284,29 +292,29 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
         availableItemSecond.setEnvironment(lazyEnvironmentSecond.getName());
         availableItemSecond.setSystem(systemSecond.getName());
         consumedItemSecond = new ConsumedStatisticsItem(TABLE_TITLE,
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(2L);
                     add(0L);
                 }});
         consumedItemSecond.setEnvironment(lazyEnvironmentSecond.getName());
         consumedItemSecond.setSystem(systemSecond.getName());
         outdatedItemSecond = new OutdatedStatisticsItem(TABLE_TITLE,
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(4L);
                     add(0L);
                 }},
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(2L);
                     add(0L);
                 }},
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(0L);
                     add(0L);
                 }});
         outdatedItemSecond.setEnvironment(lazyEnvironmentSecond.getName());
         outdatedItemSecond.setSystem(systemSecond.getName());
         DateStatisticsItem createdWhenItemSecond = new DateStatisticsItem(TABLE_TITLE,
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(2L);
                     add(0L);
                 }});
@@ -368,7 +376,7 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
     }
 
     private String readErFromFile(String path) throws IOException {
-        return new String(Files.readAllBytes(Paths.get(path)));
+        return new String(Files.readAllBytes(Path.of(path)));
     }
 
     @Test
@@ -382,10 +390,10 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
         expectedStatistics.add(statistics);
         List<GeneralStatisticsItem> actualStatistics = statisticsService.getTestDataAvailability(projectId, null);
         List<GeneralStatisticsItem> details =
-                actualStatistics.get(0).getDetails().stream()
+                actualStatistics.getFirst().getDetails().stream()
                         .sorted(Comparator.comparingLong(GeneralStatisticsItem::getOccupied))
                         .collect(Collectors.toList());
-        actualStatistics.forEach(x -> {x.setDetails(details);});
+        actualStatistics.forEach(x -> x.setDetails(details));
 
         Assertions.assertEquals(expectedStatistics, actualStatistics);
     }
@@ -458,7 +466,7 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
         dates.add(LocalDate.now().format(formatter));
         dates.add(LocalDate.now().plusDays(1).format(formatter));
         ConsumedStatisticsItem statisticsItem = new ConsumedStatisticsItem(TABLE_TITLE,
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(3L);
                     add(0L);
                 }});
@@ -538,15 +546,15 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
         dates.add(LocalDate.now().format(formatter));
         dates.add(LocalDate.now().plusDays(1).format(formatter));
         OutdatedStatisticsItem statisticsItem = new OutdatedStatisticsItem(TABLE_TITLE,
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(9L);
                     add(0L);
                 }},
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(3L);
                     add(0L);
                 }},
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(0L);
                     add(0L);
                 }});
@@ -559,18 +567,18 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
         OutdatedStatistics actualStatistics = statisticsService.getTestDataConsumptionWhitOutdated(projectId, null,
                 LocalDate.now(), LocalDate.now().plusDays(1), 1);
 
-        List<OutdatedStatisticsItem> details = actualStatistics.getItems().get(0).getDetails();
+        List<OutdatedStatisticsItem> details = actualStatistics.getItems().getFirst().getDetails();
         List<OutdatedStatisticsItem> detailsSorted = new ArrayList<>();
         OutdatedStatisticsItem buf = null;
         for (OutdatedStatisticsItem x : details) {
-            if (x.getConsumed().get(0) == 1L) {
+            if (x.getConsumed().getFirst() == 1L) {
                 detailsSorted.add(x);
             } else {
                 buf = x;
             }
         }
         detailsSorted.add(buf);
-        actualStatistics.getItems().get(0).setDetails(detailsSorted);
+        actualStatistics.getItems().getFirst().setDetails(detailsSorted);
 
         Assertions.assertEquals(expectedStatistics, actualStatistics);
     }
@@ -599,7 +607,7 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
         dates.add(LocalDate.now().format(formatter));
         dates.add(LocalDate.now().plusDays(1).format(formatter));
         ConsumedStatisticsItem statisticsItem = new ConsumedStatisticsItem(TABLE_TITLE,
-                new ArrayList<Long>() {{
+                new ArrayList<>() {{
                     add(3L);
                     add(0L);
                 }});
@@ -659,10 +667,18 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
 
         UserGeneralStatisticsItem itemFirst = new UserGeneralStatisticsItem(
                 lazyEnvironment.getName(), lazySystem.getName(),
-                TABLE_TITLE, new ArrayList<Long>() {{add(0L); add(0L); add(1L);}});
+                TABLE_TITLE, new ArrayList<>() {{
+            add(0L);
+            add(0L);
+            add(1L);
+        }});
         UserGeneralStatisticsItem itemSecond = new UserGeneralStatisticsItem(
                 lazyEnvironmentSecond.getName(), lazySystemSecond.getName(),
-                TABLE_TITLE, new ArrayList<Long>() {{add(0L); add(0L); add(2L);}});
+                TABLE_TITLE, new ArrayList<>() {{
+            add(0L);
+            add(0L);
+            add(2L);
+        }});
         List<UserGeneralStatisticsItem> items = new ArrayList<>();
         items.add(itemFirst);
         items.add(itemSecond);
@@ -742,7 +758,7 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
         mockEnvForStatistics();
         UsersOccupyStatisticResponse respone = statisticsService.getOccupiedDataByUsers(usersOccupyStatisticRequest);
 
-        Assertions.assertEquals(respone.getRecords(),2);
+        Assertions.assertEquals(2, respone.getRecords());
     }
 
     @Test
@@ -751,7 +767,7 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
         mockEnvForStatistics();
         UsersOccupyStatisticResponse response = statisticsService.getOccupiedDataByUsers(usersOccupyStatisticRequest);
 
-        Assertions.assertEquals(response.getData().get(0).getContext(),"Test Data");
+        Assertions.assertEquals("Test Data", response.getData().getFirst().getContext());
     }
 
     @Test
@@ -760,7 +776,7 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
         mockEnvForStatistics();
         UsersOccupyStatisticResponse response = statisticsService.getOccupiedDataByUsers(usersOccupyStatisticRequest);
 
-        Assertions.assertEquals(response.getData().get(1).getUserName(),"TestUser");
+        Assertions.assertEquals("TestUser", response.getData().get(1).getUserName());
     }
 
     @Test
@@ -853,14 +869,11 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
             Assertions.assertNull(config.getDescription());
             Assertions.assertNull(config.getActiveColumnKey());
             Assertions.assertNull(config.getTablesColumns());
-        } catch (Exception e) {
-            throw e;
         } finally {
             deleteTestDataTableIfExists(tableName);
             catalogRepository.deleteByTableName(tableName);
         }
     }
-
 
     @Test
     public void availableStatistic_saveConfig_saved() {
@@ -879,8 +892,6 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
             AvailableDataStatisticsConfig actConfig = statisticsService.getAvailableStatsConfig(system2, environmentId);
 
             Assertions.assertEquals(config, actConfig);
-        } catch (Exception e){
-            throw e;
         } finally {
             deleteTestDataTableIfExists(tableName);
             catalogRepository.deleteByTableName(tableName);
@@ -897,16 +908,14 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
             createTestDataTableCatalog(project, system2, environmentId, "gettingData", tableName);
             AvailableDataStatisticsConfig config = statisticsService.getAvailableStatsConfig(system2, environmentId);
             List<TableColumnValues> values = testDataService.getDistinctTablesColumnValues(system2, environmentId, "sim");
-            values.get(0).getValues().add("Empty stat");
+            values.getFirst().getValues().add("Empty stat");
             config.setTablesColumns(values);
             config.setDescription("Descirption");
             config.setActiveColumnKey("sim");
             statisticsService.saveAvailableStatsConfig(config);
             AvailableDataByColumnStats stats = statisticsService.getAvailableDataInColumn(system2, environmentId);
 
-            Assertions.assertEquals(new Integer(0), stats.getStatistics().get(0).getOptions().get("Empty stat"));
-        } catch (Exception e) {
-            throw e;
+            Assertions.assertEquals(Integer.valueOf(0), stats.getStatistics().getFirst().getOptions().get("Empty stat"));
         } finally {
             deleteTestDataTableIfExists(tableName);
             catalogRepository.deleteByTableName(tableName);

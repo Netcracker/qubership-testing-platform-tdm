@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.qubership.atp.tdm.configuration;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -35,8 +36,8 @@ import lombok.Getter;
 @EnableConfigurationProperties(LiquibaseProperties.class)
 public class SpringLiquibaseConfig {
 
-    private DataSource dataSource;
-    private LiquibaseProperties properties;
+    private final DataSource dataSource;
+    private final LiquibaseProperties properties;
 
     @Value("${spring.application.name}")
     private String applicationName;
@@ -57,11 +58,18 @@ public class SpringLiquibaseConfig {
         SpringLiquibase liquibase = new BeanAwareSpringLiquibase();
         liquibase.setDataSource(dataSource);
         liquibase.setChangeLog(this.properties.getChangeLog());
-        liquibase.setContexts(this.properties.getContexts());
+
+        // Complicated setting, due to sudden types mismatch between:
+        //  SpringLiquibase#contexts (String) vs. LiquibaseProperties#contexts (List<String>)
+        //  which appeared after Spring Boot 3.5.11+ upgrade
+        List<String> contextsList = this.properties.getContexts();
+        if (contextsList != null && !contextsList.isEmpty()) {
+            liquibase.setContexts(String.join(",", contextsList));
+        }
+
         liquibase.setDefaultSchema(this.properties.getDefaultSchema());
         liquibase.setDropFirst(this.properties.isDropFirst());
         liquibase.setShouldRun(this.properties.isEnabled());
-        liquibase.setLabels(this.properties.getLabels());
         Map<String, String> parameters = this.properties.getParameters();
         if (null == parameters) {
             parameters = new HashMap<>();

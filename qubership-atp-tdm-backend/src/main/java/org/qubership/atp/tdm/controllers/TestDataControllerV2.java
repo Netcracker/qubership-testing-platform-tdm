@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -18,14 +18,11 @@ package org.qubership.atp.tdm.controllers;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
 import org.qubership.atp.integration.configuration.configuration.AuditAction;
 import org.qubership.atp.tdm.model.ImportSqlTestDataRequest;
 import org.qubership.atp.tdm.model.ImportTestDataStatistic;
 import org.qubership.atp.tdm.service.TestDataService;
 import org.qubership.atp.tdm.service.impl.MetricService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -49,7 +47,6 @@ public class TestDataControllerV2 {
     private final TestDataService testDataService;
     private final MetricService metricService;
 
-    @Autowired
     public TestDataControllerV2(@Nonnull TestDataService testDataService, @Nonnull MetricService metricService) {
         this.testDataService = testDataService;
         this.metricService = metricService;

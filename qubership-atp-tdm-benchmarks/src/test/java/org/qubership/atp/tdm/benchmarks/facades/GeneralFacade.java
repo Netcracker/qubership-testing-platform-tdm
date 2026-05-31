@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.qubership.atp.tdm.benchmarks.utils.Helper;
@@ -38,6 +36,7 @@ import org.qubership.atp.tdm.service.TestDataService;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.common.base.Strings;
+import jakarta.annotation.Nonnull;
 
 public class GeneralFacade {
 

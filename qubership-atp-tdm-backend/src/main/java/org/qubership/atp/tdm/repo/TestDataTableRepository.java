@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -22,9 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import org.qubership.atp.tdm.env.configurator.model.Server;
 import org.qubership.atp.tdm.model.ColumnValues;
 import org.qubership.atp.tdm.model.ImportTestDataStatistic;
 import org.qubership.atp.tdm.model.table.TestDataTable;
@@ -33,7 +31,8 @@ import org.qubership.atp.tdm.model.table.TestDataTableOrder;
 import org.qubership.atp.tdm.model.table.TestDataType;
 import org.springframework.web.multipart.MultipartFile;
 
-import org.qubership.atp.tdm.env.configurator.model.Server;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public interface TestDataTableRepository {
 

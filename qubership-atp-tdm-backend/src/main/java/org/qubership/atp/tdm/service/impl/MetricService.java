@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -19,15 +19,13 @@ package org.qubership.atp.tdm.service.impl;
 import java.util.List;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.annotation.Nonnull;
 
 @Component
 public class MetricService {
@@ -57,7 +55,6 @@ public class MetricService {
      *
      * @param meterRegistry micrometer registry helps add custom metrics.
      */
-    @Autowired
     public MetricService(MeterRegistry meterRegistry, @Nonnull JdbcTemplate jdbcTemplate) {
 
         this.meterRegistry = meterRegistry;
@@ -82,7 +79,7 @@ public class MetricService {
      * Get Table Count For Project.
      */
     public int getTableCountForProject(UUID projectId) {
-        String query = String.format("select count(*) from test_data_table_catalog where project_id='%s';", projectId);
+        String query = "select count(*) from test_data_table_catalog where project_id='%s';".formatted(projectId);
         return jdbcTemplate.queryForObject(query, Integer.class);
 
     }

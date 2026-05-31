@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,16 +16,12 @@
 
 package org.qubership.atp.tdm.env.configurator.service.impl;
 
-import static java.lang.String.format;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-
-import javax.annotation.Nonnull;
 
 import org.qubership.atp.auth.springbootstarter.exceptions.AtpException;
 import org.qubership.atp.tdm.env.configurator.api.dto.environments.BaseSearchRequestDto;
@@ -71,6 +67,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -99,7 +96,7 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
         try {
             project = dtoConvertService.convert(fullProjectRes.getBody(), Project.class);
         } catch (Exception e) {
-            log.error(format(TdmEnvConvertFullProjectByIdException.DEFAULT_MESSAGE, projectId), e);
+            log.error(TdmEnvConvertFullProjectByIdException.DEFAULT_MESSAGE.formatted(projectId), e);
             throw new TdmEnvConvertFullProjectByIdException(projectId.toString());
         }
         log.info("Project successfully loaded.");
@@ -119,7 +116,7 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
         try {
             lazyProjects = dtoConvertService.convert(projectsResponse.getBody(), LazyProject.class);
         } catch (Exception e) {
-            log.error(format(TdmEnvConvertLazyProjectByIdException.DEFAULT_MESSAGE, projectId), e);
+            log.error(TdmEnvConvertLazyProjectByIdException.DEFAULT_MESSAGE.formatted(projectId), e);
             throw new TdmEnvConvertLazyProjectByIdException(projectId.toString());
         }
         log.info("Lazy project by Id successfully loaded.");
@@ -139,7 +136,7 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
         try {
             lazyProject = dtoConvertService.convert(projectsResponse.getBody(), LazyProject.class);
         } catch (Exception e) {
-            log.error(format(TdmEnvConvertLazyProjectByNameException.DEFAULT_MESSAGE, projectName), e);
+            log.error(TdmEnvConvertLazyProjectByNameException.DEFAULT_MESSAGE.formatted(projectName), e);
             throw new TdmEnvConvertLazyProjectByNameException(projectName);
         }
         log.info("Lazy project by name successfully loaded.");
@@ -154,8 +151,7 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
     public List<LazyProject> getLazyProjects() {
         log.info("Loading lazy projects.");
         List<LazyProject> lazyProjects;
-        ResponseEntity<List<ProjectNameViewDto>> projectsResponse =
-                projectEnvFeignClient.getAllShort(false);
+        ResponseEntity<List<ProjectNameViewDto>> projectsResponse = projectEnvFeignClient.getAllShort(false);
         try {
             lazyProjects = dtoConvertService.convertList(projectsResponse.getBody(), LazyProject.class);
         } catch (Exception e) {
@@ -181,8 +177,7 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
         try {
             environment = dtoConvertService.convert(envLazyRes.getBody(), LazyEnvironment.class);
         } catch (Exception e) {
-            log.error(format(TdmEnvConvertLazyEnvironmentByEnvIdtException.DEFAULT_MESSAGE,
-                    environmentId), e);
+            log.error(TdmEnvConvertLazyEnvironmentByEnvIdtException.DEFAULT_MESSAGE.formatted(environmentId), e);
             throw new TdmEnvConvertLazyEnvironmentByEnvIdtException(environmentId.toString());
         }
         log.info("Lazy environment successfully loaded.");
@@ -232,7 +227,7 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
             log.info("Lazy environments successfully loaded.");
             return lazyEnvironments;
         } catch (Exception e) {
-            log.error(format(TdmEnvConvertLazyEnvironmentsException.DEFAULT_MESSAGE, projectId), e);
+            log.error(TdmEnvConvertLazyEnvironmentsException.DEFAULT_MESSAGE.formatted(projectId), e);
             throw new TdmEnvConvertLazyEnvironmentsException(projectId.toString());
         }
     }
@@ -256,7 +251,7 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
                             () -> new TdmEnvConvertLazyEnvironmentByNameException(environmentName, projectId.toString())
                     );
         } catch (Exception e) {
-            log.error(format(TdmEnvConvertLazyEnvironmentByNameException.DEFAULT_MESSAGE,
+            log.error(TdmEnvConvertLazyEnvironmentByNameException.DEFAULT_MESSAGE.formatted(
                     environmentName, projectId), e);
             throw new TdmEnvConvertLazyEnvironmentByNameException(environmentName, projectId.toString());
         }
@@ -279,7 +274,7 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
         try {
             system = dtoConvertService.convert(systemResponse.getBody(), System.class);
         } catch (Exception e) {
-            log.error(format(TdmEnvConvertFullSystemByNameException.DEFAULT_MESSAGE, systemName), e);
+            log.error(TdmEnvConvertFullSystemByNameException.DEFAULT_MESSAGE.formatted(systemName), e);
             throw new TdmEnvConvertFullSystemByNameException(systemName);
         }
         log.info("Full systems by name successfully loaded.");
@@ -299,7 +294,7 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
         try {
             system = dtoConvertService.convert(systemResponse.getBody(), System.class);
         } catch (Exception e) {
-            log.error(format(TdmEnvConvertFullSystemBySysIdException.DEFAULT_MESSAGE, systemId), e);
+            log.error(TdmEnvConvertFullSystemBySysIdException.DEFAULT_MESSAGE.formatted(systemId), e);
             throw new TdmEnvConvertFullSystemBySysIdException(systemId.toString());
         }
         log.info("Full systems by system ID successfully loaded.");
@@ -319,7 +314,7 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
         try {
             connections = dtoConvertService.convertList(systemConnections.getBody(), Connection.class);
         } catch (Exception e) {
-            log.error(format(TdmEnvConvertFullSystemBySysIdException.DEFAULT_MESSAGE, systemId), e);
+            log.error(TdmEnvConvertFullSystemBySysIdException.DEFAULT_MESSAGE.formatted(systemId), e);
             throw new TdmEnvConvertFullSystemBySysIdException(systemId.toString());
         }
         log.info("Full systems by system ID successfully loaded.");
@@ -338,7 +333,7 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
         try {
             lazySystem = dtoConvertService.convert(system.getBody(), LazySystem.class);
         } catch (Exception e) {
-            log.error(format(TdmEnvConvertLazySystemBySysIdException.DEFAULT_MESSAGE, systemId), e);
+            log.error(TdmEnvConvertLazySystemBySysIdException.DEFAULT_MESSAGE.formatted(systemId), e);
             throw new TdmEnvConvertLazySystemBySysIdException(systemId.toString());
         }
         log.info("Lazy systems by system ID successfully loaded.");
@@ -360,7 +355,7 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
         try {
             lazySystem = dtoConvertService.convert(systemResponse.getBody(), LazySystem.class);
         } catch (Exception e) {
-            log.error(format(TdmEnvConvertFullSystemByNameException.DEFAULT_MESSAGE, systemName), e);
+            log.error(TdmEnvConvertFullSystemByNameException.DEFAULT_MESSAGE.formatted(systemName), e);
             throw new TdmEnvConvertFullSystemByNameException(systemName);
         }
         log.info("Full systems by name successfully loaded.");
@@ -382,7 +377,7 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
         try {
             return dtoConvertService.convertList(systemsRes.getBody(), LazySystem.class);
         } catch (Exception e) {
-            log.error(format(TdmEnvConvertLazySystemsByEnvIdException.DEFAULT_MESSAGE, environmentId), e);
+            log.error(TdmEnvConvertLazySystemsByEnvIdException.DEFAULT_MESSAGE.formatted(environmentId), e);
             throw new TdmEnvConvertLazySystemsByEnvIdException(environmentId.toString());
         }
     }
@@ -404,7 +399,7 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
             List<LazySystem> systems = dtoConvertService.convertList(systemsRes.getBody(), LazySystem.class);
             lazySystems = sortByDefault(systems, defaultSystem);
         } catch (Exception e) {
-            log.error(format(TdmEnvConvertLazySystemsByEnvIdByNameException.DEFAULT_MESSAGE,
+            log.error(TdmEnvConvertLazySystemsByEnvIdByNameException.DEFAULT_MESSAGE.formatted(
                     environmentId, defaultSystem), e);
             throw new TdmEnvConvertLazySystemsByEnvIdByNameException(environmentId.toString(), defaultSystem);
         }
@@ -422,7 +417,7 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
         try {
             lazySystems = dtoConvertService.convertList(allShortName.getBody(), LazySystem.class);
         } catch (Exception e) {
-            log.error(format(TdmEnvConvertLazySystemsByProjectIdException.DEFAULT_MESSAGE, projectId), e);
+            log.error(TdmEnvConvertLazySystemsByProjectIdException.DEFAULT_MESSAGE.formatted(projectId), e);
             throw new TdmEnvConvertLazySystemsByProjectIdException(projectId.toString());
         }
         log.info("Lazy systems by project ID successfully loaded.");
@@ -446,7 +441,7 @@ public class EnvironmentsServiceImpl implements EnvironmentsService {
         } catch (AtpException ae) {
             throw ae;
         } catch (Exception e) {
-            log.error(format(TdmEnvConvertLazySystemsByProjectIdException.DEFAULT_MESSAGE, projectId), e);
+            log.error(TdmEnvConvertLazySystemsByProjectIdException.DEFAULT_MESSAGE.formatted(projectId), e);
             throw new TdmEnvConvertLazySystemsByProjectIdException(projectId.toString());
         }
         log.info("Lazy systems by project ID successfully loaded");

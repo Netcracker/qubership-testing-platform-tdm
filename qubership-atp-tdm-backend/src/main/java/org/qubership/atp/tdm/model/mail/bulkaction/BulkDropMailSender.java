@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,14 +16,12 @@
 
 package org.qubership.atp.tdm.model.mail.bulkaction;
 
-import javax.annotation.Nonnull;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.qubership.atp.integration.configuration.service.MailSenderService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import org.qubership.atp.integration.configuration.service.MailSenderService;
 import freemarker.template.Configuration;
+import jakarta.annotation.Nonnull;
 
 @Component
 public class BulkDropMailSender extends AbstractBulkActionMailSender {
@@ -31,7 +29,6 @@ public class BulkDropMailSender extends AbstractBulkActionMailSender {
     /**
      * BulkDropMailSender Constructor.
      */
-    @Autowired
     private BulkDropMailSender(@Nonnull Configuration configuration,
                                @Nonnull MailSenderService mailSender,
                                @Value("${mail.sender.bulk.drop.subject}") String mailSenderSubject,

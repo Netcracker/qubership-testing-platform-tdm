@@ -133,7 +133,7 @@ SERVICE_REGISTRY_URL: "http://atp-registry-service-devci.dev-atp-cloud.some-doma
 # Set to ATP2 to enable Prometheus scrapping
 SERVICE_TYPE: "ATP2"
 # Spring profile for security
-SPRING_PROFILES: "default"
+ACTIVE_PROFILES_SPRING: "default"
 # Name of db
 TDM_DB: ""
 # Password for itf db

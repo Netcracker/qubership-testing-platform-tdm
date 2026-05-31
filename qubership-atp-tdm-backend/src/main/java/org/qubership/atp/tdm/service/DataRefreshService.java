@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-
 import org.qubership.atp.tdm.model.refresh.RefreshResults;
 import org.qubership.atp.tdm.model.refresh.TestDataRefreshConfig;
+
+import jakarta.annotation.Nonnull;
 
 public interface DataRefreshService {
 
@@ -37,7 +37,7 @@ public interface DataRefreshService {
     RefreshResults runRefresh(@Nonnull String tableName,
                               boolean saveOccupiedData) throws Exception;
 
-    List<RefreshResults> runRefresh(@Nonnull String tableName, @Nonnull Integer queryTimeout, @Nonnull boolean allEnv,
+    List<RefreshResults> runRefresh(@Nonnull String tableName, @Nonnull Integer queryTimeout, boolean allEnv,
                                     boolean saveOccupiedData) throws Exception;
 
     String getNextScheduledRun(String cronExpression) throws ParseException;

@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -35,9 +35,9 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-
 import org.qubership.atp.tdm.exceptions.file.TdmBuildCvsFileException;
 import org.qubership.atp.tdm.model.table.column.TestDataTableColumn;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -145,7 +145,7 @@ public class TestDataTableConvertor {
                 try {
                     printer.print(value);
                 } catch (IOException e) {
-                    log.error(String.format(TdmBuildCvsFileException.DEFAULT_MESSAGE, tableName), e);
+                    log.error(TdmBuildCvsFileException.DEFAULT_MESSAGE.formatted(tableName), e);
                     throw new TdmBuildCvsFileException(tableName);
                 }
             });

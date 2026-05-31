@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,18 +16,13 @@
 
 package org.qubership.atp.tdm;
 
-import org.qubership.atp.tdm.integration.environment.IntegrationPostgresEnvironment;
-
-import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.junit.jupiter.api.parallel.Isolated;
+import org.qubership.atp.tdm.integration.environment.IntegrationPostgresEnvironment;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @SpringBootTest
-@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = Main.class)
 @TestPropertySource(locations = "classpath:application-test.properties")
 @Isolated

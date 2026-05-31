@@ -25,6 +25,7 @@ import org.qubership.atp.tdm.model.table.TestDataOccupyReportGroupBy;
 import org.qubership.atp.tdm.utils.TestDataQueries;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -33,16 +34,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface OccupyStatisticRepository extends JpaRepository<TestDataOccupyStatistic, UUID> {
 
-    @Query(value = TestDataQueries.GET_OCCUPIED_STATISTIC_BY_PROJECT, nativeQuery = true)
+    @NativeQuery(TestDataQueries.GET_OCCUPIED_STATISTIC_BY_PROJECT)
     List<TestDataOccupyStatistic> findAllByProjectId(@Param("projectId") UUID projectId);
 
-    @Query(value = TestDataQueries.GET_OCCUPIED_STATISTIC_BY_PROJECT_AND_SYSTEM, nativeQuery = true)
+    @NativeQuery(TestDataQueries.GET_OCCUPIED_STATISTIC_BY_PROJECT_AND_SYSTEM)
     List<TestDataOccupyStatistic> findAllByProjectIdAndSystemId(@Param("projectId") UUID projectId,
                                                                 @Param("systemId") UUID systemId);
 
     @Transactional
     @Modifying
-    @Query(value = TestDataQueries.DELETE_OCCUPIED_STATISTIC, nativeQuery = true)
+    @NativeQuery(TestDataQueries.DELETE_OCCUPIED_STATISTIC)
     void deleteAllByRowId(@Param("rowIds") List<UUID> rowIds);
 
     @Query(value = TestDataQueries.GET_OCCUPIED_STATISTICS_GROUP_BY)

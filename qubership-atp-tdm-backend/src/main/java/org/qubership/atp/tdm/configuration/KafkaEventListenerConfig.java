@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,23 +16,22 @@
 
 package org.qubership.atp.tdm.configuration;
 
-import javax.annotation.Nonnull;
-
 import org.qubership.atp.tdm.mdc.TdmMdcHelper;
 import org.qubership.atp.tdm.repo.CatalogRepository;
 import org.qubership.atp.tdm.service.ProjectInformationService;
 import org.qubership.atp.tdm.service.TestDataService;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.annotation.EnableKafka;
-
 import org.qubership.atp.tdm.service.notification.environments.EnvironmentEventListener;
 import org.qubership.atp.tdm.service.notification.environments.EnvironmentsEventKafkaListener;
 import org.qubership.atp.tdm.service.notification.projects.ProjectEventKafkaListener;
 import org.qubership.atp.tdm.service.notification.projects.ProjectEventListener;
 import org.qubership.atp.tdm.service.notification.systems.SystemEventListener;
 import org.qubership.atp.tdm.service.notification.systems.SystemsEventKafkaListener;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.annotation.EnableKafka;
+
+import jakarta.annotation.Nonnull;
 
 @EnableKafka
 @Configuration

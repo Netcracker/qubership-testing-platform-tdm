@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -25,16 +25,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-
+import org.qubership.atp.integration.configuration.model.MailRequest;
+import org.qubership.atp.integration.configuration.service.MailSenderService;
 import org.qubership.atp.tdm.model.bulkaction.BulkActionContext;
 import org.qubership.atp.tdm.model.bulkaction.BulkActionResult;
 
-import org.qubership.atp.integration.configuration.model.MailRequest;
-import org.qubership.atp.integration.configuration.service.MailSenderService;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -54,7 +53,7 @@ public abstract class AbstractBulkActionMailSender {
         if (mailSenderEnable) {
             MailRequest mailRequest = new MailRequest();
             mailRequest.setFrom(mailSenderFrom);
-            mailRequest.setSubject(String.format(mailSenderSubject, bulkActionContext.getId()));
+            mailRequest.setSubject(mailSenderSubject.formatted(bulkActionContext.getId()));
             mailRequest.setTo(bulkActionContext.getRecipients());
             mailRequest.setContent(buildMessageContent(configuration, bulkActionContext.getProjectName(),
                     bulkActionContext.getEnvironmentName(), bulkActionContext.getSystemName(),

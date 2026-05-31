@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,25 +16,24 @@
 
 package org.qubership.atp.tdm.configuration;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.spi.JobFactory;
 import org.qubership.atp.tdm.utils.scheduler.AutowiringSpringBeanJobFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
+import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 
 @Configuration
@@ -47,7 +46,6 @@ public class QuartzConfig {
     /**
      * Builds Quartz config object to interact with a scheduler.
      */
-    @Autowired
     public QuartzConfig(@Qualifier(AtpWebConfig.APP_PROPERTIES) Properties props,
                         ApplicationContext applicationContext) {
         this.props = new Properties();
@@ -95,8 +93,8 @@ public class QuartzConfig {
      * @return A SchedulerFactoryBean instance
      */
     @Bean
-    public SchedulerFactoryBean schedulerFactoryBean(DataSource dataSource, JobFactory jobFactory)
-            throws IOException {
+    @DependsOnDatabaseInitialization
+    public SchedulerFactoryBean schedulerFactoryBean(DataSource dataSource, JobFactory jobFactory) {
         SchedulerFactoryBean factory = new SchedulerFactoryBean();
         factory.setDataSource(dataSource);
         factory.setJobFactory(jobFactory);

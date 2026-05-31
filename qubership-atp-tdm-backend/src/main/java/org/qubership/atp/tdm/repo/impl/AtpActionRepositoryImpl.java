@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -24,10 +24,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.common.lock.LockManager;
@@ -57,11 +53,12 @@ import org.qubership.atp.tdm.service.DataRefreshService;
 import org.qubership.atp.tdm.service.TestDataFlagsService;
 import org.qubership.atp.tdm.service.impl.CleanupServiceImpl;
 import org.qubership.atp.tdm.utils.TestDataTableConvertor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -83,7 +80,6 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
     /**
      * AtpActionRepository Constructor.
      */
-    @Autowired
     public AtpActionRepositoryImpl(@Nonnull CatalogRepository catalogRepository,
                                    @Nonnull TestDataTableRepository testDataTableRepository,
                                    @Nonnull CleanupConfigRepository cleanupConfigRepository,
@@ -162,7 +158,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
                             log.warn("Occupation test data. Response column with name: [{}] was not found.",
                                     nameColumnResponse);
                             responseMessages.add(new ResponseMessage(ResponseType.ERROR,
-                                    String.format("Column with name \"%s\" was not found!", nameColumnResponse)));
+                                    "Column with name \"%s\" was not found!".formatted(nameColumnResponse)));
                         }
                     } else {
                         log.warn("Occupation test data. Rows were not found. Filters: {}",
@@ -175,7 +171,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
         } else {
             log.warn("Occupation test data. Table with title:  [{}] was not found.", tableTitle);
             responseMessages.add(new ResponseMessage(ResponseType.ERROR,
-                    String.format("Table with title \"%s\" was not found!", tableTitle)));
+                    "Table with title \"%s\" was not found!".formatted(tableTitle)));
             return responseMessages;
         }
         return responseMessages;
@@ -211,11 +207,9 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
                             } else {
                                 columnsExists = false;
                                 log.warn("Occupation test data to return several rows. Response column with name: [{}] "
-                                                + "was not found.",
-                                        responseColumnName);
+                                                + "was not found.", responseColumnName);
                                 responseMessages.add(new ResponseMessage(ResponseType.ERROR,
-                                        String.format("Column with name \"%s\" was not found!",
-                                                responseColumnName)));
+                                        "Column with name \"%s\" was not found!".formatted(responseColumnName)));
                             }
                         }
                         if (columnsExists) {
@@ -243,7 +237,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
         } else {
             log.warn("Occupation test data to return several rows. Table with title:  [{}] was not found.", tableTitle);
             responseMessages.add(new ResponseMessage(ResponseType.ERROR,
-                    String.format("Table with title \"%s\" was not found!", tableTitle)));
+                    "Table with title \"%s\" was not found!".formatted(tableTitle)));
             return responseMessages;
         }
         return responseMessages;
@@ -274,7 +268,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
                         log.warn("Release test data. Response column with name: [{}] was not found.",
                                 nameColumnResponse);
                         responseMessages.add(new ResponseMessage(ResponseType.ERROR,
-                                String.format("Column with name \"%s\" was not found!", nameColumnResponse)));
+                                "Column with name \"%s\" was not found!".formatted(nameColumnResponse)));
                     }
                 } else if (data.size() > 1) {
                     log.warn("Release test data. More then one row were found. Filters: {}",
@@ -291,7 +285,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
         } else {
             log.warn("Release test data. Table with title:  [{}] was not found.", tableTitle);
             responseMessages.add(new ResponseMessage(ResponseType.ERROR,
-                    String.format("Table with title \"%s\" was not found!", tableTitle)));
+                    "Table with title \"%s\" was not found!".formatted(tableTitle)));
             return responseMessages;
         }
         return responseMessages;
@@ -306,7 +300,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
         if (!tableDetails.isExists()) {
             log.warn("Release test data. Table with title: [{}] was not found.", tableTitle);
             responseMessages.add(new ResponseMessage(ResponseType.ERROR,
-                    String.format("Table with title \"%s\" was not found!", tableTitle)));
+                    "Table with title \"%s\" was not found!".formatted(tableTitle)));
             return responseMessages;
         }
 
@@ -323,7 +317,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
                 }
                 List<UUID> rowIds = testDataTable.stream()
                         .map(row -> UUID.fromString(String.valueOf(row.get("ROW_ID"))))
-                        .collect(Collectors.toList());
+                        .toList();
                 allRowIds.addAll(rowIds);
 
                 offset += UPDATE_TEST_DATA_LIMIT;
@@ -335,7 +329,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
             }
 
             responseMessages.add(new ResponseMessage(ResponseType.SUCCESS,
-                    String.format("All occupied data in table with title \"%s\" released.", tableTitle)));
+                    "All occupied data in table with title \"%s\" released.".formatted(tableTitle)));
 
         } catch (Exception e) {
             logAndAddErrorResponse(tableTitle, e, responseMessages);
@@ -347,11 +341,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
         log.error("Failed to release test data for table [{}]: {}", tableTitle, e.getMessage(), e);
         responseMessages.add(new ResponseMessage(
                 ResponseType.ERROR,
-                String.format(
-                        "An error occurred while releasing data for table \"%s\": %s",
-                        tableTitle,
-                        e.getMessage()
-                )
+                "An error occurred while releasing data for table \"%s\": %s".formatted(tableTitle, e.getMessage())
         ));
     }
 
@@ -367,7 +357,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
                         updateRowRequest.getFilters(), updateRowRequest.getRecordWithDataForUpdate());
                 testDataTableRepository.updateLastUsage(table.getTableName());
                 if (updatedRowsCount > 0) {
-                    String msg = String.format("\"%s\" rows were successfully updated", updatedRowsCount);
+                    String msg = "\"%s\" rows were successfully updated".formatted(updatedRowsCount);
                     responseMessages.add(new ResponseMessage(ResponseType.SUCCESS, msg));
                 } else {
                     responseMessages.add(new ResponseMessage(ResponseType.ERROR,
@@ -375,7 +365,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
                 }
             }
         } else {
-            String msg = String.format("Table with title \"%s\" was not found!", tableTitle);
+            String msg = "Table with title \"%s\" was not found!".formatted(tableTitle);
             log.warn("Updating test data. {}", msg);
             responseMessages.add(new ResponseMessage(ResponseType.ERROR, msg));
             return responseMessages;
@@ -418,7 +408,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
                             log.warn("Getting test data. Response column with name: [{}] was not found.",
                                     responseColumnName);
                             responseMessages.add(new ResponseMessage(ResponseType.ERROR,
-                                    String.format("Column with name \"%s\" was not found!", nameColumnResponse)));
+                                    "Column with name \"%s\" was not found!".formatted(nameColumnResponse)));
                         }
                     }
                     if (allColumnsExist) {
@@ -433,8 +423,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
                         }
                     }
                 } else {
-                    log.warn("Getting test data. Rows were not found. Filters: {}",
-                            getRowRequest.getFilters());
+                    log.warn("Getting test data. Rows were not found. Filters: {}", getRowRequest.getFilters());
                     responseMessages.add(new ResponseMessage(ResponseType.ERROR,
                             "No test data available for requested criteria!"));
                 }
@@ -442,7 +431,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
         } else {
             log.warn("Getting test data. Table with title:  [{}] was not found.", tableTitle);
             responseMessages.add(new ResponseMessage(ResponseType.ERROR,
-                    String.format("Table with title \"%s\" was not found!", tableTitle)));
+                    "Table with title \"%s\" was not found!".formatted(tableTitle)));
             return responseMessages;
         }
         return responseMessages;
@@ -469,11 +458,10 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
                         log.warn("Getting test data. Response column with name: [{}] was not found.",
                                 nameColumnResponse);
                         responseMessages.add(new ResponseMessage(ResponseType.ERROR,
-                                String.format("Column with name \"%s\" was not found!", nameColumnResponse)));
+                                "Column with name \"%s\" was not found!".formatted(nameColumnResponse)));
                     }
                 } else {
-                    log.warn("Getting test data. Rows were not found. Filters: {}",
-                            getRowRequest.getFilters());
+                    log.warn("Getting test data. Rows were not found. Filters: {}", getRowRequest.getFilters());
                     responseMessages.add(new ResponseMessage(ResponseType.ERROR,
                             "No test data available for requested criteria!"));
                 }
@@ -481,7 +469,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
         } else {
             log.warn("Getting test data. Table with title:  [{}] was not found.", tableTitle);
             responseMessages.add(new ResponseMessage(ResponseType.ERROR,
-                    String.format("Table with title \"%s\" was not found!", tableTitle)));
+                    "Table with title \"%s\" was not found!".formatted(tableTitle)));
             return responseMessages;
         }
         return responseMessages;
@@ -499,7 +487,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
                         addInfoToRowRequest.getFilters(), addInfoToRowRequest.getRecordWithDataForUpdate());
                 testDataTableRepository.updateLastUsage(table.getTableName());
                 if (updatedRowsCount > 0) {
-                    String msg = String.format("\"%s\" rows were successfully updated", updatedRowsCount);
+                    String msg = "\"%s\" rows were successfully updated".formatted(updatedRowsCount);
                     responseMessages.add(new ResponseMessage(ResponseType.SUCCESS, msg));
                 } else {
                     responseMessages.add(new ResponseMessage(ResponseType.ERROR,
@@ -507,7 +495,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
                 }
             }
         } else {
-            String msg = String.format("Table with title \"%s\" was not found!", tableTitle);
+            String msg = "Table with title \"%s\" was not found!".formatted(tableTitle);
             log.warn("Add info to row in test data table. {}", msg);
             responseMessages.add(new ResponseMessage(ResponseType.ERROR, msg));
             return responseMessages;
@@ -542,7 +530,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
             try {
                 RefreshResults refreshResults = dataRefreshService
                         .runRefresh(tableCatalog.getTableName(), false);
-                String msg = String.format("Successfully refreshed %s records fot table: %s.",
+                String msg = "Successfully refreshed %s records fot table: %s.".formatted(
                         refreshResults.getRecordsTotal(), tableCatalog.getTableTitle());
                 responseMessages.add(new ResponseMessage(ResponseType.SUCCESS, msg, resultLink));
                 testDataTableRepository.updateLastUsage(tableCatalog.getTableName());
@@ -565,7 +553,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
             TestDataTableCatalog catalog = catalogRepository
                     .findByProjectIdAndSystemIdAndTableTitle(projectId, systemId, tableTitle);
             if (Objects.isNull(catalog)) {
-                String message = String.format("Tables with title: %s was not found under project with id: %s",
+                String message = "Tables with title: %s was not found under project with id: %s".formatted(
                         tableTitle, projectId);
                 log.warn(message);
                 responseMessage.setType(ResponseType.ERROR);
@@ -573,7 +561,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
                 responseMessage.setLink(StringUtils.EMPTY);
             } else {
                 String tableName = catalog.getTableName();
-                String message = String.format("Table %s has been truncated.", tableName);
+                String message = "Table %s has been truncated.".formatted(tableName);
                 testDataTableRepository.truncateTable(tableName);
                 testDataTableRepository.updateLastUsage(tableName);
                 log.info(message);
@@ -592,19 +580,16 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
                 systemId, tableTitle);
         String message;
         if (tableCatalog == null) {
-            message = String.format("Table \"%s\" hasn't been found. Could you please check provided data.",
-                    tableTitle);
+            message = "Table \"%s\" hasn't been found. Could you please check provided data.".formatted(tableTitle);
             return Collections.singletonList(new ResponseMessage(ResponseType.ERROR, message));
         } else if (tableCatalog.getCleanupConfigId() == null) {
-            message = String.format("Cleanup hasn't been configured for table \"%s\".",
-                    tableTitle);
+            message = "Cleanup hasn't been configured for table \"%s\".".formatted(tableTitle);
             return Collections.singletonList(new ResponseMessage(ResponseType.ERROR, message));
         }
-        TestDataCleanupConfig cleanupConfigId =
-                cleanupConfigRepository.findById(tableCatalog.getCleanupConfigId())
+        TestDataCleanupConfig cleanupConfigId = cleanupConfigRepository.findById(tableCatalog.getCleanupConfigId())
                         .orElseThrow(() ->
                                 new TdmSearchCleanupConfigException(tableCatalog.getCleanupConfigId().toString()));
-        CleanupResults cleanupResults = null;
+        CleanupResults cleanupResults;
         try {
             cleanupResults = cleanupService.runCleanup(tableCatalog.getTableName(), cleanupConfigId);
             testDataTableRepository.updateLastUsage(tableCatalog.getTableName());
@@ -614,7 +599,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
             log.info(message);
             return Collections.singletonList(new ResponseMessage(ResponseType.ERROR, message));
         }
-        message = String.format("For table \"%s\" with total records %s has been removed %s records.",
+        message = "For table \"%s\" with total records %s has been removed %s records.".formatted(
                 cleanupResults.getTableName(),
                 cleanupResults.getRecordsTotal(),
                 cleanupResults.getRecordsRemoved());
@@ -623,7 +608,7 @@ public class AtpActionRepositoryImpl implements AtpActionRepository {
     }
 
     private String formResultLink(UUID projectId, UUID environmentId, UUID systemId, String tdmUrl) {
-        return String.format(DATA_REFRESH_LINK, tdmUrl, projectId, environmentId, systemId);
+        return DATA_REFRESH_LINK.formatted(tdmUrl, projectId, environmentId, systemId);
     }
 
     private TableDetails getTableDetails(@Nonnull UUID projectId, @Nullable UUID systemId,

@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -24,23 +24,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-
-import org.qubership.atp.tdm.model.statistics.TestDataTableMonitoring;
-import org.qubership.atp.tdm.model.statistics.report.StatisticsReportObject;
-import org.qubership.atp.tdm.service.StatisticsService;
-import org.qubership.atp.tdm.service.impl.MetricService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import org.qubership.atp.integration.configuration.model.MailRequest;
 import org.qubership.atp.integration.configuration.service.MailSenderService;
 import org.qubership.atp.tdm.env.configurator.model.LazyProject;
 import org.qubership.atp.tdm.env.configurator.service.EnvironmentsService;
+import org.qubership.atp.tdm.model.statistics.TestDataTableMonitoring;
+import org.qubership.atp.tdm.model.statistics.report.StatisticsReportObject;
+import org.qubership.atp.tdm.service.StatisticsService;
+import org.qubership.atp.tdm.service.impl.MetricService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -62,7 +60,6 @@ public class StatisticsMailSender {
     /**
      * StatisticsMailSender Constructor.
      */
-    @Autowired
     private StatisticsMailSender(@Value("${mail.sender.from}") String mailSenderFrom,
                                  @Nonnull Configuration configuration,
                                  @Nonnull StatisticsService statisticsService,
@@ -98,7 +95,7 @@ public class StatisticsMailSender {
                 UUID projId = UUID.fromString(projectId);
                 StatisticsReportObject statisticsReportObject = statisticsService
                         .getTestDataMonitoringStatistics(projId, monitoring.getThreshold());
-                mailRequest.setSubject(String.format(mailSenderSubject, statisticsReportObject.getProjectName()));
+                mailRequest.setSubject(mailSenderSubject.formatted(statisticsReportObject.getProjectName()));
                 mailRequest.setContent(buildMessageContent(configuration, statisticsReportObject));
                 Map<String, Object> metadata = new HashMap<>();
                 metadata.put("projectId", projId);
@@ -110,9 +107,9 @@ public class StatisticsMailSender {
                     LazyProject lazyProjectById = environmentsService.getLazyProjectById(UUID.fromString(projectId));
                     projectName = lazyProjectById.getName();
                 } catch (Exception er) {
-                    log.error(String.format("Error while get project by id: %s", projectId));
+                    log.error("Error while get project by id: {}", projectId);
                 }
-                mailRequest.setSubject(String.format(mailSenderSubject, projectName));
+                mailRequest.setSubject(mailSenderSubject.formatted(projectName));
                 String messageError = "Error statistics send mail. Message: " + e.getMessage();
                 mailRequest.setContent(messageError);
                 mailSender.send(mailRequest);

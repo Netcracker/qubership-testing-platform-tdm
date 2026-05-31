@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,28 +16,27 @@
 
 package org.qubership.atp.tdm.ei;
 
-import org.qubership.atp.ei.node.dto.ExportImportData;
-import org.qubership.atp.ei.node.dto.ExportFormat;
-import org.qubership.atp.ei.node.dto.ExportScope;
-import org.qubership.atp.ei.node.dto.ValidationResult;
-import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
-import org.qubership.atp.tdm.env.configurator.model.LazyProject;
-import org.qubership.atp.tdm.env.configurator.model.LazySystem;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.qubership.atp.ei.node.dto.ExportFormat;
+import org.qubership.atp.ei.node.dto.ExportImportData;
+import org.qubership.atp.ei.node.dto.ExportScope;
+import org.qubership.atp.ei.node.dto.ValidationResult;
+import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
+import org.qubership.atp.tdm.env.configurator.model.LazyProject;
+import org.qubership.atp.tdm.env.configurator.model.LazySystem;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 public class TdmImportExecutorTest extends AbstractExportImportTest {
 
@@ -92,87 +91,87 @@ public class TdmImportExecutorTest extends AbstractExportImportTest {
     }
 
     @Test
-    public void importData_importFile_importedSuccessfully() throws Exception {
+    public void importData_importFile_importedSuccessfully() {
         importExecutor.validateData(new ExportImportData(exportImportProjectId, new ExportScope(), ExportFormat.ATP),
-                Paths.get(validImportFile));
+                Path.of(validImportFile));
         importExecutor.importData(new ExportImportData(exportImportProjectId, new ExportScope(), ExportFormat.ATP),
-                Paths.get(validImportFile));
+                Path.of(validImportFile));
         Assertions.assertEquals(6,
                 jdbcTemplate.queryForList("select * from tdm_test_data_export_import").size());
     }
 
     @Test
-    public void validateData_validateImportingFile_fileIsValid() throws Exception {
+    public void validateData_validateImportingFile_fileIsValid() {
         ValidationResult validationResult = importExecutor.validateData(new ExportImportData(exportImportProjectId,
                         new ExportScope(),
                         ExportFormat.ATP),
-                Paths.get(validImportFile));
+                Path.of(validImportFile));
         Assertions.assertTrue(validationResult.isValid());
     }
 
     @Test
-    public void validateData_validateImportingFile_thereAreNoMessagesInValidationResult() throws Exception {
+    public void validateData_validateImportingFile_thereAreNoMessagesInValidationResult() {
         ValidationResult validationResult = importExecutor.validateData(new ExportImportData(exportImportProjectId,
                         new ExportScope(),
                         ExportFormat.ATP),
-                Paths.get(validImportFile));
+                Path.of(validImportFile));
         Assertions.assertTrue(validationResult.getMessages().isEmpty());
     }
 
     @Test
-    public void validateData_validateImportingFile_thereIsNoProjectInEnvsService() throws Exception {
+    public void validateData_validateImportingFile_thereIsNoProjectInEnvsService() {
         ValidationResult validationResult = importExecutor.validateData(new ExportImportData(exportImportProjectId,
                         new ExportScope(),
                         ExportFormat.ATP),
-                Paths.get(thereIsNoProjectInEnvServiceImportFile));
+                Path.of(thereIsNoProjectInEnvServiceImportFile));
         Assertions.assertEquals("Project with id:[13fec4c4-9c27-42e2-a4b3-250415525603] wasn't found in env service.",
-                validationResult.getMessages().get(0));
+                validationResult.getMessages().getFirst());
     }
 
     @Test
-    public void validateData_validateImportingFile_thereIsNoProjectInEnvsServiceFileIsIncorrect() throws Exception {
+    public void validateData_validateImportingFile_thereIsNoProjectInEnvsServiceFileIsIncorrect() {
         ValidationResult validationResult = importExecutor.validateData(new ExportImportData(exportImportProjectId,
                         new ExportScope(),
                         ExportFormat.ATP),
-                Paths.get(thereIsNoProjectInEnvServiceImportFile));
+                Path.of(thereIsNoProjectInEnvServiceImportFile));
         Assertions.assertFalse(validationResult.isValid());
     }
 
     @Test
-    public void validateData_validateImportingFile_thereIsNoEnvironmentInEnvsService() throws Exception {
+    public void validateData_validateImportingFile_thereIsNoEnvironmentInEnvsService() {
         ValidationResult validationResult = importExecutor.validateData(new ExportImportData(exportImportProjectId,
                         new ExportScope(),
                         ExportFormat.ATP),
-                Paths.get(thereIsNoEnvironmentInEnvServiceImportFile));
+                Path.of(thereIsNoEnvironmentInEnvServiceImportFile));
         Assertions.assertEquals("Environment with id:[da027247-bb3b-41cf-a8e8-247a368065e1] wasn't found in env service.",
-                validationResult.getMessages().get(0));
+                validationResult.getMessages().getFirst());
     }
 
     @Test
-    public void validateData_validateImportingFile_thereIsNoEnvironmentInEnvsServiceFileIsIncorrect() throws Exception {
+    public void validateData_validateImportingFile_thereIsNoEnvironmentInEnvsServiceFileIsIncorrect() {
         ValidationResult validationResult = importExecutor.validateData(new ExportImportData(exportImportProjectId,
                         new ExportScope(),
                         ExportFormat.ATP),
-                Paths.get(thereIsNoEnvironmentInEnvServiceImportFile));
+                Path.of(thereIsNoEnvironmentInEnvServiceImportFile));
         Assertions.assertFalse(validationResult.isValid());
     }
 
     @Test
-    public void validateData_validateImportingFile_thereIsNoSystemInEnvsService() throws Exception {
+    public void validateData_validateImportingFile_thereIsNoSystemInEnvsService() {
         ValidationResult validationResult = importExecutor.validateData(new ExportImportData(exportImportProjectId,
                         new ExportScope(),
                         ExportFormat.ATP),
-                Paths.get(thereIsNoSystemInEnvServiceImportFile));
+                Path.of(thereIsNoSystemInEnvServiceImportFile));
         Assertions.assertEquals("System with id:[dc42601e-54c5-4511-bd5b-bc588b343051] wasn't found in env service.",
-                validationResult.getMessages().get(0));
+                validationResult.getMessages().getFirst());
     }
 
     @Test
-    public void validateData_validateImportingFile_thereIsNoSystemInEnvsServiceFileIsIncorrect() throws Exception {
+    public void validateData_validateImportingFile_thereIsNoSystemInEnvsServiceFileIsIncorrect() {
         ValidationResult validationResult = importExecutor.validateData(new ExportImportData(exportImportProjectId,
                         new ExportScope(),
                         ExportFormat.ATP),
-                Paths.get(thereIsNoSystemInEnvServiceImportFile));
+                Path.of(thereIsNoSystemInEnvServiceImportFile));
         Assertions.assertFalse(validationResult.isValid());
     }
 }

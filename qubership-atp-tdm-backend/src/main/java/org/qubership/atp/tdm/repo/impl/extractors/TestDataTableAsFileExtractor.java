@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
 import org.qubership.atp.tdm.exceptions.internal.TdmGetTableException;
 import org.qubership.atp.tdm.model.ExportFileType;
 import org.qubership.atp.tdm.model.table.TestDataType;
@@ -33,6 +31,7 @@ import org.qubership.atp.tdm.utils.TestDataTableConvertor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -60,7 +59,7 @@ public class TestDataTableAsFileExtractor implements ResultSetExtractor<File> {
                 return TestDataTableConvertor.convertTableToCsvFile(this.tableName, columns, resultSet);
             }
         } catch (IOException e) {
-            log.error(String.format(TdmGetTableException.DEFAULT_MESSAGE, this.fileType.name()), e);
+            log.error(TdmGetTableException.DEFAULT_MESSAGE.formatted(this.fileType.name()), e);
             throw new TdmGetTableException(this.fileType.name());
         }
     }

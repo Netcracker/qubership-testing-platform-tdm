@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,13 +16,10 @@
 
 package org.qubership.atp.tdm.repo.impl;
 
-import static java.lang.String.format;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.List;
 
-import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
 import org.qubership.atp.crypt.api.Decryptor;
@@ -38,14 +35,16 @@ import org.qubership.atp.tdm.model.TestDataTableCatalog;
 import org.qubership.atp.tdm.repo.CatalogRepository;
 import org.qubership.atp.tdm.repo.SqlRepository;
 import org.qubership.atp.tdm.utils.TestDataUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Strings;
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
+@DependsOnDatabaseInitialization
 @Slf4j
 @Repository
 public class SqlRepositoryImpl implements SqlRepository {
@@ -56,7 +55,6 @@ public class SqlRepositoryImpl implements SqlRepository {
     private static final String DB_CONNECTION_NAME = "DB";
     private final Decryptor decryptor;
 
-    @Autowired
     public SqlRepositoryImpl(@Nonnull Decryptor decryptor) {
         this.decryptor = decryptor;
     }
@@ -97,7 +95,7 @@ public class SqlRepositoryImpl implements SqlRepository {
             return DriverManager.getConnection(connectionString, decryptor.decryptIfEncrypted(user),
                     decryptor.decryptIfEncrypted(password));
         } catch (Exception e) {
-            log.error(format(TdmDbConnectionException.DEFAULT_MESSAGE, connectionString), e);
+            log.error(TdmDbConnectionException.DEFAULT_MESSAGE.formatted(connectionString), e);
             throw new TdmDbConnectionException(connectionString);
         }
     }
@@ -116,7 +114,7 @@ public class SqlRepositoryImpl implements SqlRepository {
         String dbType = server.getProperty("db_type");
         String dbDriverName = getDbDriverName(dbType);
         try (Connection connection = createConnection(server)) {
-            JdbcTemplate jdbcTemplate = null;
+            JdbcTemplate jdbcTemplate;
             if (server.getProperty("jdbc_url").isEmpty()) {
                 String jdbcUrl = createConnectionString(dbType, server);
                 jdbcTemplate = new JdbcTemplate(createDataSource(dbDriverName, jdbcUrl,
@@ -195,7 +193,7 @@ public class SqlRepositoryImpl implements SqlRepository {
         try {
             return decryptor.decryptIfEncrypted(var);
         } catch (AtpDecryptException e) {
-            log.error(format(TdmDbDecryptException.DEFAULT_MESSAGE, var), e);
+            log.error(TdmDbDecryptException.DEFAULT_MESSAGE.formatted(var), e);
             throw new TdmDbDecryptException(var);
         }
     }

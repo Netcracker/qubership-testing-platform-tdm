@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -21,14 +21,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
 import org.apache.commons.lang3.StringUtils;
-
 import org.qubership.atp.tdm.model.table.TestDataTable;
 import org.qubership.atp.tdm.model.table.TestDataTableFilter;
 import org.qubership.atp.tdm.repo.TestDataTableRepository;
 import org.qubership.atp.tdm.service.TestDataService;
+
+import jakarta.annotation.Nonnull;
 
 public class GetDataFacade extends GeneralFacade {
 
@@ -88,18 +87,13 @@ public class GetDataFacade extends GeneralFacade {
     }
 
     public String getTableName(String filterName) {
-        switch (filterName) {
-            case "FilterEquals":
-                return TEST_DATA_TABLE_FILTER_EQUALS;
-            case "FilterContains":
-                return TEST_DATA_TABLE_FILTER_CONTAINS;
-            case "FilterDates":
-                return TEST_DATA_TABLE_FILTER_DATES;
-            case "Pagination":
-                return TEST_DATA_TABLE_PAGINATION;
-            default:
-                return StringUtils.EMPTY;
-        }
+        return switch (filterName) {
+            case "FilterEquals" -> TEST_DATA_TABLE_FILTER_EQUALS;
+            case "FilterContains" -> TEST_DATA_TABLE_FILTER_CONTAINS;
+            case "FilterDates" -> TEST_DATA_TABLE_FILTER_DATES;
+            case "Pagination" -> TEST_DATA_TABLE_PAGINATION;
+            default -> StringUtils.EMPTY;
+        };
     }
 
     private List<String> filterValues() {

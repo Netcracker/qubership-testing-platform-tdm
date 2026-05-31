@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-
 import org.qubership.atp.integration.configuration.configuration.AuditAction;
 import org.qubership.atp.integration.configuration.mdc.MdcUtils;
 import org.qubership.atp.tdm.mdc.MdcField;
@@ -45,7 +43,6 @@ import org.qubership.atp.tdm.service.TestDataService;
 import org.qubership.atp.tdm.service.impl.MetricService;
 import org.qubership.atp.tdm.utils.HttpUtils;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -61,6 +58,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.Gson;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -71,8 +69,6 @@ public class TestDataController /* implements TestDataControllerApi */ {
     private final TestDataService testDataService;
     private final MetricService metricService;
 
-
-    @Autowired
     public TestDataController(@Nonnull TestDataService testDataService, @Nonnull MetricService metricService) {
         this.testDataService = testDataService;
         this.metricService = metricService;
@@ -319,7 +315,7 @@ public class TestDataController /* implements TestDataControllerApi */ {
                 validateUnoccupiedResources, pickUpFullLinkFromTableCell);
     }
 
-    @Operation(description = "Check flag \'is unoccupied validation\'.")
+    @Operation(description = "Check flag 'is unoccupied validation'.")
     @PreAuthorize("@entityAccess.checkAccess("
             + "T(org.qubership.atp.tdm.utils.UsersManagementEntities).TEST_DATA.getName(),"
             + "@catalogRepository.findByTableName(#tableName).getProjectId(), 'READ')")
@@ -342,7 +338,7 @@ public class TestDataController /* implements TestDataControllerApi */ {
     }
 
     /**
-     * Replaces macroses (related to internal TDM table) with real values.
+     * Replaces macros (related to internal TDM table) with real values.
      *
      * @param tableName - table name
      * @param query     - source query

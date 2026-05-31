@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,7 +16,19 @@
 
 package org.qubership.atp.tdm.websocket.bulkaction.cleanup;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.net.URI;
+import java.util.Collections;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.qubership.atp.tdm.AbstractTestDataTest;
 import org.qubership.atp.tdm.mdc.TdmMdcHelper;
 import org.qubership.atp.tdm.model.TestDataTableCatalog;
@@ -25,26 +37,13 @@ import org.qubership.atp.tdm.model.bulkaction.BulkActionResult;
 import org.qubership.atp.tdm.model.cleanup.CleanupResults;
 import org.qubership.atp.tdm.model.mail.bulkaction.BulkCleanupMailSender;
 import org.qubership.atp.tdm.repo.CleanupConfigRepository;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.net.URI;
-import java.util.Collections;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BulkActionHandlerTest extends AbstractTestDataTest {
 
@@ -58,7 +57,7 @@ public class BulkActionHandlerTest extends AbstractTestDataTest {
     CleanupConfigRepository cleanupConfigRepository;
     @Autowired
     BulkCleanupMailSender bulkCleanupMailSender;
-    @MockBean
+    @MockitoBean
     WebSocketSession session;
     BulkDataCleanupHandler bulkDataCleanupHandler;
 
@@ -74,7 +73,6 @@ public class BulkActionHandlerTest extends AbstractTestDataTest {
         when(environmentsService.getLazyEnvironmentsShort(any())).thenReturn(Collections.singletonList(lazyEnvironment));
         when(environmentsService.getConnectionsSystemById(any())).thenReturn(connections);
     }
-
 
     @Test
     public void handleTextMessageTest_doNotFoundTableForCleanup_sendMessageNothingFound( ) throws Exception {

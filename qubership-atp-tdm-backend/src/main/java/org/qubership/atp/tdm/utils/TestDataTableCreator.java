@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
+import org.qubership.atp.tdm.repo.impl.SystemColumns;
 
 import com.healthmarketscience.sqlbuilder.CreateTableQuery;
 import com.healthmarketscience.sqlbuilder.InsertQuery;
@@ -32,7 +32,7 @@ import com.healthmarketscience.sqlbuilder.dbspec.basic.DbColumn;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbSchema;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbSpec;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbTable;
-import org.qubership.atp.tdm.repo.impl.SystemColumns;
+import jakarta.annotation.Nonnull;
 import lombok.Data;
 
 @Data
@@ -91,7 +91,7 @@ public class TestDataTableCreator {
 
     public class InsertRowQuery {
 
-        private InsertQuery insertQuery;
+        private final InsertQuery insertQuery;
 
         InsertRowQuery() {
             insertQuery = new InsertQuery(dbTable);

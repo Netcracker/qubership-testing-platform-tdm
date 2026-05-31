@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -33,9 +33,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.quartz.CronScheduleBuilder;
@@ -93,12 +90,13 @@ import org.qubership.atp.tdm.utils.DataUtils;
 import org.qubership.atp.tdm.utils.TestDataTableConvertor;
 import org.qubership.atp.tdm.utils.TestDataUtils;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -129,7 +127,6 @@ public class TestDataServiceImpl implements TestDataService {
     /**
      * Constructor for TestDataService.
      */
-    @Autowired
     public TestDataServiceImpl(@Nonnull CatalogRepository catalogRepository,
                                @Nonnull TestDataTableRepository testDataTableRepository,
                                @Nonnull EnvironmentsService environmentsService,
@@ -307,7 +304,7 @@ public class TestDataServiceImpl implements TestDataService {
         try {
             envName = environmentsService.getEnvNameById(environmentId);
         } catch (Exception e) {
-            String message = String.format("Environment: [%s] was not found.", environmentId);
+            String message = "Environment: [%s] was not found.".formatted(environmentId);
             log.error(message);
             statistic.setError(message);
             statistic.setEnvName(environmentId.toString());
@@ -542,7 +539,7 @@ public class TestDataServiceImpl implements TestDataService {
                 if (Objects.nonNull(project)) {
                     Optional<Environment> environment = project.getEnvironments().stream()
                             .filter(env -> env.getSystems().stream().map(AbstractConfiguratorModel::getId)
-                                    .collect(Collectors.toList())
+                                    .toList()
                                     .contains(catalog.getSystemId())).findFirst();
                     environment.ifPresent(rnv -> catalog.setEnvironmentId(rnv.getId()));
                 }
@@ -679,12 +676,11 @@ public class TestDataServiceImpl implements TestDataService {
 
         } catch (Exception e) {
             if (Objects.isNull(systemId)) {
-                log.error(String.format("Error while retrieving test data from table %s under project %s.",
-                        tableTitle, projectId), e);
+                log.error("Error while retrieving test data from table {} under project {}.", tableTitle, projectId, e);
                 throw new TdmRetrieveTestDataException(tableTitle, projectId.toString());
             } else {
-                log.error(String.format("Error while retrieving test data from table %s under project %s and system %s",
-                        tableTitle, projectId, systemId), e);
+                log.error("Error while retrieving test data from table {} under project {} and system {}",
+                        tableTitle, projectId, systemId, e);
                 throw new TdmRetrieveTestDataException(tableTitle, projectId.toString(), systemId.toString());
             }
         }
@@ -715,7 +711,7 @@ public class TestDataServiceImpl implements TestDataService {
             table = testDataTableRepository.getTestData(occupied, catalog.getTableName(),
                     null, null, filters, null, false);
         } catch (Exception e) {
-            log.error(String.format("Error while retrieving test data from table %s", tableName), e);
+            log.error("Error while retrieving test data from table {}", tableName, e);
             throw new TdmRetrieveTestDataException(tableName);
         }
         Optional<Map<String, Object>> row = table.getData().stream().findFirst();

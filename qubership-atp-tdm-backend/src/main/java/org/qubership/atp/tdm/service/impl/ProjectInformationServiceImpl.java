@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,19 +16,16 @@
 
 package org.qubership.atp.tdm.service.impl;
 
-import org.qubership.atp.tdm.service.ProjectInformationService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import org.qubership.atp.tdm.model.ProjectInformation;
 import org.qubership.atp.tdm.repo.ProjectInformationRepository;
+import org.qubership.atp.tdm.service.ProjectInformationService;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ProjectInformationServiceImpl implements ProjectInformationService {
 
     private final ProjectInformationRepository projectInformationRepository;
 
-    @Autowired
     public ProjectInformationServiceImpl(ProjectInformationRepository projectInformationRepository) {
         this.projectInformationRepository = projectInformationRepository;
     }

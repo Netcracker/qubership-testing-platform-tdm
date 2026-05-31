@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -20,9 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.qubership.atp.tdm.model.rest.ResponseMessage;
 import org.qubership.atp.tdm.model.rest.requests.AddInfoToRowRequest;
 import org.qubership.atp.tdm.model.rest.requests.GetRowRequest;
@@ -30,6 +27,9 @@ import org.qubership.atp.tdm.model.rest.requests.OccupyFullRowRequest;
 import org.qubership.atp.tdm.model.rest.requests.OccupyRowRequest;
 import org.qubership.atp.tdm.model.rest.requests.ReleaseRowRequest;
 import org.qubership.atp.tdm.model.rest.requests.UpdateRowRequest;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public interface AtpActionRepository {
 

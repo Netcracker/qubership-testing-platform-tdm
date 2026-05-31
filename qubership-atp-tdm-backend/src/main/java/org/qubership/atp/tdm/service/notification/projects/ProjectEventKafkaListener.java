@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,12 +16,9 @@
 
 package org.qubership.atp.tdm.service.notification.projects;
 
-import static java.lang.String.format;
 import static org.qubership.atp.tdm.env.configurator.utils.CacheNames.AUTH_PROJECT_CACHE;
 
 import java.io.IOException;
-
-import javax.annotation.Nonnull;
 
 import org.qubership.atp.integration.configuration.mdc.MdcUtils;
 import org.qubership.atp.tdm.exceptions.kafka.TdmKafkaListenerReadEventException;
@@ -35,6 +32,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.kafka.annotation.KafkaListener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -59,7 +57,7 @@ public class ProjectEventKafkaListener implements ProjectEventListener {
         try {
             projectEvent = objectMapper.readValue(event, ProjectEvent.class);
         } catch (IOException e) {
-            log.error(String.format(TdmKafkaListenerReadEventException.DEFAULT_MESSAGE, event), e);
+            log.error(TdmKafkaListenerReadEventException.DEFAULT_MESSAGE.formatted(event), e);
             throw new TdmKafkaListenerReadEventException(event);
         }
         MdcUtils.put(MdcField.PROJECT_ID.toString(), projectEvent.getProjectId());
@@ -78,7 +76,7 @@ public class ProjectEventKafkaListener implements ProjectEventListener {
                 testDataService.deleteProjectFromCatalogue(projectEvent.getProjectId());
                 break;
             default:
-                log.error(format(TdmKafkaListenerTypeEventException.DEFAULT_MESSAGE, projectEvent.getType().name()));
+                log.error(TdmKafkaListenerTypeEventException.DEFAULT_MESSAGE.formatted(projectEvent.getType().name()));
                 throw new TdmKafkaListenerTypeEventException(projectEvent.getType().name());
         }
     }

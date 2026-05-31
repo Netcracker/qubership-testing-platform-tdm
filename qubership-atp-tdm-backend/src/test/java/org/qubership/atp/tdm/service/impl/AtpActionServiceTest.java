@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,6 +16,20 @@
 
 package org.qubership.atp.tdm.service.impl;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.qubership.atp.tdm.AbstractTestDataTest;
 import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
 import org.qubership.atp.tdm.model.TestDataTableCatalog;
@@ -23,13 +37,6 @@ import org.qubership.atp.tdm.model.cleanup.TestDataCleanupConfig;
 import org.qubership.atp.tdm.model.rest.ApiDataFilter;
 import org.qubership.atp.tdm.model.rest.ResponseMessage;
 import org.qubership.atp.tdm.model.rest.ResponseType;
-import org.qubership.atp.tdm.model.rest.requests.*;
-import org.qubership.atp.tdm.model.table.TestDataTable;
-import org.qubership.atp.tdm.model.table.TestDataTableFilter;
-import org.qubership.atp.tdm.service.AtpActionService;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.qubership.atp.tdm.model.rest.requests.AddInfoToRowRequest;
 import org.qubership.atp.tdm.model.rest.requests.ChangeRowRequest;
 import org.qubership.atp.tdm.model.rest.requests.GetRowRequest;
@@ -37,13 +44,10 @@ import org.qubership.atp.tdm.model.rest.requests.OccupyFullRowRequest;
 import org.qubership.atp.tdm.model.rest.requests.OccupyRowRequest;
 import org.qubership.atp.tdm.model.rest.requests.ReleaseRowRequest;
 import org.qubership.atp.tdm.model.rest.requests.UpdateRowRequest;
+import org.qubership.atp.tdm.model.table.TestDataTable;
+import org.qubership.atp.tdm.model.table.TestDataTableFilter;
+import org.qubership.atp.tdm.service.AtpActionService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.IOException;
-import java.util.*;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 public class AtpActionServiceTest extends AbstractTestDataTest {
 
@@ -58,7 +62,6 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
         when(environmentsService.getConnectionsSystemById(any())).thenReturn(connections);
     }
 
-
     @Test
     public void atpRefreshTestData_testDataForInsertExist_responseMessageWithSuccessRefreshTestData() {
         String tableTitle = "TDM API Test Refresh Exist Test Data";
@@ -67,16 +70,16 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
         String importQuery = "select sim from " + tableName;
         createTestDataTableCatalog(projectId, systemId, environmentId, tableTitle, tableName, importQuery);
 
-        String msg = String.format("Successfully refreshed %s records fot table: %s.",
+        String msg = "Successfully refreshed %s records fot table: %s.".formatted(
                 testDataTable.getRecords(), tableTitle);
         String dataRefreshLink = "%s/project/%s/tdm/TEST%%20DATA/%s/%s";
         String tdmUrl = "localhost:8080";
-        String resultLink = String.format(dataRefreshLink, tdmUrl, projectId, environmentId, systemId);
+        String resultLink = dataRefreshLink.formatted(tdmUrl, projectId, environmentId, systemId);
         ResponseMessage expectedResponseMessage = new ResponseMessage(ResponseType.SUCCESS, msg, resultLink);
 
         List<ResponseMessage> responseMessages = atpActionService.refreshTables(lazyProject.getName(),
                 lazyEnvironment.getName(), system.getName(), tableTitle);
-        ResponseMessage actualResponseMessage = responseMessages.get(0);
+        ResponseMessage actualResponseMessage = responseMessages.getFirst();
 
         deleteTestDataTableIfExists(tableName);
         catalogRepository.deleteByTableName(tableName);
@@ -97,12 +100,12 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
                 "Root cause: Import info don't exist for table: " + tableName;
         String dataRefreshLink = "%s/project/%s/tdm/TEST%%20DATA/%s/%s";
         String tdmUrl = "localhost:8080";
-        String resultLink = String.format(dataRefreshLink, tdmUrl, projectId, environmentId, systemId);
+        String resultLink = dataRefreshLink.formatted(tdmUrl, projectId, environmentId, systemId);
         ResponseMessage expectedResponseMessage = new ResponseMessage(ResponseType.ERROR, msg, resultLink);
 
         List<ResponseMessage> responseMessages = atpActionService.refreshTables(lazyProject.getName(),
                 lazyEnvironment.getName(), system.getName(), tableTitle);
-        ResponseMessage actualResponseMessage = responseMessages.get(0);
+        ResponseMessage actualResponseMessage = responseMessages.getFirst();
 
         deleteTestDataTableIfExists(tableName);
         catalogRepository.deleteByTableName(tableName);
@@ -142,7 +145,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
         when(environmentsService.getLazyEnvironmentByName(any(), any())).thenReturn(lazyTemporaryEnvironment);
 
         String link = "localhost:8080/project/%s/tdm/TEST%%20DATA/%s/%s/";
-        link = String.format(link, projectId, lazyTemporaryEnvironment.getId(), systemId);
+        link = link.formatted(projectId, lazyTemporaryEnvironment.getId(), systemId);
         String expectedResponseMessage = "A new test data table has been created. Test data was inserted.";
 
         verifyCreationTableWithRecords(tableTitle, projectId, lazyProject.getName(),
@@ -180,7 +183,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
         catalogRepository.deleteByTableName(tableName);
 
         Assertions.assertEquals(expectedResponseMessage, responseMessage.getContent());
-        Assertions.assertEquals(String.format(link, projectId, lazyEnvironment.getId(), systemId),
+        Assertions.assertEquals(link.formatted(projectId, lazyEnvironment.getId(), systemId),
                 responseMessage.getLink());
     }
 
@@ -210,7 +213,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
 
         Assertions.assertEquals(expectedResponseValues, actualResponseMap);
         String link = "localhost:8080/project/%s/tdm/TEST%%20DATA/%s/%s/tdm_api_test_occupy_full_row_contains_filter";
-        Assertions.assertEquals(String.format(link, projectId, lazyEnvironment.getId(), systemId),
+        Assertions.assertEquals(link.formatted(projectId, lazyEnvironment.getId(), systemId),
                 responseMessage.getLink());
     }
 
@@ -237,7 +240,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
         String expectedResponseMessage = "Test Automation 4";
         String link = "localhost:8080/project/%s/tdm/TEST%%20DATA/%s/%s/tdm_api_test_occupy_stat_with_filter";
         Assertions.assertEquals(expectedResponseMessage, responseMessage.getContent());
-        Assertions.assertEquals(String.format(link, projectId, lazyEnvironment.getId(), systemId),
+        Assertions.assertEquals(link.formatted(projectId, lazyEnvironment.getId(), systemId),
                 responseMessage.getLink());
     }
 
@@ -267,7 +270,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
 
         Assertions.assertEquals(expectedResponseValues, actualResponseMap);
         String link = "localhost:8080/project/%s/tdm/TEST%%20DATA/%s/%s/tdm_api_test_occupy_full_row_stat_with_filter";
-        Assertions.assertEquals(String.format(link, projectId, lazyEnvironment.getId(), systemId),
+        Assertions.assertEquals(link.formatted(projectId, lazyEnvironment.getId(), systemId),
                 responseMessage.getLink());
     }
 
@@ -403,12 +406,12 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
 
         ResponseMessage responseMessage = responseMessages.stream().findFirst().orElse(new ResponseMessage());
         Assertions.assertEquals(ResponseType.ERROR, responseMessage.getType());
-        Assertions.assertEquals(String.format("Table with title \"%s\" was not found!", tableTitle),
+        Assertions.assertEquals("Table with title \"%s\" was not found!".formatted(tableTitle),
                 responseMessage.getContent());
     }
 
     @Test
-    public void atpOccupyTestDataFullRow_wrongTable_tableWasNotFoundErrorMessage() throws IOException {
+    public void atpOccupyTestDataFullRow_wrongTable_tableWasNotFoundErrorMessage() {
         String tableTitle = "Wrong Table Title";
         List<ResponseMessage> responseMessages = atpActionService.occupyTestDataFullRow(lazyProject.getName(),
                 lazyEnvironment.getName(), system.getName(), tableTitle, Collections.emptyList());
@@ -416,7 +419,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
         ResponseMessage responseMessage =
                 responseMessages.stream().findFirst().orElse(new ResponseMessage());
         Assertions.assertEquals(ResponseType.ERROR, responseMessage.getType());
-        Assertions.assertEquals(String.format("Table with title \"%s\" was not found!", tableTitle),
+        Assertions.assertEquals("Table with title \"%s\" was not found!".formatted(tableTitle),
                 responseMessage.getContent());
     }
 
@@ -436,7 +439,6 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
         List<ResponseMessage> responseMessages = atpActionService.occupyTestData(lazyProject.getName(),
                 lazyEnvironment.getName(), system.getName(), catalog.getTableTitle(),
                 Collections.singletonList(occupyRowRequest));
-
 
         ResponseMessage responseMessage = responseMessages.stream().findFirst().orElse(new ResponseMessage());
         Assertions.assertEquals(ResponseType.SUCCESS, responseMessage.getType());
@@ -663,7 +665,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
 
         ResponseMessage responseMessage = responseMessages.stream().findFirst().orElse(new ResponseMessage());
         Assertions.assertEquals(ResponseType.ERROR, responseMessage.getType());
-        Assertions.assertEquals(String.format("Table with title \"%s\" was not found!", tableTitle),
+        Assertions.assertEquals("Table with title \"%s\" was not found!".formatted(tableTitle),
                 responseMessage.getContent());
     }
 
@@ -701,7 +703,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
         catalogRepository.deleteByTableName(tableName);
 
         Assertions.assertEquals(ResponseType.ERROR, responseMessage.getType());
-        Assertions.assertEquals(String.format("Table with title \"%s\" was not found!", wrongTableTitle),
+        Assertions.assertEquals("Table with title \"%s\" was not found!".formatted(wrongTableTitle),
                 responseMessage.getContent());
     }
 
@@ -821,7 +823,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
         catalogRepository.deleteByTableName(tableName);
 
         Assertions.assertEquals(ResponseType.ERROR, responseMessage.getType());
-        Assertions.assertEquals(String.format("Table with title \"%s\" was not found!", wrongTableTitle),
+        Assertions.assertEquals("Table with title \"%s\" was not found!".formatted(wrongTableTitle),
                 responseMessage.getContent());
     }
 
@@ -858,8 +860,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
         deleteTestDataTableIfExists(tableName);
         catalogRepository.deleteByTableName(tableName);
 
-        Assertions.assertEquals(String.format("Table %s has been truncated.", tableName),
-                responseMessage.getContent());
+        Assertions.assertEquals("Table %s has been truncated.".formatted(tableName), responseMessage.getContent());
     }
 
     @Test
@@ -869,7 +870,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
                 lazyEnvironment.getName(), system.getName(), wrongTableTitle);
         ResponseMessage responseMessage = responseMessages.stream().findFirst().orElse(new ResponseMessage());
 
-        Assertions.assertEquals(String.format("Tables with title: %s was not found under project with id: %s",
+        Assertions.assertEquals("Tables with title: %s was not found under project with id: %s".formatted(
                 wrongTableTitle, lazyProject.getId()), responseMessage.getContent());
     }
 
@@ -891,7 +892,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
         deleteTestDataTableIfExists(tableName);
         catalogRepository.deleteByTableName(tableName);
 
-        Assertions.assertEquals(String.format("For table \"%s\" with total records %s has been removed %s records.",
+        Assertions.assertEquals("For table \"%s\" with total records %s has been removed %s records.".formatted(
                 tableName, 6, 0),
                 responseMessage.getContent());
     }
@@ -914,11 +915,11 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
         deleteTestDataTableIfExists(tableName);
         catalogRepository.deleteByTableName(tableName);
 
-        Assertions.assertEquals(String.format("Cleanup %s for table %s failed.\n" +
-                        "Error while run cleanup. Column 'PartnerR' doesn't exist", cleanupConfig, tableName),
+        Assertions.assertEquals("""
+                Cleanup %s for table %s failed.
+                Error while run cleanup. Column 'PartnerR' doesn't exist""".formatted(cleanupConfig, tableName),
                 responseMessage.getContent());
     }
-
 
     @Test
     public void atpRunCleanupForTable_prepareDataWithoutCleanupConfRunCleanup_cleanupNotFound() {
@@ -935,7 +936,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
         deleteTestDataTableIfExists(tableName);
         catalogRepository.deleteByTableName(tableName);
 
-        Assertions.assertEquals(String.format("Cleanup hasn't been configured for table \"%s\".", tableTitle),
+        Assertions.assertEquals("Cleanup hasn't been configured for table \"%s\".".formatted(tableTitle),
                 responseMessage.getContent());
     }
 
@@ -945,7 +946,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
         List<ResponseMessage> responseMessages = atpActionService.runCleanupForTable(lazyProject.getId().toString(),
                 lazyEnvironment.getName(), system.getName(), tableTitle);
         ResponseMessage responseMessage = responseMessages.stream().findFirst().orElse(new ResponseMessage());
-        Assertions.assertEquals(String.format("Table \"%s\" hasn't been found. Could you please check provided data.",
+        Assertions.assertEquals("Table \"%s\" hasn't been found. Could you please check provided data.".formatted(
                 tableTitle),
                 responseMessage.getContent());
     }
@@ -1006,10 +1007,10 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
         if (Objects.nonNull(systemId)) {
             lazyEnvironmentId = lazyEnvironment.getId();
             verifyCreationTableWithRecords(tableTitle, projectId, systemId,
-                    String.format(linkFull, AtpActionServiceTest.projectId, lazyEnvironmentId, systemId), expectedResponseMessage);
+                    linkFull.formatted(AtpActionServiceTest.projectId, lazyEnvironmentId, systemId), expectedResponseMessage);
         } else {
             verifyCreationTableWithRecords(tableTitle, projectId, systemId,
-                    String.format(linkNullSystem, AtpActionServiceTest.projectId), expectedResponseMessage);
+                    linkNullSystem.formatted(AtpActionServiceTest.projectId), expectedResponseMessage);
         }
     }
 
@@ -1018,7 +1019,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
         String link = "localhost:8080/project/%s/tdm/TEST%%20DATA/%s/%s/";
 
         verifyCreationTableWithRecords(tableTitle, projectId, systemId,
-                String.format(link, AtpActionServiceTest.projectId, lazyEnvironment.getId(), systemId), expectedResponseMessage);
+                link.formatted(AtpActionServiceTest.projectId, lazyEnvironment.getId(), systemId), expectedResponseMessage);
     }
 
     private void verifyCreationTableWithRecords(String tableTitle, UUID projectId, UUID systemId,
@@ -1079,11 +1080,10 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
         String linkNullSystem = "localhost:8080/project/%s/%s";
         Assertions.assertEquals(expectedResponseMessage, responseMessage.getContent());
         if (Objects.nonNull(systemId)) {
-            Assertions.assertEquals(String.format(linkFull, AtpActionServiceTest.projectId, lazyEnvironmentId, systemId,
-                    catalog.getTableName()),
-                    responseMessage.getLink());
+            Assertions.assertEquals(linkFull.formatted(AtpActionServiceTest.projectId, lazyEnvironmentId, systemId,
+                    catalog.getTableName()), responseMessage.getLink());
         } else {
-            Assertions.assertEquals(String.format(linkNullSystem, AtpActionServiceTest.projectId, catalog.getTableName()),
+            Assertions.assertEquals(linkNullSystem.formatted(AtpActionServiceTest.projectId, catalog.getTableName()),
                     responseMessage.getLink());
         }
 
@@ -1114,12 +1114,11 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
         Assertions.assertEquals(expectedResponseValues, actualResponseMap);
         if (Objects.nonNull(systemId)) {
             String linkFull = "localhost:8080/project/%s/tdm/TEST%%20DATA/%s/%s/%s";
-            Assertions.assertEquals(String.format(linkFull, AtpActionServiceTest.projectId, lazyEnvironmentId, systemId,
-                    catalog.getTableName()),
-                    responseMessage.getLink());
+            Assertions.assertEquals(linkFull.formatted(AtpActionServiceTest.projectId, lazyEnvironmentId, systemId,
+                    catalog.getTableName()), responseMessage.getLink());
         } else {
             String linkNullSystem = "localhost:8080/project/%s/%s";
-            Assertions.assertEquals(String.format(linkNullSystem, AtpActionServiceTest.projectId, catalog.getTableName()),
+            Assertions.assertEquals(linkNullSystem.formatted(AtpActionServiceTest.projectId, catalog.getTableName()),
                     responseMessage.getLink());
         }
 
@@ -1140,14 +1139,13 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
 
         List<TestDataTableFilter> filters = Collections.singletonList(new TestDataTableFilter("Assignment",
                 "contains", Collections.singletonList("Test Automation 4"), false));
-        if (changeRowRequest instanceof AddInfoToRowRequest) {
-            AddInfoToRowRequest addInfoToRow = (AddInfoToRowRequest) changeRowRequest;
+        if (changeRowRequest instanceof AddInfoToRowRequest addInfoToRow) {
             responseMessages = atpActionService.addInfoToRow(lazyProject.getName(),
                     lazyEnvironment.getName(), systemName, catalog.getTableTitle(),
                     Collections.singletonList(addInfoToRow));
             TestDataTable table = testDataService.getTestData(catalog.getTableName(), null, null,
                     filters, null, false);
-            Assertions.assertEquals("ZLAB04\r\nZLAB109", table.getData().get(0).get("environment"));
+            Assertions.assertEquals("ZLAB04\r\nZLAB109", table.getData().getFirst().get("environment"));
         } else {
             UpdateRowRequest updateRow = (UpdateRowRequest) changeRowRequest;
             responseMessages = atpActionService.updateTestData(lazyProject.getName(),
@@ -1155,7 +1153,7 @@ public class AtpActionServiceTest extends AbstractTestDataTest {
                     Collections.singletonList(updateRow));
             TestDataTable table = testDataService.getTestData(catalog.getTableName(), null, null,
                     filters, null, false);
-            Assertions.assertEquals("ZLAB109", table.getData().get(0).get("environment"));
+            Assertions.assertEquals("ZLAB109", table.getData().getFirst().get("environment"));
         }
 
         ResponseMessage responseMessage = responseMessages.stream().findFirst().orElse(new ResponseMessage());

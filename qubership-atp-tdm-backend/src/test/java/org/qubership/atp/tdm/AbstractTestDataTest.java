@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -34,7 +34,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.io.IOUtils;
-
+import org.qubership.atp.common.lock.LockManager;
+import org.qubership.atp.tdm.env.configurator.model.Connection;
+import org.qubership.atp.tdm.env.configurator.model.Environment;
+import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
+import org.qubership.atp.tdm.env.configurator.model.LazyProject;
+import org.qubership.atp.tdm.env.configurator.model.LazySystem;
+import org.qubership.atp.tdm.env.configurator.model.System;
+import org.qubership.atp.tdm.env.configurator.service.EnvironmentsService;
 import org.qubership.atp.tdm.mdc.TdmMdcHelper;
 import org.qubership.atp.tdm.model.ColumnType;
 import org.qubership.atp.tdm.model.FilterType;
@@ -58,20 +65,11 @@ import org.qubership.atp.tdm.service.StatisticsService;
 import org.qubership.atp.tdm.service.TestDataService;
 import org.qubership.atp.tdm.utils.CurrentTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.multipart.MultipartFile;
 
-import org.qubership.atp.common.lock.LockManager;
-import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
-import org.qubership.atp.tdm.env.configurator.model.LazyProject;
-import org.qubership.atp.tdm.env.configurator.model.LazySystem;
-import org.qubership.atp.tdm.env.configurator.model.Connection;
-import org.qubership.atp.tdm.env.configurator.model.Environment;
-import org.qubership.atp.tdm.env.configurator.model.System;
-import org.qubership.atp.tdm.env.configurator.service.EnvironmentsService;
-import org.qubership.atp.tdm.repo.*;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -135,7 +133,7 @@ public abstract class AbstractTestDataTest extends AbstractTest {
         setParameters(parameters);
     }};
 
-    protected static final List<Connection> connections = new ArrayList<Connection>() {{
+    protected static final List<Connection> connections = new ArrayList<>() {{
         add(httpConnection);
         add(dbConnection);
     }};
@@ -217,10 +215,10 @@ public abstract class AbstractTestDataTest extends AbstractTest {
     @Autowired
     protected LockManager lockManager;
 
-    @MockBean
+    @MockitoBean
     protected EnvironmentsService environmentsService;
 
-    @MockBean
+    @MockitoBean
     protected CurrentTime currentTime;
 
     protected TestDataTableCatalog createTestDataTableCatalog(UUID projectId, UUID systemId, UUID environmentId,
@@ -383,12 +381,12 @@ public abstract class AbstractTestDataTest extends AbstractTest {
         row.put("Status", "51");
         row.put("Partner ID", "1");
         row.put("Operator ID", "2501");
-        row.put("ROW_ID", testDataService.getTestData(tableName).getData().get(0).get("ROW_ID"));
+        row.put("ROW_ID", testDataService.getTestData(tableName).getData().getFirst().get("ROW_ID"));
         row.put("SELECTED", false);
         row.put("Assignment", "Test Automation' 1");
         row.put("OCCUPIED_BY", null);
         row.put("sim", "8901260720040140811");
-        row.put("CREATED_WHEN", testDataService.getTestData(tableName).getData().get(0).get("CREATED_WHEN"));
+        row.put("CREATED_WHEN", testDataService.getTestData(tableName).getData().getFirst().get("CREATED_WHEN"));
         row.put("Partner category", "MVNO");
         row.put("environment", "ZLAB01");
         row.put("OCCUPIED_DATE", null);
@@ -441,7 +439,7 @@ public abstract class AbstractTestDataTest extends AbstractTest {
 
     protected void mockEnvironmentService(List<UUID> envs, UUID systemId1, UUID systemId2) {
         LazySystem lazySystem1 = new LazySystem();
-        lazySystem1.setEnvironmentIds(Collections.singletonList(envs.get(0)));
+        lazySystem1.setEnvironmentIds(Collections.singletonList(envs.getFirst()));
         lazySystem1.setId(systemId1);
         lazySystem1.setName("Default");
         LazySystem lazySystem2 = new LazySystem();

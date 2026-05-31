@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,6 +16,16 @@
 
 package org.qubership.atp.tdm.service.impl;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.qubership.atp.tdm.AbstractTestDataTest;
 import org.qubership.atp.tdm.env.configurator.model.Project;
 import org.qubership.atp.tdm.model.TestDataTableCatalog;
@@ -23,20 +33,8 @@ import org.qubership.atp.tdm.model.refresh.RefreshResults;
 import org.qubership.atp.tdm.model.refresh.TestDataRefreshConfig;
 import org.qubership.atp.tdm.model.table.TestDataTable;
 import org.qubership.atp.tdm.service.DataRefreshService;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 public class DataRefreshServiceTest extends AbstractTestDataTest {
 
@@ -48,7 +46,7 @@ public class DataRefreshServiceTest extends AbstractTestDataTest {
         setEnvironments(Collections.singletonList(environment));
     }};
 
-    @MockBean
+    @MockitoBean
     private MetricService metricServiceMock;
 
     @Autowired
@@ -61,7 +59,6 @@ public class DataRefreshServiceTest extends AbstractTestDataTest {
         when(environmentsService.getFullSystemByName(any(), any(), any())).thenReturn(system);
         when(environmentsService.getConnectionsSystemById(any())).thenReturn(connections);
     }
-
 
     @Test
     public void saveRefreshConfig_saveConfig_dataRefreshConfigigSaved() throws Exception {

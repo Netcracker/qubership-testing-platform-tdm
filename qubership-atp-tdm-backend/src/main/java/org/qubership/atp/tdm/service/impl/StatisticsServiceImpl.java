@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 package org.qubership.atp.tdm.service.impl;
 
+import static java.time.temporal.ChronoUnit.DAYS;
 import static org.qubership.atp.tdm.utils.AvailableStatisticUtils.availableDataQuery;
 import static org.qubership.atp.tdm.utils.DateFormatters.FULL_DATE_FORMATTER;
 import static org.qubership.atp.tdm.utils.TestDataQueries.GET_COUNT_OF_ROWS;
-import static java.time.temporal.ChronoUnit.DAYS;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.nio.file.Files;
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -45,26 +44,11 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.CronExpression;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
-import org.qubership.atp.tdm.service.SchedulerService;
-import org.qubership.atp.tdm.service.StatisticsService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import com.google.common.base.Preconditions;
 import org.qubership.atp.tdm.env.configurator.model.LazyEnvironment;
 import org.qubership.atp.tdm.env.configurator.service.EnvironmentsService;
 import org.qubership.atp.tdm.exceptions.internal.TdmAvailableStatisticActiveColumnException;
@@ -114,9 +98,22 @@ import org.qubership.atp.tdm.repo.TestAvailableDataMonitoringRepository;
 import org.qubership.atp.tdm.repo.TestDataMonitoringRepository;
 import org.qubership.atp.tdm.repo.TestDataUsersMonitoringRepository;
 import org.qubership.atp.tdm.repo.impl.SystemColumns;
+import org.qubership.atp.tdm.service.SchedulerService;
+import org.qubership.atp.tdm.service.StatisticsService;
 import org.qubership.atp.tdm.service.TestDataService;
 import org.qubership.atp.tdm.utils.UsersOccupyStatisticUtils;
 import org.qubership.atp.tdm.utils.ValidateCronExpression;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import com.google.common.base.Preconditions;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -151,7 +148,6 @@ public class StatisticsServiceImpl implements StatisticsService {
     /**
      * Default constructor.
      */
-    @Autowired
     public StatisticsServiceImpl(@Nonnull StatisticsRepository statisticsRepository,
                                  @Nonnull TestDataMonitoringRepository monitoringRepository,
                                  @Nonnull TestDataUsersMonitoringRepository userMonitoringRepository,
@@ -195,7 +191,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         } else {
             List<GeneralStatisticsItem> listItems = new ArrayList<>();
             List<String> contextList = data.stream().map(GeneralStatisticsItem::getContext)
-                    .distinct().collect(Collectors.toList());
+                    .distinct().toList();
             contextList.forEach(contextValue -> {
                 List<GeneralStatisticsItem> details = new ArrayList<>();
                 GeneralStatisticsItem item = new GeneralStatisticsItem(contextValue, 0L, 0L, 0L, 0L);
@@ -234,7 +230,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         setEnvironmentsNames(projectId, data.getItems());
         if (Objects.isNull(systemId)) {
             List<String> contextList = data.getItems().stream().map(ConsumedStatisticsItem::getContext)
-                    .distinct().collect(Collectors.toList());
+                    .distinct().toList();
             contextList.forEach(contextValue -> {
                 int datesNumber = data.getDates().size();
                 List<ConsumedStatisticsItem> details = new ArrayList<>();
@@ -302,7 +298,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         setEnvironmentsNames(projectId, data.getItems());
         if (Objects.isNull(systemId)) {
             List<String> contextList = data.getItems().stream().map(OutdatedStatisticsItem::getContext)
-                    .distinct().collect(Collectors.toList());
+                    .distinct().toList();
             contextList.forEach(contextValue -> {
                 int datesNumber = data.getDates().size();
                 List<OutdatedStatisticsItem> details = new ArrayList<>();
@@ -354,7 +350,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         DateStatistics dateStatistics = DateStatistics.concatDateStatistics(dataExisting, dataDeleted);
         if (Objects.isNull(systemId)) {
             List<String> contextList = dateStatistics.getItems().stream().map(DateStatisticsItem::getContext)
-                    .distinct().collect(Collectors.toList());
+                    .distinct().toList();
             contextList.forEach(contextValue -> {
                 int datesNumber = dateStatistics.getDates().size();
                 List<DateStatisticsItem> details = new ArrayList<>();
@@ -455,16 +451,16 @@ public class StatisticsServiceImpl implements StatisticsService {
         List<StatisticsReportElement> upToThreshold = new ArrayList<>();
         List<StatisticsReportElement> downToThreshold = new ArrayList<>();
         List<String> environments = reportStatistics.stream().map(StatisticsReport::getEnvironment).distinct()
-                .collect(Collectors.toList());
+                .toList();
         environments.forEach(env -> {
             List<String> filterSystem = reportStatistics.stream().filter(el -> env.equals(el.getEnvironment()))
                     .map(StatisticsReport::getSystem)
                     .distinct()
-                    .collect(Collectors.toList());
+                    .toList();
             filterSystem.forEach(system -> {
                 List<StatisticsReport> data = reportStatistics.stream()
                         .filter(el -> env.equals(el.getEnvironment()) && system.equals(el.getSystem()))
-                        .collect(Collectors.toList());
+                        .toList();
                 List<GeneralStatisticsItem> up = new ArrayList<>();
                 List<GeneralStatisticsItem> down = new ArrayList<>();
                 data.forEach(it -> {
@@ -590,7 +586,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             List<String> userNames = testDataOccupy.stream()
                     .map(TestDataOccupyReportGroupBy::getOccupiedBy)
                     .distinct()
-                    .collect(Collectors.toList());
+                    .toList();
 
             userNames.forEach(userName -> {
                 UsersStatisticsReportElement usersStatisticsReportElement = new UsersStatisticsReportElement();
@@ -599,15 +595,15 @@ public class StatisticsServiceImpl implements StatisticsService {
                 usersStatisticsReportElement.setDates(getDateFormatFromDaysCount(daysCount));
 
                 List<TestDataOccupyReportGroupBy> testDataOccupyForUserName = testDataOccupy.stream()
-                        .filter(t -> t.getOccupiedBy().equals(userName)).collect(Collectors.toList());
+                        .filter(t -> t.getOccupiedBy().equals(userName)).toList();
 
                 List<String> tableNames =
                         testDataOccupyForUserName.stream().map(TestDataOccupyReportGroupBy::getTableName)
-                                .distinct().collect(Collectors.toList());
+                                .distinct().toList();
 
                 tableNames.forEach(tableName -> {
                     List<TestDataOccupyReportGroupBy> testDataOccupyForTableName = testDataOccupyForUserName.stream()
-                            .filter(t -> t.getTableName().equals(tableName)).collect(Collectors.toList());
+                            .filter(t -> t.getTableName().equals(tableName)).toList();
 
                     TestDataTableCatalog tableCatalog = catalogMap.get(tableName);
 
@@ -776,8 +772,8 @@ public class StatisticsServiceImpl implements StatisticsService {
                 queryResult,
                 LocalDate.parse(request.getDateFrom()));
         fillEnvironmentsAndSystems(tableValues,tables);
-        int countOfRows = ((BigInteger) entityManager
-                .createNativeQuery(String.format(GET_COUNT_OF_ROWS, generatedQuery)).getResultList().get(0)).intValue();
+        int countOfRows = ((Long) entityManager
+                .createNativeQuery(GET_COUNT_OF_ROWS.formatted(generatedQuery)).getResultList().getFirst()).intValue();
         return new UsersOccupyStatisticResponse(tableValues, countOfRows);
     }
 
@@ -837,11 +833,9 @@ public class StatisticsServiceImpl implements StatisticsService {
             csvHeader.append(datesString).append(",\n");
             fileWriter.write(csvHeader.toString());
             for (OccupiedDataByUsersStatistics table : response.getData()) {
-                SortedSet<LocalDate> keys = new TreeSet<LocalDate>(table.getData().keySet());
+                SortedSet<LocalDate> keys = new TreeSet<>(table.getData().keySet());
                 StringBuilder valuesString = new StringBuilder();
-                keys.forEach(date -> {
-                    valuesString.append(table.getData().get(date)).append(",");
-                });
+                keys.forEach(date -> valuesString.append(table.getData().get(date)).append(","));
 
                 StringBuilder build = new StringBuilder();
                 build
@@ -910,7 +904,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             monitoringConfig = new TestAvailableDataMonitoring(config.getSystemId(), config.getEnvironmentId());
         }
         if (!config.getColumnKeys().contains(config.getActiveColumnKey())) {
-            log.error(String.format(TdmAvailableStatisticColumnException.DEFAULT_MESSAGE, config.getActiveColumnKey()));
+            log.error(TdmAvailableStatisticColumnException.DEFAULT_MESSAGE.formatted(config.getActiveColumnKey()));
             throw new TdmAvailableStatisticColumnException(config.getActiveColumnKey());
         }
         if (StringUtils.isNotEmpty(config.getActiveColumnKey())) {
@@ -974,7 +968,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             result.forEach(resultRow -> {
                 String key = String.valueOf(resultRow[0]);
                 if (columnValues.getValues().contains(key)) {
-                    tableStats.getOptions().put(key, ((BigInteger)resultRow[1]).intValue());
+                    tableStats.getOptions().put(key, ((Long)resultRow[1]).intValue());
                 }
             });
             columnValues.getValues().stream().forEach(value -> tableStats.getOptions().putIfAbsent(value,0));
