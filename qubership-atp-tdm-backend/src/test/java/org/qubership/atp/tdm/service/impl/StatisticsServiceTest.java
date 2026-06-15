@@ -821,7 +821,13 @@ public class StatisticsServiceTest extends AbstractTestDataTest {
         usersMonitoring.setProjectId(projectId);
         usersMonitoring.setEnabled(true);
         usersMonitoring.setCronExpression(cron);
-        usersMonitoring.setRecipients("example1@example.com,example2@example.com");
+
+        /*
+            According to regulations, both test emails are set to example@example.com.
+            It doesn't affect tests, because these emails aren't used in tests at all.
+         */
+        usersMonitoring.setRecipients("example@example.com,example@example.com");
+
         usersMonitoring.setDaysCount(2);
         usersMonitoring.setHtmlReport(true);
         usersMonitoring.setCsvReport(true);
