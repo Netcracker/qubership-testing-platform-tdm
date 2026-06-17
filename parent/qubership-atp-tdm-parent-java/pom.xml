@@ -38,7 +38,7 @@
         <reactor-bom.version>2024.0.17</reactor-bom.version>
         <netty.version>4.1.132.Final</netty.version>
 
-        <atp.auth.version>2.0.0</atp.auth.version>
+        <atp.auth.version>2.0.1</atp.auth.version>
         <atp-export-import-lib.version>1.0.0</atp-export-import-lib.version>
         <atp.crypt.version>1.0.0</atp.crypt.version>
         <atp.integration.version>1.0.0</atp.integration.version>
